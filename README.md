@@ -24,9 +24,9 @@ The hello-world app for Splunk Enterprise contains the following two example cus
 
 When you call the endpoints for these two handlers, they both return the following payload:
 
-`
+```
 {"text":"Hello world!"}
-`
+```
 
 To test these custom REST handlers on the backend management port of your Splunk Enterprise installation, go to the following URLs:
 * `hello_templates`- [https://localhost:8089/servicesNS/-/hello-world/hello-templates/say-hello-templates](https://localhost:8089/servicesNS/-/hello-world/hello-templates/say-hello-templates)
