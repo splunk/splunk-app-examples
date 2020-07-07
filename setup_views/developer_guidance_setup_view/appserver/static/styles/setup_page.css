@@ -1,0 +1,70 @@
+/* -------------------------------------------------------------------------- */
+/* General Styling                                                            */
+/* -------------------------------------------------------------------------- */
+
+.setup.container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.setup.container .left {
+    width: 50%;
+}
+
+.setup.container .right {
+    width: 50%;
+}
+
+.setup.container .description {
+    /* none */
+}
+
+.setup.container .field {
+    /* none */
+}
+
+.setup.container .field.hostname .protocol {
+    /* none */
+}
+
+.setup.container .field .user_input {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Specific Element Styling                                                   */
+/* -------------------------------------------------------------------------- */
+
+.setup.container .field.api_url .user_input .protocol {
+    /* Derived from Splunk */
+    background-color: #eee;
+    background-image: linear-gradient(180deg, #f7f7f7, #eee);
+    border-color: #bfbfbf;
+    border-radius: 5px 0px 0px 5px;
+    border-style: solid;
+    border-width: 1px 0px 1px 1px;
+
+    /* Custom CSS */
+    height: 20px;
+    margin-bottom: 8px;
+    padding: 4px 5px 0px 5px;
+}
+
+.setup.container .field.api_url .user_input .text input {
+    border-left-width: 0px;
+    border-radius: 0px 5px 5px 0px;
+}
+
+.setup.container .error.output {
+    /* Used to set defaults for JQuery Fade In/Fade Out */
+    display: none;
+    opacity: 1;
+}
+
+.setup.container .error.output ul li {
+    /* Styling for each line of the errors */
+    color: rgba(255, 0, 0, 1);
+}
