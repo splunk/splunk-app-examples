@@ -2,7 +2,7 @@
 
 The Splunk App Examples repository contains some libraries that were written by others, and are being redistributed under their respective open source licenses. We want to thank the contributors to these projects:
 
-## react_setup_view_example
+## react_setup_page_example
 
 ### React v16.13.1
 

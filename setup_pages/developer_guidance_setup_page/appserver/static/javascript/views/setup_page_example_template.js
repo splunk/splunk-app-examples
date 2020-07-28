@@ -6,10 +6,10 @@ function get_template() {
       "<div class='setup container'>" +
       "    <div class='left'>" +
       "        <h2>Overview</h2>" +
-      "        This setup view will create/modify two files in the local directory of this Splunk App." +
+      "        This setup page will create/modify two files in the local directory of this Splunk App." +
       "        <br/>" +
       "        <br/>" +
-      "        Splunk App Directory Path: `$SPLUNK_HOME/etc/apps/developer_guidance_setup_view/local/`" +
+      "        Splunk App Directory Path: `$SPLUNK_HOME/etc/apps/developer_guidance_setup_page/local/`" +
       "        <ul>" +
       "            <li>app.conf" +
       "                <ul>" +
@@ -82,7 +82,7 @@ function get_template() {
       "        <h2>Implementation Details</h2>" +
       "        <div class='description'>" +
       "            <h3>Overview</h3>" +
-      "            This is a setup view that is intended to serve as a point of reference for Splunk Developers." +
+      "            This is a setup page that is intended to serve as a point of reference for Splunk Developers." +
       "            </br>" +
       "            This has been created using Application Certification approved best practices." +
       "            <br/>" +
@@ -93,7 +93,7 @@ function get_template() {
       "                        <li><a href='http://docs.splunk.com/Documentation/SplunkCloud/latest/Viz/PanelreferenceforSimplifiedXML'>API Documentation</a>  (docs.splunk.com)" +
       "                    </ul>" +
       "                </li>" +
-      "                <li>Splunk Setup View" +
+      "                <li>Splunk Setup Page" +
       "                    <ul>" +
       "                        <li><a href='http://docs.splunk.com/Documentation/Splunk/6.6.3/admin/Appconf#.5Bui.5D'>app.conf Specification</a>" +
       "                    </ul>" +
