@@ -30,7 +30,7 @@ define(["react", "splunkjs/splunk"], function(react, splunk_js_sdk){
       this.setState({ ...this.state, [event.target.name]: event.target.value})
     }
 
-    handleSubmit(event) {
+    async handleSubmit(event) {
       await Setup.perform(splunk_js_sdk, this.state)
 
       event.preventDefault();
