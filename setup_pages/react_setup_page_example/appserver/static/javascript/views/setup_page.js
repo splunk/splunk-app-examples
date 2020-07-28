@@ -6,7 +6,7 @@ import * as Config from './setup_configuration.js'
 const MACROS_CONF = 'macros'
 
 export async function perform(splunk_js_sdk, setup_options) {
-    var app_name = "react_setup_view_example";
+    var app_name = "react_setup_page_example";
 
     var application_name_space = {
         owner: "nobody",

@@ -7,12 +7,12 @@
  * Some task runners/module bundlers are : gulp, grunt, webpack, and Parcel
  */
 
-import * as Setup from "./setup_view.js";
+import * as Setup from "./setup_page.js";
 
 define(["react", "splunkjs/splunk"], function(react, splunk_js_sdk){
   const e = react.createElement;
 
-  class SetupView extends react.Component {
+  class SetupPage extends react.Component {
     constructor(props) {
       super(props);
 
@@ -30,7 +30,7 @@ define(["react", "splunkjs/splunk"], function(react, splunk_js_sdk){
       this.setState({ ...this.state, [event.target.name]: event.target.value})
     }
 
-    handleSubmit(event) {
+    async handleSubmit(event) {
       await Setup.perform(splunk_js_sdk, this.state)
 
       event.preventDefault();
@@ -38,7 +38,7 @@ define(["react", "splunkjs/splunk"], function(react, splunk_js_sdk){
 
     render() {
       return e("div", null, [
-        e("h2", null, "Macro Setup View"),
+        e("h2", null, "Macro Setup Page"),
         e("div", null, [
           e("form", { onSubmit: this.handleSubmit }, [
             e("label", null, [
@@ -60,5 +60,5 @@ define(["react", "splunkjs/splunk"], function(react, splunk_js_sdk){
     }
   }
 
-  return e(SetupView);
+  return e(SetupPage);
 });

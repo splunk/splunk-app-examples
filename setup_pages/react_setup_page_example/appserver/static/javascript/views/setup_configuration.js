@@ -4,7 +4,7 @@ async function create_custom_configuration_file(
   splunk_js_sdk_service,
   api_url,
 ) {
-  var custom_configuration_file_name = "setup_view_example";
+  var custom_configuration_file_name = "setup_page_example";
   var stanza_name = "example_stanza";
   var properties_to_update = {
       api_url: api_url,

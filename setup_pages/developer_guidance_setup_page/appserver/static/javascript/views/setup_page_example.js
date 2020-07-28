@@ -2,7 +2,7 @@
 
 import * as Splunk from './splunk_helpers.js'
 import * as Setup from './setup_configuration.js'
-import get_template from './setup_view_example_template.js'
+import get_template from './setup_page_example_template.js'
 
 const MACROS_CONF = 'macros'
 
@@ -76,7 +76,7 @@ define(
 
             // This is where the main setup process occurs
             perform_setup: async function perform_setup(splunk_js_sdk, setup_options) {
-                var app_name = "developer_guidance_setup_view";
+                var app_name = "developer_guidance_setup_page";
 
                 var application_name_space = {
                     owner: "nobody",

@@ -1,6 +1,6 @@
 "use strict";
 
-var app_name = "./react_setup_view_example";
+var app_name = "./developer_guidance_setup_page";
 
 // This is an undocumented Splunk solution for how to include javascript logic
 // from other files.
@@ -15,25 +15,26 @@ var app_name = "./react_setup_view_example";
 // 2) This only provides supprt for JavaScript files, plain-text html files won't work
 // 3) The "../app" is required as a prefix and your app name is required to follow it
 // 4) After the app name, the path is provided as though it were from the
-//    $SPLUNK_HOME/etc/apps/appserver/static/* directory
-
+//    $SPLUK_HOME/etc/apps/appserver/static/* directory
 require.config({
     paths: {
-        // $SPLUNK_HOME/etc/apps/SPLUNK_APP_NAME/appserver/static/javascript/views/setup_view_example
-        myApp: "../app/" + app_name + "/javascript/views/app",
-        // React v16.13.1
-        react: "../app/" + app_name + "/javascript/vendor/react.production.min",
-        ReactDOM: "../app/" + app_name + "/javascript/vendor/react-dom.production.min",
+        // $SPLUNK_HOME/etc/apps/SPLUNK_APP_NAME/appserver/static/javascript/views/setup_page_example
+        SetupPageExample: "../app/" + app_name + "/javascript/views/setup_page_example",
     },
     scriptType: "module",
 });
 
 require([
     // Splunk Web Framework Provided files
+    "backbone", // From the SplunkJS stack
+    "jquery", // From the SplunkJS stack
     // Custom files
-    "react", // this needs to be lowercase because ReactDOM refers to it as lowercase
-    "ReactDOM",
-    "myApp",
-], function(react, ReactDOM, myApp) {
-    ReactDOM.render(myApp, document.getElementById('main_container'));
+    "SetupPageExample",
+], function(Backbone, jquery, SetupPageExample) {
+    var example_setup_page = new SetupPageExample({
+        // Sets the element that will be used for rendering
+        el: jquery("#main_container"),
+    });
+
+    example_setup_page.render();
 });
