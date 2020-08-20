@@ -129,3 +129,8 @@ dmypy.json
 .pyre/
 
 .DS_Store
+
+# Splunk stuff
+vendor/
+local/
+local.meta
