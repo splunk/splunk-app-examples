@@ -34,6 +34,8 @@ def get_encrypted_weather_api_token(search_command):
 
 @Configuration()
 class WeatherSearch(GeneratingCommand):
+    location = Option(require=True)
+
     def generate(self):
         # TODO: Never ever do this! Take the token out of configuration instead.
         # token = 'DUMMY_TOKEN'
@@ -41,7 +43,7 @@ class WeatherSearch(GeneratingCommand):
         token = get_encrypted_weather_api_token(self)
 
         # call out to the weather API
-        url = build_weather_api_url('forecast', 'seattle', token)
+        url = build_weather_api_url('forecast', self.location, token)
 
         # make request
         response = requests.get(url)
