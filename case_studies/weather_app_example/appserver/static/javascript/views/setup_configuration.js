@@ -24,7 +24,7 @@ async function reload_splunk_app(
   await promisify(splunk_js_sdk_apps.fetch)();
 
   var current_app = splunk_js_sdk_apps.item(app_name);
-  current_app.reload();
+  await promisify(current_app.reload)();
 };
 
 function redirect_to_splunk_app_homepage(
