@@ -15,6 +15,8 @@ VERSION := `git describe --tags --dirty 2>/dev/null`
 COMMITHASH := `git rev-parse --short HEAD 2>/dev/null`
 DATE := `date "+%FT%T%z"`
 
+PYTHON_VERSION := '3.7'
+
 CONTAINER_NAME := 'splunk-app-examples'
 
 .PHONY: all
@@ -26,7 +28,7 @@ init:
 .PHONY: modules
 modules:
 	@echo "$(ATTN_COLOR)==> modules $(NO_COLOR)"
-	cd case_studies/weather_app_example && pip install -r requirements.txt -t vendor --upgrade
+	docker run -v $(ROOT_DIR)/case_studies/weather_app_example:/opt python:$(PYTHON_VERSION) pip install -r /opt/requirements.txt -t /opt/vendor --upgrade
 
 .PHONY: up
 up:
