@@ -1,0 +1,19 @@
+<!--
+Both of the <dashboard> element's `styles` and `script` attribute search for
+files in `$SPLUNK_HOME/etc/<SPLUNK_APP_NAME>/appserver/static/*`
+
+Documentation link:
+http://docs.splunk.com/Documentation/Splunk/latest/Viz/PanelreferenceforSimplifiedXML#dashboard_or_form
+-->
+<dashboard isDashboard="false"
+           script="javascript/setup_page.js"
+           stylesheet="styles/setup_page.css"
+           theme="dark">
+    <row>
+        <panel>
+            <html>
+                <div id="main_container"></div>
+            </html>
+        </panel>
+    </row>
+</dashboard>

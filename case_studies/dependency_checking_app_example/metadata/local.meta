@@ -1,0 +1,8 @@
+[app/install]
+version = 8.1.1
+modtime = 1610650484.272016000
+
+[passwords/credential%3Aweather_app_example_realm%3Aadmin%3A]
+owner = admin
+version = 8.1.1
+modtime = 1609980947.696521000
