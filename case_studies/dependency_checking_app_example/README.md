@@ -2,7 +2,7 @@
 
 This is an example Splunk App that demonstrates how to use a setup page to check for the installation of app dependencies. This example adheres to Splunk Application Certification standards.
 
-This app requires that users configure the weather app as a dependency in order to complete the setup process. The setup page checks whether the dependent app is configured, and updated to specific version before allowing users to access the app home page."
+This app requires that users configure the weather app as a dependency in order to complete the setup process. The setup page checks whether the dependent app is configured and updated to a specific version before allowing users to access the app home page.
 
 # Setup Page Entry Point
 
