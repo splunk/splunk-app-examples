@@ -1,6 +1,6 @@
 "use strict";
 
-var app_name = "./dependency_checking_app_example";
+var app_name = "dependency_checking_app_example";
 
 // This is an undocumented Splunk solution for how to include javascript logic
 // from other files.
