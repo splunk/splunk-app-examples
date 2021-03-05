@@ -26,7 +26,7 @@ init:
 .PHONY: modules
 modules:
 	@echo "$(ATTN_COLOR)==> modules $(NO_COLOR)"
-	cd case_studies/weather_app_example && pip install -r requirements.txt -t vendor --upgrade
+	cd setup_pages/weather_app_example && pip install -r requirements.txt -t vendor --upgrade
 
 .PHONY: up
 up:
