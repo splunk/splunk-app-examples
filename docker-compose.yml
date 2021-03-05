@@ -13,8 +13,8 @@ services:
             - 8088:8088
             - 8089:8089
         volumes:
-            - ./case_studies/weather_app_example:/opt/splunk/etc/apps/weather_app_example
-            - ./case_studies/dependency_checking_app_example:/opt/splunk/etc/apps/dependency_checking_app_example
+            - ./setup_pages/weather_app_example:/opt/splunk/etc/apps/weather_app_example
+            - ./setup_pages/dependency_checking_app_example:/opt/splunk/etc/apps/dependency_checking_app_example
         healthcheck:
             test: ['CMD', 'curl', '-f', 'http://localhost:8000']
             interval: 5s
