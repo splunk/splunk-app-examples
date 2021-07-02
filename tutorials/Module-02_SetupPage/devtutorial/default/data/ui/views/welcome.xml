@@ -1,0 +1,14 @@
+<dashboard>
+  <label>Developer Tutorial App</label>
+  <row>
+    <panel>
+      <html>
+        <p>
+          Hello! You created this app using the 
+          <a href="https://dev.splunk.com/enterprise/tutorials/module_getstarted" target="_blank">Module 1: Get Started</a> 
+          tutorial on the Splunk Developer Portal.
+        </p>
+      </html>
+    </panel>
+  </row>
+</dashboard>
