@@ -14,6 +14,7 @@ require([
     "jquery", "splunkjs/splunk",
 ], function($, splunkjs) {
     console.log("setup_page.js require(...) called");
+
     // Register .on( "click", handler ) for "Complete Setup" button
     $("#setup_button").click(completeSetup);
 
@@ -57,7 +58,8 @@ require([
                         realm: pwRealm,
                     }, (err, resp) => {
                         if (err) throw err;
-                        console.log(resp);
+                        setIsConfigured(installStanza, 1);
+                        reloadApp(service);
                         $('.success').show();
                         redirectToApp();
                     }
@@ -69,7 +71,8 @@ require([
                         password: passwordToSave,
                     }, (err, resp) => {
                         if (err) throw err;
-                        console.log(resp);
+                        setIsConfigured(installStanza, 1);
+                        reloadApp(service);
                         $('.success').show();
                         redirectToApp();
                     }
@@ -80,8 +83,29 @@ require([
             console.warn(e);
             $('.error').show();
             $('#error_details').html(e);
-            redirectToApp();
         }
+    }
+
+    async function setIsConfigured(installStanza, val) {
+        await installStanza.update({
+            is_configured: val
+        });
+    }
+
+    async function reloadApp(service) {
+        // In order for the app to register that it has been configured
+        // it first needs to be reloaded
+        var apps = service.apps();
+        await apps.fetch();
+
+        var app = apps.item(appName);
+        await app.reload();
+    }
+
+    function redirectToApp() {
+        setTimeout(() => {
+            window.location.href = `/app/${appName}`;
+        }, 800); // wait 800ms and redirect
     }
 
     function isTrue(v) {
@@ -93,11 +117,5 @@ require([
             if (v === '1') return true;
         }
         return false;
-    }
-
-    function redirectToApp() {
-        setTimeout(() => {
-            window.location.href = `/app/${appName}`;
-        }, 500); // wait 500ms and redirect
     }
 });

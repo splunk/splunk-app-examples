@@ -4,11 +4,11 @@ This is an example Splunk App to demonstrate how to use setup pages that adhere 
 
 # Setup Page Entry Point
 
-Splunk will automatically try to redirect the user to the setup page if the `app.conf`'s `[install]` stanza has its `is_configured` property set to false.
+Splunk will automatically try to redirect the user to the setup page if the `app.conf`'s `[install]` stanza has its `is_configured` property set to `0` (false).
 
 # Program Flow
 
-This program starts in the `app.conf`, where the `[install]` stanza's `is_configured` property is set to `false`. This causes Splunk to redirect to it's setup page that is specified so that an admin/user can configure it for use.
+This program starts in the `app.conf`, where the `[install]` stanza's `is_configured` property is set to `0` (false). This causes Splunk to redirect to it's setup page that is specified so that an admin/user can configure it for use.
 
 In the `app.conf`'s, `[ui]` stanza there is a `setup_page` property that points to which resource should be used for the setup page. In this case it's pointing to `default/data/ui/views/setup_page_dashboard.xml`.
 
@@ -19,24 +19,24 @@ And finally the `setup_page.js` imports a custom Backbone view from the `appserv
 # Resources
 - Splunk Techniques Used
     - Splunk Dashboards
-        - [API Documentation](http://docs.splunk.com/Documentation/SplunkCloud/latest/Viz/PanelreferenceforSimplifiedXML) (docs.splunk.com)
+        - [API Documentation](https://docs.splunk.com/Documentation/SplunkCloud/latest/Viz/PanelreferenceforSimplifiedXML) (docs.splunk.com)
     - Splunk Setup Page
-        - [app.conf Specification](http://docs.splunk.com/Documentation/Splunk/6.6.3/admin/Appconf#.5Bui.5D)
+        - [app.conf Specification](https://docs.splunk.com/Documentation/Splunk/latest/admin/Appconf#.5Bui.5D)
     - Splunk Web Framework
-        - [API Documentation](http://docs.splunk.com/Documentation/WebFramework) (docs.splunk.com)
-        - [Main Website](http://dev.splunk.com/webframework) (dev.splunk.com)
+        - [API Documentation](https://docs.splunk.com/Documentation/WebFramework) (docs.splunk.com)
+        - [Main Website](https://dev.splunk.com/webframework) (dev.splunk.com)
 - Technology Used
     - CSS
     - HTML
     - JavaScript
         - Backbone JS
-            - [Main Website](http://backbonejs.org/)
+            - [Main Website](https://backbonejs.org/)
             - [On GitHub](https://github.com/jashkenas/backbone/)
-            - [Views are the only feature used](http://backbonejs.org/#View)
+            - [Views are the only feature used](https://backbonejs.org/#View)
         - JQuery
-            - [Main Website](http://jquery.com/)
+            - [Main Website](https://jquery.com/)
             - [On GitHub](https://github.com/jquery/jquery/)
         - Splunk JavaScript Software Development Kit
-            - [API Documentation](http://docs.splunk.com/Documentation/JavaScriptSDK) (docs.splunk.com)
+            - [API Documentation](https://docs.splunk.com/Documentation/JavaScriptSDK) (docs.splunk.com)
             - [On GitHub](https://github.com/splunk/splunk-sdk-javascript)
-            - [Main Website](http://dev.splunk.com/javascript) (dev.splunk.com)
+            - [Main Website](https://dev.splunk.com/enterprise/docs/devtools/javascript/sdk-javascript) (dev.splunk.com)
