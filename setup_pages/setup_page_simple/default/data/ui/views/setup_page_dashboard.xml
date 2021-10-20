@@ -1,0 +1,32 @@
+<!--
+Both of the <dashboard> element's `styles` and `script` attribute search for
+files in `$SPLUNK_HOME/etc/<SPLUNK_APP_NAME>/appserver/static/*`
+
+Documentation link:
+http://docs.splunk.com/Documentation/Splunk/latest/Viz/PanelreferenceforSimplifiedXML#dashboard_or_form
+-->
+<dashboard isDashboard='false'
+           script='javascript/setup_page.js'
+           stylesheet='styles/setup_page.css'
+           version='1.1'>
+    <row>
+        <panel>
+            <html>
+                <div id='main_container'>
+                    <div>
+                        <div class='text'>
+                            <span>Enter password:</span>
+                            <input type='password' id='password_input'></input>
+                        </div>
+                        <!-- Complete Setup button will call the completeSetup() function
+                             within javascript/setup_page.js -->
+                        <button id='setup_button'>Complete Setup</button>
+                        <div class='success'>Password saved successfully, redirecting to app...</div>
+                        <div class='error'>Issue saving password, details below:</div>
+                        <code id='error_details'></code>
+                    </div>
+                </div>
+            </html>
+        </panel>
+    </row>
+</dashboard>
