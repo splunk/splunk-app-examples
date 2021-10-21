@@ -23,6 +23,7 @@ require([
         console.log("setup_page.js completeSetup called");
         // Value of password_input from setup_page_dashboard.xml
         const passwordToSave = $('#password_input').val();
+        let stage = 'Initializing the Splunk SDK for Javascript';
         try {
             // Initialize a Splunk Javascript SDK Service instance
             const http = new splunkjs.SplunkWebHttp();
@@ -31,58 +32,68 @@ require([
                 appNamespace,
             );
             // Get app.conf configuration
+            stage = 'Retrieving configurations SDK collection';
             const configCollection = service.configurations(appNamespace);
             await configCollection.fetch();
+            stage = `Retrieving app.conf values for ${appName}`;
             const appConfig = configCollection.item('app');
             await appConfig.fetch();
+            stage = `Retrieving app.conf [install] stanza values for ${appName}`;
             const installStanza = appConfig.item('install');
             await installStanza.fetch();
             // Verify that app is not already configured
             const isConfigured = installStanza.properties().is_configured;
             if (isTrue(isConfigured)) {
                 console.warn(`App is configured already (is_configured=${isConfigured}), skipping setup page...`);
+                reloadApp(service);
                 redirectToApp();
             }
             // The storage passwords key = <realm>:<name>:
+            stage = 'Retrieving storagePasswords SDK collection';
             const passKey = `${pwRealm}:${pwName}:`;
             const passwords = service.storagePasswords(appNamespace);
             await passwords.fetch();
+            stage = `Checking for existing password for realm and password name = ${passKey}`;
             const existingPw = passwords.item(passKey);
             await existingPw;
+            function passwordCallback(err, resp) {
+                // Why use a callback here? Well the Javascript SDK doesn't
+                // bind .create the way other methods are bound so await isn't an option
+                if (err) throw err;
+                stage = 'Setting app.conf [install] is_configured = 1'
+                setIsConfigured(installStanza, 1);
+                stage = `Reloading app ${appName} to register is_configured = 1 change`
+                reloadApp(service);
+                $('.success').show();
+                stage = 'Redirecting to app home page'
+                redirectToApp();
+            }
             if (!existingPw) {
                 // Secret doesn't exist, create new one
+                stage = `Creating a new password for realm = ${pwRealm} and password name = ${pwName}`;
                 passwords.create(
                     {
                         name: pwName,
                         password: passwordToSave,
                         realm: pwRealm,
-                    }, (err, resp) => {
-                        if (err) throw err;
-                        setIsConfigured(installStanza, 1);
-                        reloadApp(service);
-                        $('.success').show();
-                        redirectToApp();
-                    }
-                );
+                    }, passwordCallback);
             } else {
                 // Secret exists, update to new value
+                stage = `Updating existing password for realm = ${pwRealm} and password name = ${pwName}`;
                 existingPw.update(
                     {
                         password: passwordToSave,
-                    }, (err, resp) => {
-                        if (err) throw err;
-                        setIsConfigured(installStanza, 1);
-                        reloadApp(service);
-                        $('.success').show();
-                        redirectToApp();
-                    }
-                );
+                    }, passwordCallback);
             }
-            
         } catch (e) {
             console.warn(e);
             $('.error').show();
-            $('#error_details').html(e);
+            $('#error_details').show();
+            let errText = `Error encountered during stage: ${stage}<br>`;
+            errText += (e.toString() === '[object Object]') ? '' : e.toString();
+            if (e.hasOwnProperty('status')) errText += `<br>[${e.status}] `;
+            if (e.hasOwnProperty('responseText')) errText += e.responseText;
+            $('#error_details').html(errText);
         }
     }
 
@@ -99,10 +110,11 @@ require([
         await apps.fetch();
 
         var app = apps.item(appName);
+        await app.fetch();
         await app.reload();
     }
 
-    function redirectToApp() {
+    function redirectToApp(waitMs) {
         setTimeout(() => {
             window.location.href = `/app/${appName}`;
         }, 800); // wait 800ms and redirect

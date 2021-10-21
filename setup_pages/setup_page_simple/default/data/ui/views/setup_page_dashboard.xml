@@ -24,7 +24,7 @@ https://docs.splunk.com/Documentation/Splunk/latest/Viz/PanelreferenceforSimplif
                              within javascript/setup_page.js -->
                         <button id='setup_button'>Complete Setup</button>
                         <div class='success'>Password saved successfully, redirecting to app...</div>
-                        <div class='error'>Issue saving password, details below:</div>
+                        <div class='error'>Issue encountered during setup, details below:</div>
                         <code id='error_details'></code>
                     </div>
                 </div>
