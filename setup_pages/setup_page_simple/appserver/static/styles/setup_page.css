@@ -1,0 +1,28 @@
+#main_container {
+    padding: 10px;
+}
+
+input {
+    margin-left: 20px;
+}
+
+#setup_button {
+    margin-top: 15px;
+}
+
+.success {
+    margin-top: 15px;
+    color: green;
+    display: none;
+}
+
+.error {
+    margin-top: 15px;
+    color: darkred;
+    display: none;
+}
+
+#error_details {
+    margin-top: 15px;
+    display: none;
+}

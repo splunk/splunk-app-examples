@@ -1,6 +1,6 @@
 # Overview
 
-This is an example Splunk App to demonstrate how to use setup pages that adhere to Splunk Application Certification standards.
+This is an example Splunk App to demonstrate how to use setup pages to store an encrypted credential with the storage/passwords endpoint using the Splunk SDK for Javascript.
 
 # Setup Page Entry Point
 
@@ -8,13 +8,11 @@ Splunk will automatically try to redirect the user to the setup page if the `app
 
 # Program Flow
 
-This program starts in the `app.conf`, where the `[install]` stanza's `is_configured` property is set to `0` (false). This causes Splunk to redirect to it's setup page that is specified so that an admin/user can configure it for use.
+This program starts in the `app.conf`, where the `[install]` stanza's `is_configured` property is set to `0` (false). This causes Splunk to redirect to its setup page that is specified so that an admin/user can configure it for use.
 
 In the `app.conf`'s, `[ui]` stanza there is a `setup_page` property that points to which resource should be used for the setup page. In this case it's pointing to `default/data/ui/views/setup_page_dashboard.xml`.
 
 The dashboard view specifies its CSS and JavaScript resources and points to the two file in `appserver/static/javascript/setup_page.js` and `appserver/static/styles/setup_page.css`.
-
-And finally the `setup_page.js` imports a custom Backbone view from the `appserver/static/javascript/views/setup_page_example.js`.
 
 # Resources
 - Splunk Techniques Used
@@ -29,10 +27,6 @@ And finally the `setup_page.js` imports a custom Backbone view from the `appserv
     - CSS
     - HTML
     - JavaScript
-        - Backbone JS
-            - [Main Website](https://backbonejs.org/)
-            - [On GitHub](https://github.com/jashkenas/backbone/)
-            - [Views are the only feature used](https://backbonejs.org/#View)
         - JQuery
             - [Main Website](https://jquery.com/)
             - [On GitHub](https://github.com/jquery/jquery/)
