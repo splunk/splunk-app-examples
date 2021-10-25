@@ -57,8 +57,6 @@ require([
             const existingPw = passwords.item(passKey);
             await existingPw;
             function passwordCallback(err, resp) {
-                // Why use a callback here? Well the Javascript SDK doesn't
-                // bind .create the way other methods are bound so await isn't an option
                 if (err) throw err;
                 stage = 'Setting app.conf [install] is_configured = 1'
                 setIsConfigured(installStanza, 1);
