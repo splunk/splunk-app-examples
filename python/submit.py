@@ -37,6 +37,7 @@ RULES = {
     }
 }
 
+
 def main(argv):
     usage = 'usage: %prog [options] <index>'
     opts = parse(argv, RULES, ".env", usage=usage)
@@ -50,8 +51,8 @@ def main(argv):
     if index not in service.indexes:
         error("Index '%s' does not exist." % index, 2)
 
-    kwargs_submit = dslice(opts.kwargs, 
-        {'eventhost':'host'}, 'source', 'sourcetype')
+    kwargs_submit = dslice(opts.kwargs,
+                           {'eventhost': 'host'}, 'source', 'sourcetype')
 
     #
     # The following code uses the Splunk streaming receiver in order
@@ -74,6 +75,6 @@ def main(argv):
     finally:
         cn.close()
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])
-

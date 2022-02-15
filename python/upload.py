@@ -49,6 +49,7 @@ RULES = {
     }
 }
 
+
 def main(argv):
     usage = 'usage: %prog [options] <filename>*'
     opts = parse(argv, RULES, ".env", usage=usage)
@@ -61,16 +62,16 @@ def main(argv):
         error("Index '%s' does not exist." % name, 2)
     index = service.indexes[name]
 
-    kwargs_submit = dslice(opts.kwargs, 
-        {'eventhost': "host"}, 'source', 'host_regex',
-        'host_segment', 'rename-source', 'sourcetype')
+    kwargs_submit = dslice(opts.kwargs,
+                           {'eventhost': "host"}, 'source', 'host_regex',
+                           'host_segment', 'rename-source', 'sourcetype')
 
-    for arg in opts.args: 
+    for arg in opts.args:
         # Note that it's possible the file may not exist (if you had a typo),
         # but it only needs to exist on the Splunk server, which we can't verify.
         fullpath = path.abspath(arg)
         index.upload(fullpath, **kwargs_submit)
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])
-

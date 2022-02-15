@@ -21,6 +21,7 @@ from splunklib.client import connect
 
 from utils import parse
 
+
 def main():
     opts = parse(sys.argv[1:], {}, ".env")
     service = connect(**opts.kwargs)
@@ -28,7 +29,7 @@ def main():
     for saved_search in service.saved_searches:
         header = saved_search.name
         print(header)
-        print('='*len(header))
+        print('=' * len(header))
         content = saved_search.content
         for key in sorted(content.keys()):
             value = content[key]
@@ -40,7 +41,6 @@ def main():
                 print("    %s" % job.name)
         print()
 
+
 if __name__ == "__main__":
     main()
-
-

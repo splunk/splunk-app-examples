@@ -20,16 +20,14 @@ from xml.etree import ElementTree
 
 import splunklib.binding as binding
 
-try:
-    import utils
-except ImportError:
-    raise Exception("Add the SDK repository to your PYTHONPATH to run the examples "
-                    "(e.g., export PYTHONPATH=~/splunk-sdk-python.")
+import utils
+
 
 # Invoke the url using the given opts parameters
 def invoke(path, **kwargs):
     method = kwargs.get("method", "GET")
     return binding.connect(**kwargs).request(path, method=method)
+
 
 def print_response(response):
     if response.status != 200:
@@ -42,11 +40,12 @@ def print_response(response):
     except Exception:
         print(body)
 
+
 def main():
     opts = utils.parse(sys.argv[1:], {}, ".env")
-    for arg in opts.args: 
+    for arg in opts.args:
         print_response(invoke(arg, **opts.kwargs))
+
 
 if __name__ == "__main__":
     main()
-

@@ -214,6 +214,9 @@ class ExamplesTestCase(testlib.SDKTestCase):
             ["search.py",
              "search * | head 10 | stats count", '--output_mode=csv'])
 
+    def test_search_modes(self):
+        self.check_commands("search_modes.py")
+
     def test_spcmd(self):
         self.check_commands(
             "spcmd.py --help",

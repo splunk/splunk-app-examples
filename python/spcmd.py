@@ -21,17 +21,19 @@
 # set the default output_mode for a session by simply setting a local variable
 # 'output_mode' to a legal output_mode value.
 
-"""An interactive command shell for Splunk.""" 
+"""An interactive command shell for Splunk."""
 
 from code import compile_command, InteractiveInterpreter
+
 try:
-    import readline # Activates readline editing, ignore for windows
+    import readline  # Activates readline editing, ignore for windows
 except ImportError:
     pass
 
 from splunklib.six.moves import input as raw_input
 import splunklib.client as client
 import utils
+
 
 class Session(InteractiveInterpreter):
     def __init__(self, **kwargs):
@@ -59,8 +61,8 @@ class Session(InteractiveInterpreter):
     def run(self):
         print("Welcome to Splunk SDK's Python interactive shell")
         print("%s connected to %s:%s" % (
-            self.service.username, 
-            self.service.host, 
+            self.service.username,
+            self.service.host,
             self.service.port))
 
         while True:
@@ -70,18 +72,18 @@ class Session(InteractiveInterpreter):
                 print("\n\nThanks for using Splunk>.\n")
                 return
 
-            if input is None: 
+            if input is None:
                 return
 
             if len(input) == 0:
-                continue # Ignore
+                continue  # Ignore
 
             try:
                 # Gather up lines until we have a fragment that compiles
                 while True:
                     co = compile_command(input)
                     if co is not None: break
-                    input = input + '\n' + raw_input(". ") # Keep trying
+                    input = input + '\n' + raw_input(". ")  # Keep trying
             except SyntaxError:
                 self.showsyntaxerror()
                 continue
@@ -91,6 +93,7 @@ class Session(InteractiveInterpreter):
 
             self.runcode(co)
 
+
 RULES = {
     "eval": {
         'flags': ["-e", "--eval"],
@@ -98,15 +101,17 @@ RULES = {
         'help': "Evaluate the given expression",
     },
     "interactive": {
-        'flags': ["-i", "--interactive"], 
+        'flags': ["-i", "--interactive"],
         'action': "store_true",
         'help': "Enter interactive mode",
     }
 }
 
+
 def actions(opts):
     """Ansers if the given command line options specify any 'actions'."""
-    return len(opts.args) > 0 or 'eval' in opts.kwargs 
+    return len(opts.args) > 0 or 'eval' in opts.kwargs
+
 
 def main():
     opts = utils.parse(sys.argv[1:], RULES, ".env")
@@ -115,11 +120,11 @@ def main():
     session = Session(**opts.kwargs)
 
     # Load any non-option args as script files
-    for arg in opts.args: 
+    for arg in opts.args:
         session.load(arg)
 
     # Process any command line evals
-    for arg in opts.kwargs.get('eval', []): 
+    for arg in opts.kwargs.get('eval', []):
         session.eval(arg)
 
     # Enter interactive mode automatically if no actions were specified or
@@ -127,6 +132,6 @@ def main():
     if not actions(opts) or "interactive" in opts.kwargs:
         session.run()
 
+
 if __name__ == "__main__":
     main()
-

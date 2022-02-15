@@ -23,7 +23,7 @@ import splunklib.client as client
 
 from utils import *
 
-FLAGS_TOOL = [ "verbose" ]
+FLAGS_TOOL = ["verbose"]
 
 FLAGS_CREATE = [
     "earliest_time", "latest_time", "now", "time_format",
@@ -38,11 +38,13 @@ FLAGS_RESULTS = [
     "offset", "count", "search", "field_list", "f", "output_mode"
 ]
 
+
 def cmdline(argv, flags, **kwargs):
     """A cmdopts wrapper that takes a list of flags and builds the
        corresponding cmdopts rules to match those flags."""
     rules = dict([(flag, {'flags': ["--%s" % flag]}) for flag in flags])
     return parse(argv, rules, ".env", **kwargs)
+
 
 def main(argv):
     usage = 'usage: %prog [options] "search"'
@@ -68,7 +70,7 @@ def main(argv):
     try:
         service.parse(search, parse_only=True)
     except HTTPError as e:
-        cmdopts.error("query '%s' is invalid:\n\t%s" % (search, str(e)), 2)
+        error("query '%s' is invalid:\n\t%s" % (search, str(e)), 2)
         return
 
     job = service.jobs.create(search, **kwargs_create)
@@ -80,7 +82,7 @@ def main(argv):
                  'scanCount': job['scanCount'],
                  'eventCount': job['eventCount'],
                  'resultCount': job['resultCount']}
-        progress = float(stats['doneProgress'])*100
+        progress = float(stats['doneProgress']) * 100
         scanned = int(stats['scanCount'])
         matched = int(stats['eventCount'])
         results = int(stats['resultCount'])
@@ -89,7 +91,7 @@ def main(argv):
                 progress, scanned, matched, results))
             sys.stdout.write(status)
             sys.stdout.flush()
-        if stats['isDone'] == '1': 
+        if stats['isDone'] == '1':
             if verbose > 0: sys.stdout.write('\n')
             break
         sleep(2)
@@ -104,6 +106,7 @@ def main(argv):
     sys.stdout.write('\n')
 
     job.cancel()
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

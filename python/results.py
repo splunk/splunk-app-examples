@@ -22,10 +22,12 @@ from pprint import pprint
 
 import splunklib.results as results
 
+
 def pretty():
     reader = results.ResultsReader(sys.stdin)
     for event in reader:
         pprint(event)
+
 
 if __name__ == "__main__":
     pretty()
