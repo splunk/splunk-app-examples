@@ -22,7 +22,7 @@
 # 'output_mode' to a legal output_mode value.
 
 """An interactive command shell for Splunk."""
-
+import sys
 from code import compile_command, InteractiveInterpreter
 
 try:

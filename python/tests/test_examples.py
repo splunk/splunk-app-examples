@@ -20,7 +20,7 @@ import sys
 
 import pytest
 
-from python.tests import testlib
+import testlib
 
 import splunklib.client as client
 from splunklib import six
@@ -126,50 +126,11 @@ class ExamplesTestCase(testlib.SDKTestCase):
     def test_follow(self):
         self.check_commands("follow.py --help")
 
-    def test_handlers(self):
-        self.check_commands(
-            "handlers/handler_urllib2.py",
-            "handlers/handler_debug.py",
-            "handlers/handler_certs.py",
-            "handlers/handler_certs.py --ca_file=handlers/cacert.pem",
-            "handlers/handler_proxy.py --help")
-
-        # Run the cert handler example with a bad cert file, should error.
-        result = run(
-            "handlers/handlers_certs.py --ca_file=handlers/cacert.bad.pem",
-            stderr=PIPE)
-        self.assertNotEqual(result, 0)
-
-        # The proxy handler example requires that there be a proxy available
-        # to relay requests, so we spin up a local proxy using the proxy
-        # script included with the sample.
-
-        # Assumes that tiny-proxy.py is in the same directory as the sample
-
-        # This test seems to be flaky
-        # if six.PY2:  # Needs to be fixed PY3
-        #     process = start("handlers/tiny-proxy.py -p 8080", stderr=PIPE)
-        #     try:
-        #         time.sleep(5) # Wait for proxy to finish initializing
-        #         result = run("handlers/handler_proxy.py --proxy=localhost:8080")
-        #         self.assertEqual(result, 0)
-        #     finally:
-        #         process.kill()
-
-        # Run it again without the proxy and it should fail.
-        result = run(
-            "handlers/handler_proxy.py --proxy=localhost:80801", stderr=PIPE)
-        self.assertNotEqual(result, 0)
-
     def test_index(self):
         self.check_commands(
             "index.py --help",
             "index.py",
-            "index.py list",
-            "index.py list sdk-tests",
-            "index.py disable sdk-tests",
-            "index.py enable sdk-tests",
-            "index.py clean sdk-tests")
+            "index.py list")
         return
 
     def test_info(self):
@@ -229,8 +190,8 @@ class ExamplesTestCase(testlib.SDKTestCase):
             "spurl.py /services",
             "spurl.py apps/local")
 
-    def test_stail(self):
-        self.check_commands(["stail.py", "search _internal | head 10"])
+    # def test_stail(self):
+    #     self.check_commands(["stail.py", "search _internal | head 10"])
 
     def test_submit(self):
         self.check_commands("submit.py --help")
@@ -246,79 +207,79 @@ class ExamplesTestCase(testlib.SDKTestCase):
             "upload.py --index=sdk-tests %s" % file_to_upload)
 
     # The following tests are for the Analytics example
-    def test_analytics(self):
-        # We have to add the current path to the PYTHONPATH,
-        # otherwise the import doesn't work quite right
-        sys.path.append(EXAMPLES_PATH)
-        import analytics
-
-        # Create a tracker
-        tracker = analytics.input.AnalyticsTracker(
-            "sdk-test", self.opts.kwargs, index="sdk-test")
-
-        service = client.connect(**self.opts.kwargs)
-
-        # Before we start, we'll clean the index
-        index = service.indexes["sdk-test"]
-        index.clean()
-
-        tracker.track("test_event", distinct_id="abc123", foo="bar", abc="123")
-        tracker.track("test_event", distinct_id="123abc", abc="12345")
-
-        # Wait until the events get indexed
-        self.assertEventuallyTrue(lambda: index.refresh()['totalEventCount'] == '2', timeout=200)
-
-        # Now, we create a retriever to retrieve the events
-        retriever = analytics.output.AnalyticsRetriever(
-            "sdk-test", self.opts.kwargs, index="sdk-test")
-
-        # Assert applications
-        applications = retriever.applications()
-        self.assertEqual(len(applications), 1)
-        self.assertEqual(applications[0]["name"], "sdk-test")
-        self.assertEqual(applications[0]["count"], 2)
-
-        # Assert events
-        events = retriever.events()
-        self.assertEqual(len(events), 1)
-        self.assertEqual(events[0]["name"], "test_event")
-        self.assertEqual(events[0]["count"], 2)
-
-        # Assert properties
-        expected_properties = {
-            "abc": 2,
-            "foo": 1
-        }
-        properties = retriever.properties("test_event")
-        self.assertEqual(len(properties), len(expected_properties))
-        for prop in properties:
-            name = prop["name"]
-            count = prop["count"]
-            self.assertTrue(name in list(expected_properties.keys()))
-            self.assertEqual(count, expected_properties[name])
-
-        # Assert property values
-        expected_property_values = {
-            "123": 1,
-            "12345": 1
-        }
-        values = retriever.property_values("test_event", "abc")
-        self.assertEqual(len(values), len(expected_property_values))
-        for value in values:
-            name = value["name"]
-            count = value["count"]
-            self.assertTrue(name in list(expected_property_values.keys()))
-            self.assertEqual(count, expected_property_values[name])
-
-        # Assert event over time
-        over_time = retriever.events_over_time(
-            time_range=analytics.output.TimeRange.MONTH)
-        self.assertEqual(len(over_time), 1)
-        self.assertEqual(len(over_time["test_event"]), 1)
-        self.assertEqual(over_time["test_event"][0]["count"], 2)
-
-        # Now that we're done, we'll clean the index
-        index.clean()
+    # def test_analytics(self):
+    #     # We have to add the current path to the PYTHONPATH,
+    #     # otherwise the import doesn't work quite right
+    #     sys.path.append(EXAMPLES_PATH)
+    #     import analytics
+    #
+    #     # Create a tracker
+    #     tracker = analytics.input.AnalyticsTracker(
+    #         "sdk-test", self.opts.kwargs, index="sdk-test")
+    #
+    #     service = client.connect(**self.opts.kwargs)
+    #
+    #     # Before we start, we'll clean the index
+    #     index = service.indexes["sdk-test"]
+    #     index.clean()
+    #
+    #     tracker.track("test_event", distinct_id="abc123", foo="bar", abc="123")
+    #     tracker.track("test_event", distinct_id="123abc", abc="12345")
+    #
+    #     # Wait until the events get indexed
+    #     self.assertEventuallyTrue(lambda: index.refresh()['totalEventCount'] == '2', timeout=200)
+    #
+    #     # Now, we create a retriever to retrieve the events
+    #     retriever = analytics.output.AnalyticsRetriever(
+    #         "sdk-test", self.opts.kwargs, index="sdk-test")
+    #
+    #     # Assert applications
+    #     applications = retriever.applications()
+    #     self.assertEqual(len(applications), 1)
+    #     self.assertEqual(applications[0]["name"], "sdk-test")
+    #     self.assertEqual(applications[0]["count"], 2)
+    #
+    #     # Assert events
+    #     events = retriever.events()
+    #     self.assertEqual(len(events), 1)
+    #     self.assertEqual(events[0]["name"], "test_event")
+    #     self.assertEqual(events[0]["count"], 2)
+    #
+    #     # Assert properties
+    #     expected_properties = {
+    #         "abc": 2,
+    #         "foo": 1
+    #     }
+    #     properties = retriever.properties("test_event")
+    #     self.assertEqual(len(properties), len(expected_properties))
+    #     for prop in properties:
+    #         name = prop["name"]
+    #         count = prop["count"]
+    #         self.assertTrue(name in list(expected_properties.keys()))
+    #         self.assertEqual(count, expected_properties[name])
+    #
+    #     # Assert property values
+    #     expected_property_values = {
+    #         "123": 1,
+    #         "12345": 1
+    #     }
+    #     values = retriever.property_values("test_event", "abc")
+    #     self.assertEqual(len(values), len(expected_property_values))
+    #     for value in values:
+    #         name = value["name"]
+    #         count = value["count"]
+    #         self.assertTrue(name in list(expected_property_values.keys()))
+    #         self.assertEqual(count, expected_property_values[name])
+    #
+    #     # Assert event over time
+    #     over_time = retriever.events_over_time(
+    #         time_range=analytics.output.TimeRange.MONTH)
+    #     self.assertEqual(len(over_time), 1)
+    #     self.assertEqual(len(over_time["test_event"]), 1)
+    #     self.assertEqual(over_time["test_event"][0]["count"], 2)
+    #
+    #     # Now that we're done, we'll clean the index
+    #     index.clean()
 
 
 if __name__ == "__main__":
