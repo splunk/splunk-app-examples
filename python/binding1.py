@@ -18,7 +18,6 @@
    convenient 'wrapper' interface around the Splunk REST APIs. The example
    binds to a sampling of endpoints showing how to access collections,
    entities and 'method-like' endpoints."""
-
 import sys
 
 from splunklib.binding import connect
