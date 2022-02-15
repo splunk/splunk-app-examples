@@ -13,22 +13,21 @@
 // under the License.
 
 (function() {
-    var splunkjs        = require("splunk-sdk");
-    var ModularInputs   = splunkjs.ModularInputs;
-    var Logger          = ModularInputs.Logger;
-    var Event           = ModularInputs.Event;
-    var Scheme          = ModularInputs.Scheme;
-    var Argument        = ModularInputs.Argument;
-    var utils           = ModularInputs.utils;
+    let splunkjs        = require("splunk-sdk");
+    let ModularInputs   = splunkjs.ModularInputs;
+    let Logger          = ModularInputs.Logger;
+    let Event           = ModularInputs.Event;
+    let Scheme          = ModularInputs.Scheme;
+    let Argument        = ModularInputs.Argument;
 
     exports.getScheme = function() {
-        var scheme = new Scheme("Random Numbers");
+        let scheme = new Scheme("Random Numbers");
 
         scheme.description = "Streams events containing a random number.";
         scheme.useExternalValidation = true;
         scheme.useSingleInstance = true;
 
-        scheme.args = [
+        scheme.args = [ 
             new Argument({
                 name: "min",
                 dataType: Argument.dataTypeNumber,
@@ -56,9 +55,9 @@
     };
 
     exports.validateInput = function(definition, done) {
-        var min = parseFloat(definition.parameters.min);
-        var max = parseFloat(definition.parameters.max);
-        var count = parseInt(definition.parameters.count, 10);
+        let min = parseFloat(definition.parameters.min);
+        let max = parseFloat(definition.parameters.max);
+        let count = parseInt(definition.parameters.count, 10);
 
         if (min >= max) {
             done(new Error("min must be less than max; found min=" + min + ", max=" + max));
@@ -72,18 +71,18 @@
     };
 
     exports.streamEvents = function(name, singleInput, eventWriter, done) {
-        var getRandomFloat = function (min, max) {
+        let getRandomFloat = function (min, max) {
             return Math.random() * (max - min) + min;
         };
 
-        var min = parseFloat(singleInput.min);
-        var max = parseFloat(singleInput.max);
-        var count = parseInt(singleInput.count, 10);
+        let min = parseFloat(singleInput.min);
+        let max = parseFloat(singleInput.max);
+        let count = parseInt(singleInput.count, 10);
 
-        var errorFound = false;
+        let errorFound = false;
 
-        for (var i = 0; i < count && !errorFound; i++) {            
-            var curEvent = new Event({
+        for (let i = 0; i < count && !errorFound; i++) {            
+            let curEvent = new Event({
                 stanza: name,
                 data: "number=" + getRandomFloat(min, max)
             });

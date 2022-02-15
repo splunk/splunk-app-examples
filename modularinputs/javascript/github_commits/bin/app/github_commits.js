@@ -13,32 +13,32 @@
 // under the License.
 
 (function () {
-    var fs = require("fs");
-    var path = require("path");
-    var GithubAPI = require("github");
-    var splunkjs = require("splunk-sdk");
-    var Async = splunkjs.Async;
-    var ModularInputs = splunkjs.ModularInputs;
-    var Logger = ModularInputs.Logger;
-    var Event = ModularInputs.Event;
-    var Scheme = ModularInputs.Scheme;
-    var Argument = ModularInputs.Argument;
-    var utils = ModularInputs.utils;
+    let fs = require("fs");
+    let path = require("path");
+    let GithubAPI = require("github");
+    let splunkjs = require("splunk-sdk");
+    let Async = splunkjs.Async;
+    let ModularInputs = splunkjs.ModularInputs;
+    let Logger = ModularInputs.Logger;
+    let Event = ModularInputs.Event;
+    let Scheme = ModularInputs.Scheme;
+    let Argument = ModularInputs.Argument;
+    let utils = ModularInputs.utils;
 
     // The version number should be updated every time a new version of the JavaScript SDK is released.
-    var SDK_UA_STRING = "splunk-sdk-javascript/1.10.0";
+    let SDK_UA_STRING = "splunk-sdk-javascript/1.10.0";
 
     // Create easy to read date format.
     function getDisplayDate(date) {
-        var monthStrings = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let monthStrings = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
         date = new Date(date);
 
-        var hours = date.getHours();
+        let hours = date.getHours();
         if (hours < 10) {
             hours = "0" + hours.toString();
         }
-        var mins = date.getMinutes();
+        let mins = date.getMinutes();
         if (mins < 10) {
             mins = "0" + mins.toString();
         }
@@ -48,7 +48,7 @@
     }
 
     exports.getScheme = function () {
-        var scheme = new Scheme("Github Commits");
+        let scheme = new Scheme("Github Commits");
 
         scheme.description = "Streams events of commits in the specified Github repository (must be public, unless setting a token).";
         scheme.useExternalValidation = true;
@@ -82,11 +82,11 @@
     };
 
     exports.validateInput = function (definition, done) {
-        var owner = definition.parameters.owner;
-        var repository = definition.parameters.repository;
-        var token = definition.parameters.token;
+        let owner = definition.parameters.owner;
+        let repository = definition.parameters.repository;
+        let token = definition.parameters.token;
 
-        var Github = new GithubAPI({ version: "3.0.0" });
+        let Github = new GithubAPI({ version: "3.0.0" });
 
         try {
             // Authenticate with the access token if it was provided.
@@ -129,15 +129,15 @@
 
     exports.streamEvents = function (name, singleInput, eventWriter, done) {
         // Get the checkpoint directory out of the modular input's metadata.
-        var checkpointDir = this._inputDefinition.metadata["checkpoint_dir"];
+        let checkpointDir = this._inputDefinition.metadata["checkpoint_dir"];
 
-        var owner = singleInput.owner;
-        var repository = singleInput.repository;
-        var token = singleInput.token;
+        let owner = singleInput.owner;
+        let repository = singleInput.repository;
+        let token = singleInput.token;
 
-        var alreadyIndexed = 0;
+        let alreadyIndexed = 0;
 
-        var Github = new GithubAPI({ version: "3.0.0" });
+        let Github = new GithubAPI({ version: "3.0.0" });
 
         if (token && token.length > 0) {
             Github.authenticate({
@@ -146,8 +146,8 @@
             });
         }
 
-        var page = 1;
-        var working = true;
+        let page = 1;
+        let working = true;
 
         Async.whilst(
             function () {
@@ -172,12 +172,12 @@
                             working = false;
                         }
 
-                        var checkpointFilePath = path.join(checkpointDir, owner + " " + repository + ".txt");
-                        var checkpointFileNewContents = "";
-                        var errorFound = false;
+                        let checkpointFilePath = path.join(checkpointDir, owner + " " + repository + ".txt");
+                        let checkpointFileNewContents = "";
+                        let errorFound = false;
 
                         // Set the temporary contents of the checkpoint file to an empty string
-                        var checkpointFileContents = "";
+                        let checkpointFileContents = "";
                         try {
                             checkpointFileContents = utils.readFile("", checkpointFilePath);
                         }
@@ -187,8 +187,8 @@
                             fs.appendFileSync(checkpointFilePath, "");
                         }
 
-                        for (var i = 0; i < res.length && !errorFound; i++) {
-                            var json = {
+                        for (let i = 0; i < res.length && !errorFound; i++) {
+                            let json = {
                                 sha: res[i].sha,
                                 api_url: res[i].url,
                                 url: "https://github.com/" + owner + "/" + repository + "/commit/" + res[i].sha
@@ -196,7 +196,7 @@
 
                             // If the file exists and doesn't contain the sha, or if the file doesn't exist.
                             if (checkpointFileContents.indexOf(res[i].sha + "\n") < 0) {
-                                var commit = res[i].commit;
+                                let commit = res[i].commit;
 
                                 // At this point, assumed checkpoint doesn't exist.
                                 json.message = commit.message.replace(/(\n|\r)+/g, " "); // Replace newlines and carriage returns with spaces.
@@ -205,7 +205,7 @@
                                 json.displaydate = getDisplayDate(commit.author.date.replace("T|Z", " ").trim());
 
                                 try {
-                                    var event = new Event({
+                                    let event = new Event({
                                         stanza: repository,
                                         sourcetype: "github_commits",
                                         data: json, // Have Splunk index our event data as JSON, if data is an object it will be passed through JSON.stringify()
