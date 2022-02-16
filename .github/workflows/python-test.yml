@@ -39,6 +39,9 @@ jobs:
       - name: Install tox
         working-directory: ./python
         run: pip install tox
+      - name: Install splunk-sdk
+        working-directory: ./python
+        run: pip install splunk-sdk
       - name: Test Execution
         working-directory: ./python
         run: tox -e py
