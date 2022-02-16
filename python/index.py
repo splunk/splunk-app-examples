@@ -16,11 +16,14 @@
 
 """A command line utility for interacting with Splunk indexes."""
 
+import os
 import sys
 
 from splunklib.client import connect
 
 from utils import *
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 HELP_EPILOG = """
 Commands:
@@ -51,6 +54,7 @@ Examples:
     index.py list MyIndex
 """
 
+
 class Program:
     def __init__(self, service):
         self.service = service
@@ -61,7 +65,7 @@ class Program:
     def create(self, argv):
         """Create an index according to the given argument vector."""
 
-        if len(argv) == 0: 
+        if len(argv) == 0:
             error("Command requires an index name", 2)
 
         name = argv[0]
@@ -97,7 +101,7 @@ class Program:
 
         def read(index):
             print(index.name)
-            for key in sorted(index.content.keys()): 
+            for key in sorted(index.content.keys()):
                 value = index.content[key]
                 print("    %s: %s" % (key, value))
 
@@ -111,7 +115,7 @@ class Program:
     def run(self, argv):
         """Dispatch the given command & args."""
         command = argv[0]
-        handlers = { 
+        handlers = {
             'clean': self.clean,
             'create': self.create,
             'disable': self.disable,
@@ -138,7 +142,7 @@ class Program:
     def update(self, argv):
         """Update an index according to the given argument vector."""
 
-        if len(argv) == 0: 
+        if len(argv) == 0:
             error("Command requires an index name", 2)
         name = argv[0]
 
@@ -161,6 +165,7 @@ class Program:
         # Execute the edit request
         index.update(**opts.kwargs)
 
+
 def main():
     usage = "usage: %prog [options] <command> [<args>]"
 
@@ -169,7 +174,7 @@ def main():
     # Locate the command
     index = next((i for i, v in enumerate(argv) if not v.startswith('-')), -1)
 
-    if index == -1: # No command
+    if index == -1:  # No command
         options = argv
         command = ["list"]
     else:
@@ -181,7 +186,6 @@ def main():
     program = Program(service)
     program.run(command)
 
+
 if __name__ == "__main__":
     main()
-
-

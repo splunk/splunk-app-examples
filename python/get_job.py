@@ -18,11 +18,16 @@
 a search Job by its sid.
 """
 
+import os
 import sys
 import time
+
 import splunklib.client as client
 
-from utils import *
+from utils import parse
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
 
 def main(argv):
     opts = parse(argv, {}, ".env")
@@ -40,6 +45,6 @@ def main(argv):
 
     print("Number of events found: %d" % int(job["eventCount"]))
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])
-

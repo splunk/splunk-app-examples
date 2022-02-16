@@ -17,27 +17,35 @@
 """Follows (aka tails) a realtime search using the job endpoints and prints
    results to stdout."""
 
-from pprint import pprint
+# from __future__ import absolute_import
+# from __future__ import print_function
+
+import os
 import sys
 import time
+from pprint import pprint
 
 import splunklib.client as client
 import splunklib.results as results
 
 import utils
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+
 def follow(job, count, items):
-    offset = 0 # High-water mark
+    offset = 0  # High-water mark
     while True:
         total = count()
         if total <= offset:
-            time.sleep(1) # Wait for something to show up
+            time.sleep(1)  # Wait for something to show up
             job.refresh()
             continue
-        stream = items(offset+1)
+        stream = items(offset + 1)
         for event in results.ResultsReader(stream):
             pprint(event)
         offset = total
+
 
 def main():
     usage = "usage: follow.py <search>"
@@ -45,14 +53,15 @@ def main():
 
     if len(opts.args) != 1:
         utils.error("Search expression required", 2)
+        print("ok")
     search = opts.args[0]
 
     service = client.connect(**opts.kwargs)
 
     job = service.jobs.create(
-        search, 
-        earliest_time="rt", 
-        latest_time="rt", 
+        search,
+        earliest_time="rt",
+        latest_time="rt",
         search_mode="realtime")
 
     # Wait for the job to transition out of QUEUED and PARSING so that
@@ -61,22 +70,22 @@ def main():
         job.refresh()
         if job['dispatchState'] not in ['QUEUED', 'PARSING']:
             break
-        time.sleep(2) # Wait
-        
-    if job['reportSearch'] is not None: # Is it a transforming search?
+        time.sleep(2)  # Wait
+
+    if job['reportSearch'] is not None:  # Is it a transforming search?
         count = lambda: int(job['numPreviews'])
         items = lambda _: job.preview()
     else:
         count = lambda: int(job['eventCount'])
         items = lambda offset: job.events(offset=offset)
-    
+
     try:
         follow(job, count, items)
     except KeyboardInterrupt:
         print("\nInterrupted.")
     finally:
         job.cancel()
-    
+
+
 if __name__ == "__main__":
     main()
-

@@ -24,6 +24,7 @@ from splunklib.binding import connect
 
 from utils import parse
 
+
 class Service:
     def __init__(self, context):
         self.context = context
@@ -43,6 +44,7 @@ class Service:
     def search(self, query, **kwargs):
         return self.context.post("search/jobs/export", search=query, **kwargs)
 
+
 def main(argv):
     opts = parse(argv, {}, ".env")
     context = connect(**opts.kwargs)
@@ -52,6 +54,7 @@ def main(argv):
     assert service.info().status == 200
     assert service.settings().status == 200
     assert service.search("search 404").status == 200
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

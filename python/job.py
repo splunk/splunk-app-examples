@@ -21,11 +21,15 @@
 # jobs, eg: @0 would specify the first job in the list, @1 the second, and so
 # on.
 
-from pprint import pprint
+import os
 import sys
+from pprint import pprint
 
 from splunklib.client import connect
+
 from utils import error, parse, cmdline
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 HELP_EPILOG = """
 Commands:            
@@ -97,11 +101,13 @@ FLAGS_SUMMARY = [
     "field_list", "f", "search", "top_count", "min_freq"
 ]
 
+
 def cmdline(argv, flags):
     """A cmdopts wrapper that takes a list of flags and builds the
        corresponding cmdopts rules to match those flags."""
     rules = dict([(flag, {'flags': ["--%s" % flag]}) for flag in flags])
     return parse(argv, rules)
+
 
 def output(stream):
     """Write the contents of the given stream to stdout."""
@@ -109,6 +115,7 @@ def output(stream):
         content = stream.read(1024)
         if len(content) == 0: break
         sys.stdout.write(content)
+
 
 class Program:
     def __init__(self, service):
@@ -129,8 +136,8 @@ class Program:
     def events(self, argv):
         """Retrieve events for the specified search jobs."""
         opts = cmdline(argv, FLAGS_EVENTS)
-        self.foreach(opts.args, lambda job: 
-            output(job.events(**opts.kwargs)))
+        self.foreach(opts.args, lambda job:
+        output(job.events(**opts.kwargs)))
 
     def finalize(self, argv):
         """Finalize the specified search jobs."""
@@ -169,14 +176,13 @@ class Program:
     def preview(self, argv):
         """Retrieve the preview for the specified search jobs."""
         opts = cmdline(argv, FLAGS_RESULTS)
-        self.foreach(opts.args, lambda job: 
-            output(job.preview(**opts.kwargs)))
+        self.foreach(opts.args, lambda job: output(job.preview(**opts.kwargs)))
 
     def results(self, argv):
         """Retrieve the results for the specified search jobs."""
         opts = cmdline(argv, FLAGS_RESULTS)
-        self.foreach(opts.args, lambda job: 
-            output(job.results(**opts.kwargs)))
+        self.foreach(opts.args, lambda job:
+        output(job.results(**opts.kwargs)))
 
     def sid(self, spec):
         """Convert the given search specifier into a search-id (sid)."""
@@ -185,8 +191,8 @@ class Program:
             jobs = self.service.jobs.list()
             if index < len(jobs):
                 return jobs[index].sid
-        return spec # Assume it was already a valid sid
-        
+        return spec  # Assume it was already a valid sid
+
     def lookup(self, spec):
         """Lookup search job by search specifier."""
         return self.service.jobs[self.sid(spec)]
@@ -202,7 +208,7 @@ class Program:
     def run(self, argv):
         """Dispatch the given command."""
         command = argv[0]
-        handlers = { 
+        handlers = {
             'cancel': self.cancel,
             'create': self.create,
             'events': self.events,
@@ -226,24 +232,25 @@ class Program:
     def searchlog(self, argv):
         """Retrieve the searchlog for the specified search jobs."""
         opts = cmdline(argv, FLAGS_SEARCHLOG)
-        self.foreach(opts.args, lambda job: 
-            output(job.searchlog(**opts.kwargs)))
+        self.foreach(opts.args, lambda job:
+        output(job.searchlog(**opts.kwargs)))
 
     def summary(self, argv):
         opts = cmdline(argv, FLAGS_SUMMARY)
-        self.foreach(opts.args, lambda job: 
-            output(job.summary(**opts.kwargs)))
+        self.foreach(opts.args, lambda job:
+        output(job.summary(**opts.kwargs)))
 
     def timeline(self, argv):
         opts = cmdline(argv, FLAGS_TIMELINE)
-        self.foreach(opts.args, lambda job: 
-            output(job.timeline(**opts.kwargs)))
+        self.foreach(opts.args, lambda job:
+        output(job.timeline(**opts.kwargs)))
 
     def touch(self, argv):
         self.foreach(argv, lambda job: job.touch())
 
     def unpause(self, argv):
         self.foreach(argv, lambda job: job.unpause())
+
 
 def main():
     usage = "usage: %prog [options] <command> [<args>]"
@@ -253,7 +260,7 @@ def main():
     # Locate the command
     index = next((i for i, v in enumerate(argv) if not v.startswith('-')), -1)
 
-    if index == -1: # No command
+    if index == -1:  # No command
         options = argv
         command = ["list"]
     else:
@@ -265,6 +272,6 @@ def main():
     program = Program(service)
     program.run(command)
 
+
 if __name__ == "__main__":
     main()
-

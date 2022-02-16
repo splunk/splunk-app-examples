@@ -16,11 +16,14 @@
 
 """An example that prints Splunk service info & settings."""
 
+import os
 import sys
 
 import splunklib.client as client
 
 from utils import parse
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 if __name__ == "__main__":
     opts = parse(sys.argv[1:], {}, ".env")

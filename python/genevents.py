@@ -16,12 +16,18 @@
 
 """A tool to generate event data to a named index."""
 
+import datetime
+import os
 import socket
 import sys
 import time
-import datetime
+
+from six.moves import range
 from splunklib.client import connect
+
 from utils import parse
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 SPLUNK_HOST = "localhost"
 SPLUNK_PORT = 9002
@@ -29,30 +35,30 @@ SPLUNK_PORT = 9002
 INGEST_TYPE = ["stream", "submit", "tcp"]
 
 RULES = {
-   'ingest': {
+    'ingest': {
         'flags': ["--ingest"],
         'default': 'stream',
         'help': "sets the type of ingest to one of %s" % INGEST_TYPE
     },
-   'inputhost': {
+    'inputhost': {
         'flags': ["--inputhost"],
         'default': "127.0.0.1",
         'help': "input host when using tcp ingest, default is localhost"
     },
-   'type': {
+    'type': {
         'flags': ["--inputport"],
         'default': SPLUNK_PORT,
-        'help': "input host port when using tcp ingest, default is %d" % \
+        'help': "input host port when using tcp ingest, default is %d" %
                 SPLUNK_PORT
     },
 }
+
 
 def feed_index(service, opts):
     """Feed the named index in a specific manner."""
 
     indexname = opts.args[0]
     itype = opts.kwargs['ingest']
-
 
     # get index handle
     try:
@@ -67,7 +73,7 @@ def feed_index(service, opts):
         # create a tcp input if one doesn't exist
         input_host = opts.kwargs.get("inputhost", SPLUNK_HOST)
         input_port = int(opts.kwargs.get("inputport", SPLUNK_PORT))
-        input_name = "tcp:%s" % (input_port)
+        input_name = "tcp:%s" % input_port
         if input_name not in service.inputs.list():
             service.inputs.create("tcp", input_port, index=indexname)
         # connect to socket
@@ -76,26 +82,31 @@ def feed_index(service, opts):
 
     count = 0
     lastevent = ""
+
     try:
         for i in range(0, 10):
             for j in range(0, 5000):
                 lastevent = "%s: event bunch %d, number %d\n" % \
-                             (datetime.datetime.now().isoformat(), i, j)
+                            (datetime.datetime.now().isoformat(), i, j)
+
+                lastevent = (lastevent + "\n").encode()
 
                 if itype == "stream":
-                    stream.write(lastevent + "\n")
+                    stream.write(lastevent)
                 elif itype == "submit":
-                    index.submit(lastevent + "\n")
+                    index.submit(lastevent)
                 else:
-                    ingest.send(lastevent + "\n")
+                    ingest.send(lastevent)
 
                 count = count + 1
-            
+
             print("submitted %d events, sleeping 1 second" % count)
             time.sleep(1)
+
     except KeyboardInterrupt:
         print("^C detected, last event written:")
         print(lastevent)
+
 
 def main():
     usage = "usage: %prog [options] <command> [<args>]"
@@ -117,4 +128,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

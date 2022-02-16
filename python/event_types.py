@@ -16,11 +16,18 @@
 
 """A command line utility that lists Splunk event types."""
 
+# from __future__ import absolute_import
+# from __future__ import print_function
+
+import os
 import sys
 
 from splunklib.client import connect
 
 from utils import parse
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
 
 def main():
     opts = parse(sys.argv[1:], {}, ".env")
@@ -34,6 +41,7 @@ def main():
             value = content[key]
             print("%s: %s" % (key, value))
         print()
+
 
 if __name__ == "__main__":
     main()
