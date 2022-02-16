@@ -226,7 +226,7 @@ class SDKTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.opts = parse([], {}, "../python/.env")
+        cls.opts = parse([], {}, ".env")
 
         # Before we start, make sure splunk doesn't need a restart.
         service = client.connect(**cls.opts.kwargs)

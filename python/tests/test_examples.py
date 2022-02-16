@@ -73,20 +73,6 @@ class ExamplesTestCase(testlib.SDKTestCase):
         # Ignore result, it might already exist
         run("index.py create sdk-tests")
 
-    @pytest.mark.skipif(six.PY3, reason="Async needs work to support Python 3")
-    def test_async(self):
-        result = run("async/async.py sync")
-        self.assertEqual(result, 0)
-
-        try:
-            # Only try running the async version of the test if eventlet
-            # is present on the system
-            import eventlet
-            result = run("async/async.py async")
-            self.assertEqual(result, 0)
-        except:
-            pass
-
     def test_binding1(self):
         result = run("binding1.py")
         self.assertEqual(result, 0)
