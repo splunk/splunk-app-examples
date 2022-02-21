@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env github_commits
 #
 # Copyright 2021 Splunk, Inc.
 #
@@ -233,7 +233,7 @@ def _get_github_commits(owner, repo_name, per_page=1, page=1, token=None):
     connection = http_client.HTTPSConnection('api.github.com')
     headers = {
         'Content-type': 'application/json',
-        'User-Agent': 'splunk-sdk-python'
+        'User-Agent': 'splunk-sdk-github_commits'
     }
     if token:
         headers['Authorization'] = 'token ' + token
