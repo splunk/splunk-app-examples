@@ -21,7 +21,7 @@ Make sure STATUS is **healthy** for **splunk-app-examples** container<br /> <br/
 Copy the **github_commits** folder in **etc/apps** inside the container. <br />
 Execute the following command from the root of this directory.
 ```shell
-docker cp github_commits/github_commits splunk-app-examples:/opt/splunk/etc/apps/github_commits
+docker cp modularinputs/python/github_commits splunk-app-examples:/opt/splunk/etc/apps/github_commits
 ```
 <br />
 
