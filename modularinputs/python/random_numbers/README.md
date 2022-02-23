@@ -63,11 +63,11 @@ docker start splunk-app-examples
 
 ### Step 6
 
-Make sure the Splunk is in `healthy` state
+Make sure the Splunk is in `healthy` state.
 
 Log in into the Splunk UI, Go to ``Settings > DATA > Data inputs``
 
-Search for `Random Numbers`
+Search for `Random Numbers` (as per the `default/app.conf` file)
 
 Click on the `+Add new` button in front of the `Random Numbers` which opens a configuration page for `Random Numbers` app.
 
@@ -83,12 +83,12 @@ Once the details are filled, click on `Next` and then click on `Start Searching`
 
 The setup is done. Try the following commands to see some results.
 
-To get a random number for the `randomnumber` modularinput that we configured above. Search 
+To get a random number for the `randomnumber` input that we configured above. Search 
 ```markdown
 source="random_numbers://randomnumber"
 ```
     
-To get commits for all the searches in `random_numbers` app. Search
+To get random numbers for all the inputs in `random_numbers` app. Search
 ```markdown
 source="random_numbers://*"
 ```
