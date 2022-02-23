@@ -93,4 +93,4 @@ To get commits for all the searches in `github_commits` app. Search
 source="github_commits://*"
 ```
 
-> NOTE: If no Random Numbers input appears then the script is likely not running properly, see https://docs.splunk.com/Documentation/SplunkCloud/latest/AdvancedDev/ModInputsDevTools for more details on debugging the modular input using the command line and relevant logs.
+> NOTE: If no Github Commits input appears then the script is likely not running properly, see https://docs.splunk.com/Documentation/SplunkCloud/latest/AdvancedDev/ModInputsDevTools for more details on debugging the modular input using the command line and relevant logs.
