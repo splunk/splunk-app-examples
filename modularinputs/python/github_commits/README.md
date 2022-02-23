@@ -5,34 +5,47 @@ This app provides an example of a modular input that Pulls down commit data from
 
 which are then streamed to Splunk, based on the owner and repo_name provided by the user during setup of the input. <br /> <br />
 
-To run this example locally, execute the following command from the root of this repository.
+### To run this example locally, follow the below steps.
+
+### Step 1
+Execute the following command from the root of this repository.
 ```shell
 SPLUNK_VERSION=latest docker compose up -d
 ```
-<br />
+
+### Step 2
 
 Check the container health, run:
 ```shell
 docker ps
 ```
-Make sure STATUS is **healthy** for **splunk-app-examples** container<br /> <br/>
 
+### Step 3
 
-Copy the **github_commits** folder in **etc/apps** inside the container. <br />
+Make sure STATUS is **healthy** for **splunk-app-examples** container.
+
+Copy the `github_commits` folder in `etc/apps/` inside the container.
+
 Execute the following command from the root of this directory.
 ```shell
 docker cp modularinputs/python/github_commits splunk-app-examples:/opt/splunk/etc/apps/github_commits
 ```
-<br />
 
-Install splunklib in github_commits/lib folder. Run: <br /> 
+### Step 4
+
+Install splunklib in `github_commits/lib` folder. 
 ```shell
 docker exec -it -u root splunk-app-examples /bin/bash
+```
+```shell
 pip install splunk-sdk -t ${SPLUNK_HOME}/etc/apps/github_commits/lib
 ```
-<br />
+*If the last command fails, manually copy the `splunklib` in `/etc/apps/github_commits/lib` directory inside container*
 
-Restart the container. Run: </br>
+### Step 5
+
+Restart the container.
+
 From UI:
 ```markdown
 Settings > Server controls > Restart Splunk
@@ -41,34 +54,43 @@ Settings > Server controls > Restart Splunk
 From Terminal:
 ```shell
 docker stop splunk-app-examples
+```
+```shell
 docker start splunk-app-examples
 ```
 
-Once the Splunk is in healthy state, <br />
+### Step 6
 
-In Splunk UI, Go to **Settings > DATA > Data inputs** <br />
+Make sure the Splunk is in `healthy` state
 
-Search for **"Github Commits"** <br />
+Log in into the Splunk UI, Go to `Settings > DATA > Data inputs`
 
-Click on the **+Add new** button in front of the **Github Commits** which open a configuration page for **Github Commits** app <br />
+Search for `Github Commits`
 
-**name:** Name of your choice to refer this search later. No special characters. i.e. python <br />
-**Owner:** Github user or organization that created the repository. i.e. Splunk <br />
-**Repo Name:** Name of the Github repository. i.e. splunk-sdk-python <br />
-**Token (optional):** A Github API access token. Required for private repositories (the token must have the 'repo' and 'public_repo' scopes enabled). Recommended to avoid Github's API limit, especially if setting an interval. <br />
+Click on the `+Add new` button in front of the `Github Commits` which opens a configuration page for `Github Commits` app <br />
 
-Once the details are filled, click on **Next** and then click on **Start Searching** <br /> <br />
+`name`: Name of your choice to refer to this modularinput later. i.e. python 
 
-**Awesome!** 
+`Owner`: Github user or organization that created the repository. i.e. Splunk
+
+`Repo Name`: Name of the Github repository. i.e. splunk-sdk-python
+
+`Token (optional)`: A Github API access token. Required for private repositories (the token must have the 'repo' and 'public_repo' scopes enabled). Recommended to avoid Github's API limit, especially if setting an interval.
+
+Once the details are filled, click on `Next` and then click on `Start Searching`
+
+## Awesome!
 
 The setup is done. Try the following commands to see some results.
 
-To get commits for the **python** search that we configured above.
+To get github commits for the `python` modularinput that we configured above. Search
 ```markdown
 source="github_commits://python"
 ```
 
-To get commits for all the searches in **github_commits** app.
+To get commits for all the searches in `github_commits` app. Search
 ```markdown
 source="github_commits://*"
 ```
+
+> NOTE: If no Random Numbers input appears then the script is likely not running properly, see https://docs.splunk.com/Documentation/SplunkCloud/latest/AdvancedDev/ModInputsDevTools for more details on debugging the modular input using the command line and relevant logs.
