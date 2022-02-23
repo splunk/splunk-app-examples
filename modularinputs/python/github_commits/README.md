@@ -3,8 +3,6 @@ splunk-sdk-python github_commits example
 
 This app provides an example of a modular input that Pulls down commit data from GitHub and creates events for each commit. 
 
-which are then streamed to Splunk, based on the owner and repo_name provided by the user during setup of the input. <br /> <br />
-
 ### To run this example locally, follow the below steps.
 
 ### Step 1
@@ -61,13 +59,13 @@ docker start splunk-app-examples
 
 ### Step 6
 
-Make sure the Splunk is in `healthy` state
+Make sure the Splunk is in `healthy` state.
 
 Log in into the Splunk UI, Go to `Settings > DATA > Data inputs`
 
-Search for `Github Commits`
+Search for `Github Commits` (as per the `default/app.conf` file)
 
-Click on the `+Add new` button in front of the `Github Commits` which opens a configuration page for `Github Commits` app <br />
+Click on the `+Add new` button in front of the `Github Commits` which opens a configuration page for `Github Commits` app.
 
 `name`: Name of your choice to refer to this modularinput later. i.e. python 
 
@@ -83,7 +81,7 @@ Once the details are filled, click on `Next` and then click on `Start Searching`
 
 The setup is done. Try the following commands to see some results.
 
-To get github commits for the `python` modularinput that we configured above. Search
+To get github commits for the `python` input that we configured above. Search
 ```markdown
 source="github_commits://python"
 ```
