@@ -119,7 +119,7 @@ class MyScript(Script):
 
         # If we get any kind of message, that's a bad sign.
         if "message" in res:
-            raise ValueError("Some error occur during fetching commits. - " + res["message"])
+            raise ValueError(res["message"])
         elif len(res) == 1 and "sha" in res[0]:
             pass
         else:
