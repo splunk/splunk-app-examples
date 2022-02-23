@@ -26,7 +26,7 @@ import json
 # code together at /opt/splunk/etc/apps/github_commits
 from datetime import datetime
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../github_commits", "lib"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 
 from splunklib.modularinput import *
 from splunklib import six
