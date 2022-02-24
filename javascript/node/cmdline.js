@@ -13,35 +13,35 @@
 // under the License.
 
 (function() {
-    var path         = require('path');
-    var fs           = require('fs');
-    var commander    = require('../../contrib/commander');
-    var utils        = require('../../lib/utils');
+    let path         = require('path');
+    let fs           = require('fs');
+    let commander    = require('splunk-sdk/contrib/commander');
+    let utils        = require('splunk-sdk/lib/utils');
     
-    var DEFAULTS_PATHS = [
+    let DEFAULTS_PATHS = [
         process.env.HOME || process.env.HOMEPATH,
         path.resolve(__dirname, "..")
     ];
     
-    var readDefaultsFile = function(path, defaults) {
-        var contents = fs.readFileSync(path, "utf8") || "";
-        var lines = contents.split("\n") || [];
+    let readDefaultsFile = function(path, defaults) {
+        let contents = fs.readFileSync(path, "utf8") || "";
+        let lines = contents.split("\n") || [];
         
-        for(var i = 0; i < lines.length; i++) {
-            var line = lines[i].trim();
+        for(let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
             if (line !== "" && !utils.startsWith(line, "#")) {
-                var parts = line.split("=");
-                var key = parts[0].trim();
-                var value = parts[1].trim();
+                let parts = line.split("=");
+                let key = parts[0].trim();
+                let value = parts[1].trim();
                 defaults[key] = value;
             }
         }
     };
     
-    var getDefaults = function() {
-        var defaults = {};
-        for(var i = 0; i < DEFAULTS_PATHS.length; i++) {
-            var defaultsPath = path.join(DEFAULTS_PATHS[i], ".splunkrc");
+    let getDefaults = function() {
+        let defaults = {};
+        for(let i = 0; i < DEFAULTS_PATHS.length; i++) {
+            let defaultsPath = path.join(DEFAULTS_PATHS[i], ".splunkrc");
             if (fs.existsSync(defaultsPath)) {
                 readDefaultsFile(defaultsPath, defaults);
             }
@@ -51,8 +51,8 @@
     };
     
     module.exports.create = function() {
-        var parser = new commander.Command();
-        var parse = parser.parse;
+        let parser = new commander.Command();
+        let parse = parser.parse;
     
         parser.password = undefined;
     
@@ -66,10 +66,10 @@
         
         parser.parse = function(argv) {
             argv = (argv || []).slice(2);
-            var defaults = getDefaults();
-            for(var key in defaults) {
+            let defaults = getDefaults();
+            for(let key in defaults) {
                 if (defaults.hasOwnProperty(key) && argv.indexOf("--" + key) < 0) {
-                    var value = defaults[key];
+                    let value = defaults[key];
                     argv.unshift(value);
                     argv.unshift("--" + key.trim());
                 }
@@ -78,26 +78,26 @@
             argv.unshift("");
             argv.unshift("");
             
-            var cmdline = parse.call(parser, argv);
+            let cmdline = parse.call(parser, argv);
             
             return cmdline;
         };
         
         parser.add = function(commandName, description, args, flags, required_flags, onAction) {
-            var opts = {};
+            let opts = {};
             flags = flags || [];
             
-            var command = parser.command(commandName + (args ? " " + args : "")).description(description || "");
+            let command = parser.command(commandName + (args ? " " + args : "")).description(description || "");
             
             // For each of the flags, add an option to the parser
-            for(var i = 0; i < flags.length; i++) {
-                var required = required_flags.indexOf(flags[i]) >= 0;
-                var option = "<" + flags[i] + ">";
+            for(let i = 0; i < flags.length; i++) {
+                let required = required_flags.indexOf(flags[i]) >= 0;
+                let option = "<" + flags[i] + ">";
                 command.option("--" + flags[i] + " " + option, "", undefined, required);
             }
             
             command.action(function() {
-                var args = utils.toArray(arguments);
+                let args = utils.toArray(arguments);
                 args.unshift(commandName);
                 onAction.apply(null, args);
             });

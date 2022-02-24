@@ -24,21 +24,21 @@
  * At the end, the search job is cancelled.
  */
 
-var splunkjs = require('../../../index');
-var Async  = splunkjs.Async;
+let splunkjs = require('splunk-sdk');
+let Async  = splunkjs.Async;
 
 exports.main = function(opts, callback) {
     // This is just for testing - ignore it.
     opts = opts || {};
     
-    var username = opts.username    || "admin";
-    var password = opts.password    || "changed!";
-    var scheme   = opts.scheme      || "https";
-    var host     = opts.host        || "localhost";
-    var port     = opts.port        || "8089";
-    var version  = opts.version     || "default";
+    let username = opts.username    || "admin";
+    let password = opts.password    || "changed!";
+    let scheme   = opts.scheme      || "https";
+    let host     = opts.host        || "localhost";
+    let port     = opts.port        || "8089";
+    let version  = opts.version     || "default";
     
-    var service = new splunkjs.Service({
+    let service = new splunkjs.Service({
         username: username,
         password: password,
         scheme: scheme,
@@ -47,7 +47,7 @@ exports.main = function(opts, callback) {
         version: version
     });
 
-    var searches; // We'll use this later
+    let searches; // We'll use this later
 
     Async.chain([
             // First, we log in.
@@ -65,7 +65,7 @@ exports.main = function(opts, callback) {
             },
             function(dataModels, done) {
                 // ...and the specific data model we're concerned with
-                var dm = dataModels.item("internal_audit_logs");
+                let dm = dataModels.item("internal_audit_logs");
                 // Get the "searches" object out of the "internal_audit_logs" data model
                 searches = dm.objectByName("searches");
 
@@ -86,10 +86,10 @@ exports.main = function(opts, callback) {
             function(results, job, done) {
                 // Print out the results
                 console.log("Results:");
-                for (var i = 0; i < results.rows.length; i++) {
-                    var rowString = " result " + i + ":  ";
-                    var row = results.rows[i];
-                    for (var j = 0; j < results.fields.length; j++) {
+                for (let i = 0; i < results.rows.length; i++) {
+                    let rowString = " result " + i + ":  ";
+                    let row = results.rows[i];
+                    for (let j = 0; j < results.fields.length; j++) {
                         if (row[j] !== null && row[j] !== undefined) {
                             rowString += results.fields[j] + "=" + row[j] + ", ";
                         }
@@ -98,7 +98,7 @@ exports.main = function(opts, callback) {
                     console.log("------------------------------");
                 }
                 
-                var pivotSpecification = searches.createPivotSpecification();
+                let pivotSpecification = searches.createPivotSpecification();
                 // Each function call here returns a pivotSpecification so we can chain them
                 pivotSpecification
                     .addRowSplit("user", "Executing user")
@@ -116,10 +116,10 @@ exports.main = function(opts, callback) {
             function(results, job, done) {
                 // Print out the results
                 console.log("Results:");
-                for (var i = 0; i < results.rows.length; i++) {
-                    var rowString = " result " + i + ":  ";
-                    var row = results.rows[i];
-                    for (var j = 0; j < results.fields.length; j++) {
+                for (let i = 0; i < results.rows.length; i++) {
+                    let rowString = " result " + i + ":  ";
+                    let row = results.rows[i];
+                    for (let j = 0; j < results.fields.length; j++) {
                         if (row[j] !== null && row[j] !== undefined) {
                             rowString += results.fields[j] + "=" + row[j] + ", ";
                         }

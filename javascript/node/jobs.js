@@ -14,13 +14,13 @@
 // under the License.
 
 (function() {
-    var splunkjs        = require('../../index');
-    var Class           = splunkjs.Class;
-    var utils           = splunkjs.Utils;
-    var Async           = splunkjs.Async;
-    var options         = require('./cmdline');
+    let splunkjs        = require('splunk-sdk');
+    let Class           = splunkjs.Class;
+    let utils           = splunkjs.Utils;
+    let Async           = splunkjs.Async;
+    let options         = require('./cmdline');
 
-    var FLAGS_CREATE = [
+    let FLAGS_CREATE = [
         "search", "earliest_time", "latest_time", "now", "time_format",
         "exec_mode", "search_mode", "rt_blocking", "rt_queue_size",
         "rt_maxblocksecs", "rt_indexfilter", "id", "status_buckets",
@@ -28,50 +28,50 @@
         "reload_macros", "reduce_freq", "spawn_process", "required_field_list",
         "rf", "auto_cancel", "auto_pause"
     ];
-    var FLAGS_EVENTS = [
+    let FLAGS_EVENTS = [
         "offset", "count", "earliest_time", "latest_time", "search",
         "time_format", "output_time_format", "field_list", "f", "max_lines",
         "truncation_mode", "output_mode", "segmentation"
     ];
-    var FLAGS_RESULTS = [
+    let FLAGS_RESULTS = [
         "offset", "count", "search", "field_list", "f", "output_mode"
     ];
     
-    var printRows = function(data) {
-        var fields = data.fields;
-        var rows = data.rows;
-        for(var i = 0; i < rows.length; i++) {
-            var values = rows[i];
+    let printRows = function(data) {
+        let fields = data.fields;
+        let rows = data.rows;
+        for(let i = 0; i < rows.length; i++) {
+            let values = rows[i];
             console.log("Row " + i + ": ");
-            for(var j = 0; j < values.length; j++) {
-                var field = fields[j];
-                var value = values[j];
+            for(let j = 0; j < values.length; j++) {
+                let field = fields[j];
+                let value = values[j];
                 console.log("  " + field + ": " + value);
             }
         }
     };
     
-    var printCols = function(data) {
-        var fields = data.fields;
-        var columns = data.columns;
-        for(var i = 0; i < columns.length; i++) {
-            var values = columns[i];
-            var field = fields[i];
+    let printCols = function(data) {
+        let fields = data.fields;
+        let columns = data.columns;
+        for(let i = 0; i < columns.length; i++) {
+            let values = columns[i];
+            let field = fields[i];
             console.log("Column " + field + " (" + i + "): ");
-            for(var j = 0; j < values.length; j++) {
-                var value = values[j];
+            for(let j = 0; j < values.length; j++) {
+                let value = values[j];
                 console.log("  " + value);
             }
         }
     };
 
-    var _check_sids = function(command, sids) {
+    let _check_sids = function(command, sids) {
         if (!sids || sids.length === 0) {
             throw new Error("'" + command + "' requires at least one SID");
         }
     };
 
-    var Program = Class.extend({
+    let Program = Class.extend({
         init: function(service) {
             this.service = service; 
             
@@ -90,12 +90,12 @@
             // we check whether it is the job we're looking for.
             // If it is, we wrap it up in a splunkjs.Job object, and invoke
             // our function on it.
-            var jobsList = [];
+            let jobsList = [];
             this.service.jobs().fetch(function(err, jobs) {
-                var list = jobs.list() || [];
-                for(var i = 0; i < list.length; i++) {
+                let list = jobs.list() || [];
+                for(let i = 0; i < list.length; i++) {
                     if (utils.contains(sids, list[i].sid)) {
-                        var job = list[i];
+                        let job = list[i];
                         jobsList.push(job);
                     }
                 }
@@ -105,7 +105,7 @@
         },
 
         run: function(command, args, options, callback) {
-            var commands = {
+            let commands = {
                 'cancel':       this.cancel,
                 'create':       this.create,
                 'events':       this.events,
@@ -117,7 +117,7 @@
             // If we don't have any command, notify the user.
             if (!command) {
                 console.error("You must supply a command to run. Options are:");
-                for(var key in commands) {
+                for(let key in commands) {
                     if (commands.hasOwnProperty(key)) {
                         console.error("  " + key);
                     }
@@ -128,7 +128,7 @@
             }
 
             // Get the handler
-            var handler = commands[command];
+            let handler = commands[command];
 
             // If there is no handler (because the user specified an invalid command,
             // then we notify the user as an error.
@@ -170,7 +170,7 @@
                         return;
                     }
                     
-                    var output_mode = options.output_mode || "rows";
+                    let output_mode = options.output_mode || "rows";
                     if (output_mode === "json_rows") {
                         printRows(data);
                     }
@@ -191,8 +191,8 @@
         create: function(args, options, callback) {
             // Get the query and parameters, and remove the extraneous
             // search parameter
-            var query = options.search;
-            var params = options;
+            let query = options.search;
+            let params = options;
             delete params.search;
 
             // Create the job
@@ -214,15 +214,15 @@
 
             if (sids.length === 0) {
                 // If no job SIDs are provided, we list all jobs.
-                var jobs = this.service.jobs();
+                let jobs = this.service.jobs();
                 jobs.fetch(function(err, jobs) {
                     if (err) {
                         callback(err);
                         return;
                     }
                     
-                    var list = jobs.list() || [];
-                    for(var i = 0; i < list.length; i++) {
+                    let list = jobs.list() || [];
+                    for(let i = 0; i < list.length; i++) {
                         console.log("  Job " + (i + 1) + " sid: "+ list[i].sid);
                     }
 
@@ -240,8 +240,8 @@
                         }
                         
                         console.log("Job " + job.sid + ": ");
-                        var properties = job.properties();
-                        for(var key in properties) {
+                        let properties = job.properties();
+                        for(let key in properties) {
                             // Skip some keys that make the output hard to read
                             if (utils.contains(["performance"], key)) {
                                 continue;
@@ -267,7 +267,7 @@
                         return;
                     }
 
-                    var output_mode = options.output_mode || "rows";
+                    let output_mode = options.output_mode || "rows";
                     if (output_mode === "json_rows") {
                         printRows(data);
                     }
@@ -297,7 +297,7 @@
                                 return;
                             }
                             
-                            var output_mode = options.output_mode || "rows";
+                            let output_mode = options.output_mode || "rows";
                             if (output_mode === "json_rows") {
                                 printRows(data);
                             }
@@ -325,7 +325,7 @@
 
 
     exports.main = function(argv, callback) {     
-        var cmdline = options.create();
+        let cmdline = options.create();
         
         callback = callback || function(err) { 
             if (err) {
@@ -336,11 +336,11 @@
             }
         };
         
-        var run = function(name) {  
-            var options = arguments[arguments.length - 1];
+        let run = function(name) {  
+            let options = arguments[arguments.length - 1];
                     
             // Create our service context using the information from the command line
-            var svc = new splunkjs.Service({ 
+            let svc = new splunkjs.Service({ 
                 scheme: cmdline.opts.scheme,
                 host: cmdline.opts.host,
                 port: cmdline.opts.port,
@@ -356,7 +356,7 @@
                    return;
                }
                
-               var program = new Program(svc);
+               let program = new Program(svc);
                
                program.run(name, cmdline.args, options.opts, function(err) {
                    if (err) {

@@ -14,13 +14,13 @@
 // under the License.
 
 (function() {
-    var splunkjs        = require('../../index');
-    var Class           = splunkjs.Class;
-    var utils           = splunkjs.Utils;
-    var Async           = splunkjs.Async;
-    var options         = require('./cmdline');
+    let splunkjs        = require('splunk-sdk');
+    let Class           = splunkjs.Class;
+    let utils           = splunkjs.Utils;
+    let Async           = splunkjs.Async;
+    let options         = require('./cmdline');
     
-    var FLAGS_CREATE = [
+    let FLAGS_CREATE = [
         "search", "earliest_time", "latest_time", "now", "time_format",
         "exec_mode", "search_mode", "rt_blocking", "rt_queue_size",
         "rt_maxblocksecs", "rt_indexfilter", "id", "status_buckets",
@@ -29,7 +29,7 @@
         "rf", "auto_cancel", "auto_pause"
     ];
 
-    var createService = function(options) {
+    let createService = function(options) {
         return new splunkjs.Service({
             scheme:     options.scheme,
             host:       options.host,
@@ -40,13 +40,13 @@
         });
     };
     
-    var search = function(service, options, callback) {
+    let search = function(service, options, callback) {
         // Extract the options we care about and delete them
         // the object
-        var query = options.search;
-        var isVerbose = options.verbose;
-        var count = options.count || 0;
-        var mode = options.mode || "row";
+        let query = options.search;
+        let isVerbose = options.verbose;
+        let count = options.count || 0;
+        let mode = options.mode || "row";
         delete options.search;
         delete options.verbose;
         delete options.count;
@@ -69,13 +69,13 @@
                                 else {
                                     // If the user asked for verbose output,
                                     // then write out the status of the search
-                                    var properties = job.properties();
+                                    let properties = job.properties();
                                     if (isVerbose) {
-                                        var progress    = (properties.doneProgress * 100.0) + "%";
-                                        var scanned     = properties.scanCount;
-                                        var matched     = properties.eventCount;
-                                        var results     = properties.resultCount;
-                                        var stats = "-- " +
+                                        let progress    = (properties.doneProgress * 100.0) + "%";
+                                        let scanned     = properties.scanCount;
+                                        let matched     = properties.eventCount;
+                                        let results     = properties.resultCount;
+                                        let stats = "-- " +
                                             progress + " done | " +
                                             scanned  + " scanned | " +
                                             matched  + " matched | " +
@@ -111,8 +111,8 @@
         );
     };
     
-    var oneshotSearch = function(service, options, callback) {
-        var query = options.search;
+    let oneshotSearch = function(service, options, callback) {
+        let query = options.search;
         delete options.search;
         
         // Oneshot searches don't have a job associated with them, so we
@@ -136,7 +136,7 @@
                 console.log(err);
             }
         };
-        var cmdline = options.create();
+        let cmdline = options.create();
         
         cmdline.name = "search";
         cmdline.description("Create a search and print the results to stdout");
@@ -145,12 +145,12 @@
         cmdline.option("--mode <mode>", "Row or column mode [row|column]");
         
         // For each of the flags, add an option to the parser
-        var flags = FLAGS_CREATE;
-        var required_flags = ["search"];
+        let flags = FLAGS_CREATE;
+        let required_flags = ["search"];
         
-        for(var i = 0; i < flags.length; i++) {
-            var required = required_flags.indexOf(flags[i]) >= 0;
-            var option = "<" + flags[i] + ">";
+        for(let i = 0; i < flags.length; i++) {
+            let required = required_flags.indexOf(flags[i]) >= 0;
+            let option = "<" + flags[i] + ">";
             cmdline.option("--" + flags[i] + " " + option, "", undefined, required);
         }
         
@@ -173,7 +173,7 @@
         
         cmdline.parse(argv);
         
-        var service = createService(cmdline.opts);
+        let service = createService(cmdline.opts);
         service.login(function(err, success) {
             if (err || !success) {
                 callback("Error logging in");

@@ -14,20 +14,20 @@
 // under the License.
 
 (function() {
-    var splunkjs        = require('../../index');
-    var Class           = splunkjs.Class;
-    var utils           = splunkjs.Utils;
-    var Async           = splunkjs.Async;
-    var options         = require('./cmdline');
+    let splunkjs        = require('splunk-sdk');
+    let Class           = splunkjs.Class;
+    let utils           = splunkjs.Utils;
+    let Async           = splunkjs.Async;
+    let options         = require('./cmdline');
     
     // Print the result rows
-    var printRows = function(results) {        
-        for(var i = 0; i < results.rows.length; i++) {
+    let printRows = function(results) {        
+        for(let i = 0; i < results.rows.length; i++) {
             console.log("Result " + (i + 1) + ": ");
-            var row = results.rows[i];
-            for(var j = 0; j < results.fields.length; j++) {
-                var field = results.fields[j];
-                var value = row[j];
+            let row = results.rows[i];
+            for(let j = 0; j < results.fields.length; j++) {
+                let field = results.fields[j];
+                let value = row[j];
                 
                 console.log("  " + field + " = " + value);
             }
@@ -36,11 +36,11 @@
     
     // Instead of trying to print the column-major format, we just
     // transpose it
-    var transpose = function(results) {
-        var rows = [];
-        var cols = results.columns;
+    let transpose = function(results) {
+        let rows = [];
+        let cols = results.columns;
         
-        var mapFirst = function(col) { return col.shift(); };
+        let mapFirst = function(col) { return col.shift(); };
         
         while(cols.length > 0 && cols[0].length > 0) {
             rows.push(cols.map(mapFirst));   
@@ -51,10 +51,10 @@
     };
     
     // Print the results
-    var printResults = function(results) {
+    let printResults = function(results) {
         if (results) {
-            var isRows = !!results.rows;
-            var numResults = (results.rows ? results.rows.length : (results.columns[0] || []).length);
+            let isRows = !!results.rows;
+            let numResults = (results.rows ? results.rows.length : (results.columns[0] || []).length);
             
             console.log("====== " + numResults + " RESULTS (preview: " + !!results.preview + ") ======");
             
@@ -71,25 +71,25 @@
         splunkjs.Logger.setLevel("NONE");
         
         // Read data from stdin
-        var incomingResults = "";
-        var onData = function(data) {
+        let incomingResults = "";
+        let onData = function(data) {
             incomingResults += data.toString("utf-8");
         };
         
         // When there is no more data, parse it and pretty
         // print it
-        var onEnd = function() {
-            var results = JSON.parse(incomingResults || "{}");
+        let onEnd = function() {
+            let results = JSON.parse(incomingResults || "{}");
             printResults(results);
             callback();
         };
         
-        var onError = function() {
+        let onError = function() {
             callback("ERROR");
         };
         
         // Unregister all the listeners when we're done
-        var originalCallback = callback || function() {};
+        let originalCallback = callback || function() {};
         callback = function() {
             process.stdin.removeListener("data", onData);
             process.stdin.removeListener("end", onEnd);

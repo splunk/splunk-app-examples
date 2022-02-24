@@ -15,20 +15,20 @@
 // This example will login to Splunk, and then retrieve the list of fired alerts,
 // printing each alert's name and properties.
 
-var splunkjs = require('../../../index');
+let splunkjs = require('splunk-sdk');
 
 exports.main = function(opts, done) {
     // This is just for testing - ignore it
     opts = opts || {};
     
-    var username = opts.username    || "admin";
-    var password = opts.password    || "changed!";
-    var scheme   = opts.scheme      || "https";
-    var host     = opts.host        || "localhost";
-    var port     = opts.port        || "8089";
-    var version  = opts.version     || "default";
+    let username = opts.username    || "admin";
+    let password = opts.password    || "changed!";
+    let scheme   = opts.scheme      || "https";
+    let host     = opts.host        || "localhost";
+    let port     = opts.port        || "8089";
+    let version  = opts.version     || "default";
     
-    var service = new splunkjs.Service({
+    let service = new splunkjs.Service({
         username: username,
         password: password,
         scheme: scheme,
@@ -56,16 +56,16 @@ exports.main = function(opts, done) {
             }
 
             // Get the list of all fired alert groups, including the all group (represented by "-")
-            var groups = firedAlertGroups.list();
+            let groups = firedAlertGroups.list();
             console.log("Fired alert groups:");
 
-            var listGroupCallback = function(err, firedAlerts, firedAlertGroup) {
+            let listGroupCallback = function(err, firedAlerts, firedAlertGroup) {
                 // How many times was this alert fired?
                 console.log(firedAlertGroup.name, "(Count:", firedAlertGroup.count(), ")");
                 // Print the properties for each fired alert (default of 30 per alert group)
-                for(var i = 0; i < firedAlerts.length; i++) {
-                    var firedAlert = firedAlerts[i];
-                    for(var key in firedAlert.properties()) {
+                for(let i = 0; i < firedAlerts.length; i++) {
+                    let firedAlert = firedAlerts[i];
+                    for(let key in firedAlert.properties()) {
                         if (firedAlert.properties().hasOwnProperty(key)) {
                            console.log("\t", key, ":", firedAlert.properties()[key]);
                         }
@@ -75,9 +75,9 @@ exports.main = function(opts, done) {
                 console.log("======================================");
             };
 
-            for(var a in groups) {
+            for(let a in groups) {
                 if (groups.hasOwnProperty(a)) {
-                    var firedAlertGroup = groups[a];
+                    let firedAlertGroup = groups[a];
                     firedAlertGroup.list(listGroupCallback);
                 }
             }

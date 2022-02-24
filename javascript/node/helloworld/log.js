@@ -16,9 +16,9 @@
 // This example shows a simple log handler that will print to the console
 // as well as log the information to a Splunk instance.
 
-var splunkjs = require('../../../index');
+let splunkjs = require('splunk-sdk');
 
-var Logger = splunkjs.Class.extend({
+let Logger = splunkjs.Class.extend({
     init: function(service, opts) {
         this.service = service;
         
@@ -36,7 +36,7 @@ var Logger = splunkjs.Class.extend({
     },
     
     log: function(data) {
-        var message = {
+        let message = {
             __time: (new Date()).toUTCString(),
             level: "LOG",
             data: data
@@ -47,7 +47,7 @@ var Logger = splunkjs.Class.extend({
     },
     
     error: function(data) {
-        var message = {
+        let message = {
             __time: (new Date()).toUTCString(),
             level: "ERROR",
             data: data
@@ -58,7 +58,7 @@ var Logger = splunkjs.Class.extend({
     },
     
     info: function(data) {
-        var message = {
+        let message = {
             __time: (new Date()).toUTCString(),
             level: "INFO",
             data: data
@@ -69,7 +69,7 @@ var Logger = splunkjs.Class.extend({
     },
     
     warn: function(data) {
-        var message = {
+        let message = {
             __time: (new Date()).toUTCString(),
             level: "WARN",
             data: data
@@ -84,14 +84,14 @@ exports.main = function(opts, done) {
     // This is just for testing - ignore it
     opts = opts || {};
     
-    var username = opts.username    || "admin";
-    var password = opts.password    || "changed!";
-    var scheme   = opts.scheme      || "https";
-    var host     = opts.host        || "localhost";
-    var port     = opts.port        || "8089";
-    var version  = opts.version     || "default";
+    let username = opts.username    || "admin";
+    let password = opts.password    || "changed!";
+    let scheme   = opts.scheme      || "https";
+    let host     = opts.host        || "localhost";
+    let port     = opts.port        || "8089";
+    let version  = opts.version     || "default";
     
-    var service = new splunkjs.Service({
+    let service = new splunkjs.Service({
         username: username,
         password: password,
         scheme: scheme,
@@ -111,7 +111,7 @@ exports.main = function(opts, done) {
         } 
         
         // Create our logger
-        var logger = new Logger(service, { sourcetype: "mylogger", source: "test" });
+        let logger = new Logger(service, { sourcetype: "mylogger", source: "test" });
         
         // Log the various types of messages. Note how we are sending
         // both strings and JSON objects, which will be auto-encoded and

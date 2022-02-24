@@ -13,7 +13,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-var splunkjs = require('../../../index');
+let splunkjs = require('splunk-sdk');
 
 // This example will show you how to add a new REST API endpoint
 // to the Splunk SDK for JavaScript.
@@ -59,7 +59,7 @@ splunkjs.Service.Roles = splunkjs.Service.Collection.extend({
     },
 
     instantiateEntity: function(props) {
-        var entityNamespace = splunkjs.Utils.namespaceFromProperties(props);
+        let entityNamespace = splunkjs.Utils.namespaceFromProperties(props);
         return new splunkjs.Service.Role(this.service, props.name, entityNamespace);
     },
 
@@ -79,14 +79,14 @@ exports.main = function(opts, done) {
     // This is just for testing - ignore it
     opts = opts || {};
     
-    var username = opts.username    || "admin";
-    var password = opts.password    || "changed!";
-    var scheme   = opts.scheme      || "https";
-    var host     = opts.host        || "localhost";
-    var port     = opts.port        || "8089";
-    var version  = opts.version     || "default";
+    let username = opts.username    || "admin";
+    let password = opts.password    || "changed!";
+    let scheme   = opts.scheme      || "https";
+    let host     = opts.host        || "localhost";
+    let port     = opts.port        || "8089";
+    let version  = opts.version     || "default";
     
-    var service = new splunkjs.Service({
+    let service = new splunkjs.Service({
         username: username,
         password: password,
         scheme: scheme,
@@ -114,8 +114,8 @@ exports.main = function(opts, done) {
             }
 
             console.log("System roles:");
-            var rolesList = roles.list();
-            for (var i = 0; i < rolesList.length; i++) {
+            let rolesList = roles.list();
+            for (let i = 0; i < rolesList.length; i++) {
                 console.log("  " + i + " " + rolesList[i].name);
             }
             done();

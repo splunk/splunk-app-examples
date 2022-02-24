@@ -16,21 +16,21 @@
 // This example will show how to get a `Job` by it's sid without
 // fetching a collection of `Job`s.
 
-var splunkjs = require('../../../index');
-var Async  = splunkjs.Async;
+let splunkjs = require('splunk-sdk');
+let Async  = splunkjs.Async;
 
 exports.main = function(opts, callback) {
     // This is just for testing - ignore it
     opts = opts || {};
     
-    var username = opts.username    || "admin";
-    var password = opts.password    || "changed!";
-    var scheme   = opts.scheme      || "https";
-    var host     = opts.host        || "localhost";
-    var port     = opts.port        || "8089";
-    var version  = opts.version     || "default";
+    let username = opts.username    || "admin";
+    let password = opts.password    || "changed!";
+    let scheme   = opts.scheme      || "https";
+    let host     = opts.host        || "localhost";
+    let port     = opts.port        || "8089";
+    let version  = opts.version     || "default";
     
-    var service = new splunkjs.Service({
+    let service = new splunkjs.Service({
         username: username,
         password: password,
         scheme: scheme,
@@ -39,7 +39,7 @@ exports.main = function(opts, callback) {
         version: version
     });
 
-    var sid;
+    let sid;
 
     Async.chain([
             // First, we log in

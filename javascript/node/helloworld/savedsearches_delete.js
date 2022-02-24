@@ -16,20 +16,20 @@
 // This example will login to Splunk, and then try to delete the 
 // saved search that was created in savedsearches_create.js
 
-var splunkjs = require('../../../index');
+let splunkjs = require('splunk-sdk');
 
 exports.main = function(opts, done) {
     // This is just for testing - ignore it
     opts = opts || {};
     
-    var username = opts.username    || "admin";
-    var password = opts.password    || "changed!";
-    var scheme   = opts.scheme      || "https";
-    var host     = opts.host        || "localhost";
-    var port     = opts.port        || "8089";
-    var version  = opts.version     || "default";
+    let username = opts.username    || "admin";
+    let password = opts.password    || "changed!";
+    let scheme   = opts.scheme      || "https";
+    let host     = opts.host        || "localhost";
+    let port     = opts.port        || "8089";
+    let version  = opts.version     || "default";
     
-    var service = new splunkjs.Service({
+    let service = new splunkjs.Service({
         username: username,
         password: password,
         scheme: scheme,
@@ -48,7 +48,7 @@ exports.main = function(opts, done) {
             return;
         } 
         
-        var name = "My Awesome Saved Search";
+        let name = "My Awesome Saved Search";
         
         // Now that we're logged in, Let's create a saved search
         service.savedSearches().fetch(function(err, savedSearches) {
@@ -58,7 +58,7 @@ exports.main = function(opts, done) {
                 return;
             } 
             
-            var savedSearchToDelete = savedSearches.item(name);
+            let savedSearchToDelete = savedSearches.item(name);
             if (!savedSearchToDelete) {
                 console.log("Can't delete '" + name + "' because it doesn't exist!");
                 done();

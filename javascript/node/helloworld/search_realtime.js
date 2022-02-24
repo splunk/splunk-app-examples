@@ -17,21 +17,21 @@
 // how many events of each sourcetype we have seen. It will then print out
 // this information every 1 second for a set number of iterations.
 
-var splunkjs = require('../../../index');
-var Async  = splunkjs.Async;
+let splunkjs = require('splunk-sdk');
+let Async  = splunkjs.Async;
 
 exports.main = function(opts, callback) {
     // This is just for testing - ignore it
     opts = opts || {};
     
-    var username = opts.username    || "admin";
-    var password = opts.password    || "changed!";
-    var scheme   = opts.scheme      || "https";
-    var host     = opts.host        || "localhost";
-    var port     = opts.port        || "8089";
-    var version  = opts.version     || "default";
+    let username = opts.username    || "admin";
+    let password = opts.password    || "changed!";
+    let scheme   = opts.scheme      || "https";
+    let host     = opts.host        || "localhost";
+    let port     = opts.port        || "8089";
+    let version  = opts.version     || "default";
     
-    var service = new splunkjs.Service({
+    let service = new splunkjs.Service({
         username: username,
         password: password,
         scheme: scheme,
@@ -59,8 +59,8 @@ exports.main = function(opts, callback) {
             // The search is never going to be done, so we simply poll it every second to get
             // more results
             function(job, done) {
-                var MAX_COUNT = 5;
-                var count = 0;
+                let MAX_COUNT = 5;
+                let count = 0;
                 
                 Async.whilst(
                     // Loop for N times
@@ -80,14 +80,14 @@ exports.main = function(opts, callback) {
                                     count++;
                                     
                                     console.log("========== Iteration " + count + " ==========");
-                                    var sourcetypeIndex = results.fields.indexOf("sourcetype");
-                                    var countIndex = results.fields.indexOf("count");
+                                    let sourcetypeIndex = results.fields.indexOf("sourcetype");
+                                    let countIndex = results.fields.indexOf("count");
                                     
-                                    for(var i = 0; i < results.rows.length; i++) {
-                                        var row = results.rows[i];
+                                    for(let i = 0; i < results.rows.length; i++) {
+                                        let row = results.rows[i];
                                         
                                         // This is a hacky "padding" solution
-                                        var stat = ("  " + row[sourcetypeIndex] + "                         ").slice(0, 30);
+                                        let stat = ("  " + row[sourcetypeIndex] + "                         ").slice(0, 30);
                                         
                                         // Print out the sourcetype and the count of the sourcetype so far
                                         console.log(stat + row[countIndex]);   

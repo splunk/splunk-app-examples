@@ -1,11 +1,11 @@
-var splunkjs = require('../../index');
+let splunkjs = require('splunk-sdk');
 
 /*
 ################ Login with sessionKey #################
 Execute following command to create sessionKey manually: 
 curl -k -u <username>:<password>  <scheme>://<host>:<port>/services/auth/login -d username=<username> -d password=<password>
 */
-var serviceWithSessionKey = new splunkjs.Service(
+let serviceWithSessionKey = new splunkjs.Service(
     {
         // Replace the host if you are accessing remote host
         scheme: 'https',
@@ -30,7 +30,7 @@ curl -k -u <username>:<password> -X POST <scheme>://<host>:<port>/services/admin
 Execute following command to create bearer token manually:
 curl -k -u <username>:<password> -X POST <scheme>://<host>:<port>/services/authorization/tokens?output_mode=json --data name=<username> --data audience=Users --data-urlencode expires_on=+30d
 */
-var serviceWithBearerToken = new splunkjs.Service(
+let serviceWithBearerToken = new splunkjs.Service(
     {
         // Replace the host if you are accessing remote host
         scheme: 'https',

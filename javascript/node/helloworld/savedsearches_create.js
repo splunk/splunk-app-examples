@@ -15,20 +15,20 @@
 
 // This example will login to Splunk, and create a saved search.
 
-var splunkjs = require('../../../index');
+let splunkjs = require('splunk-sdk');
 
 exports.main = function(opts, done) {
     // This is just for testing - ignore it
     opts = opts || {};
     
-    var username = opts.username    || "admin";
-    var password = opts.password    || "changed!";
-    var scheme   = opts.scheme      || "https";
-    var host     = opts.host        || "localhost";
-    var port     = opts.port        || "8089";
-    var version  = opts.version     || "default";
+    let username = opts.username    || "admin";
+    let password = opts.password    || "changed!";
+    let scheme   = opts.scheme      || "https";
+    let host     = opts.host        || "localhost";
+    let port     = opts.port        || "8089";
+    let version  = opts.version     || "default";
     
-    var service = new splunkjs.Service({
+    let service = new splunkjs.Service({
         username: username,
         password: password,
         scheme: scheme,
@@ -47,7 +47,7 @@ exports.main = function(opts, done) {
             return;
         } 
         
-        var savedSearchOptions = {
+        let savedSearchOptions = {
             name: "My Awesome Saved Search",
             search: "index=_internal error sourcetype=splunkd* | head 10"
         };
