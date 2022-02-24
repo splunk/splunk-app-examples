@@ -40,24 +40,13 @@
     
     let getDefaults = function() {
         let defaults = {};
-        console.log('Old Start :' + new Date());
-        for(let i = 0; i < DEFAULTS_PATHS.length; i++) {
-            let defaultsPath = path.join(DEFAULTS_PATHS[i], ".splunkrc");
-            if (fs.existsSync(defaultsPath)) {
-                readDefaultsFile(defaultsPath, defaults);
-            }
-        }
-        console.log('Old End :' + new Date());
-        defaults = {};
 
-        console.log('New Start :' + new Date());
         for (const defaultPath of DEFAULTS_PATHS) {
             let defaultsPath = path.join(defaultPath, '.splunkrc');
             if (fs.existsSync(defaultsPath)) {
                 readDefaultsFile(defaultsPath, defaults);
             }
         }
-        console.log('New End :' + new Date());
         
         return defaults;
     };
