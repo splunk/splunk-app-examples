@@ -19,6 +19,9 @@ jobs:
           - "8.0"
           - "latest"
       fail-fast: false
+    defaults:
+      run:
+        shell: bash
 
     services:
       splunk:
@@ -56,7 +59,7 @@ jobs:
         run: npm install
 
       - name: Test Execution
-        working-directory: ./javascript/node_modules/mocha/bin
-        run: mocha test_examples.js
+        working-directory: ./javascript
+        run: ./node_modules/mocha/bin/mocha test_examples.js
         env:
           SPLUNK_HOME: /opt/splunk
