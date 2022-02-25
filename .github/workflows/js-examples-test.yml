@@ -53,10 +53,10 @@ jobs:
 
       - name: Run npm install
         working-directory: ./javascript
-        run: npm install
+        run: npm install -g
 
       - name: Test Execution
         working-directory: ./javascript
-        run: ./node_modules/mocha/bin/mocha test_examples.js
+        run: mocha test_examples.js
         env:
           SPLUNK_HOME: /opt/splunk

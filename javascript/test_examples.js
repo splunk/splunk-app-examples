@@ -374,7 +374,7 @@ exports.setup = function (svc, opts) {
                 let options = {
                     search: "search index=_internal | head 5"
                 };
-
+                this.timeout(40000);
                 this.run(null, null, options, function (err) {
                     assert.ok(!err);
                     done();
@@ -385,7 +385,7 @@ exports.setup = function (svc, opts) {
                 let options = {
                     search: "search index=_internal | head 5"
                 };
-
+                this.timeout(40000);
                 this.run(null, ["--verbose"], options, function (err) {
                     assert.ok(!err);
                     done();
@@ -409,7 +409,7 @@ exports.setup = function (svc, opts) {
                     search: "search index=_internal | head 20",
                     count: 10
                 };
-
+                this.timeout(40000);
                 this.run(null, ["--verbose"], options, function (err) {
                     assert.ok(!err);
                     done();
