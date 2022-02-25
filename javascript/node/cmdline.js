@@ -27,8 +27,8 @@
         let contents = fs.readFileSync(path, "utf8") || "";
         let lines = contents.split("\n") || [];
 
-        for(let i = 0; i < lines.length; i++) {
-            let line = lines[i].trim();
+        for (let line of lines) {
+            line = line.trim();
             if (line !== "" && !utils.startsWith(line, "#")) {
                 let parts = line.split("=");
                 let key = parts[0].trim();
