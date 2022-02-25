@@ -18,17 +18,17 @@
 
 let splunkjs = require('splunk-sdk');
 
-exports.main = function(opts, done) {
+exports.main = function (opts, done) {
     // This is just for testing - ignore it
     opts = opts || {};
-    
+
     let username = opts.username    || "admin";
     let password = opts.password    || "changed!";
     let scheme   = opts.scheme      || "https";
     let host     = opts.host        || "localhost";
     let port     = opts.port        || "8089";
     let version  = opts.version     || "default";
-    
+
     let service = new splunkjs.Service({
         username: username,
         password: password,
@@ -39,31 +39,31 @@ exports.main = function(opts, done) {
     });
 
     // First, we log in
-    service.login(function(err, success) {
+    service.login(function (err, success) {
         // We check for both errors in the connection as well
         // as if the login itself failed.
         if (err || !success) {
             console.log("Error in logging in");
             done(err || "Login failed");
             return;
-        } 
-        
+        }
+
         let name = "My Awesome Saved Search";
-        
+
         // Now that we're logged in, Let's create a saved search
-        service.savedSearches().fetch(function(err, savedSearches) {
+        service.savedSearches().fetch(function (err, savedSearches) {
             if (err) {
                 console.log("There was an error in fetching the saved searches");
                 done(err);
                 return;
-            } 
-            
+            }
+
             let savedSearchToDelete = savedSearches.item(name);
             if (!savedSearchToDelete) {
                 console.log("Can't delete '" + name + "' because it doesn't exist!");
                 done();
             }
-            else {                
+            else {
                 savedSearchToDelete.remove();
                 console.log("Deleted saved search: " + name + "");
                 done();
@@ -73,5 +73,5 @@ exports.main = function(opts, done) {
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function () { /* Empty function */ });
 }

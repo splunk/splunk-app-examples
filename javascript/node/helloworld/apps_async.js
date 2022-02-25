@@ -20,17 +20,17 @@
 let splunkjs = require('splunk-sdk');
 let Async  = splunkjs.Async;
 
-exports.main = function(opts, callback) {
+exports.main = function (opts, callback) {
     // This is just for testing - ignore it
     opts = opts || {};
-    
+
     let username = opts.username    || "admin";
     let password = opts.password    || "changed!";
     let scheme   = opts.scheme      || "https";
     let host     = opts.host        || "localhost";
     let port     = opts.port        || "8089";
     let version  = opts.version     || "default";
-    
+
     let service = new splunkjs.Service({
         username: username,
         password: password,
@@ -41,35 +41,35 @@ exports.main = function(opts, callback) {
     });
 
     Async.chain([
-            // First, we log in
-            function(done) {
-                service.login(done);
-            },
-            // Retrieve the apps
-            function(success, done) {
-                if (!success) {
-                    done("Error logging in");
-                }
-                
-                service.apps().fetch(done);
-            },
-            // Print them out
-            function(apps, done) {           
-                let appList = apps.list();
-                console.log("Applications:");
-                for(let i = 0; i < appList.length; i++) {
-                    let app = appList[i];
-                    console.log("  App " + i + ": " + app.name);
-                } 
-                done();
+        // First, we log in
+        function (done) {
+            service.login(done);
+        },
+        // Retrieve the apps
+        function (success, done) {
+            if (!success) {
+                done("Error logging in");
             }
-        ],
-        function(err) {
-            callback(err);        
+
+            service.apps().fetch(done);
+        },
+        // Print them out
+        function (apps, done) {
+            let appList = apps.list();
+            console.log("Applications:");
+            for (let i = 0; i < appList.length; i++) {
+                let app = appList[i];
+                console.log("  App " + i + ": " + app.name);
+            }
+            done();
+        }
+    ],
+        function (err) {
+            callback(err);
         }
     );
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function () { /* Empty function */ });
 }

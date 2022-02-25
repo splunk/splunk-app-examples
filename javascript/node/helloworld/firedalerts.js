@@ -63,8 +63,8 @@ exports.main = function(opts, done) {
                 // How many times was this alert fired?
                 console.log(firedAlertGroup.name, "(Count:", firedAlertGroup.count(), ")");
                 // Print the properties for each fired alert (default of 30 per alert group)
-                for(let i = 0; i < firedAlerts.length; i++) {
-                    let firedAlert = firedAlerts[i];
+                
+                for (const firedAlert of firedAlerts) {
                     for(let key in firedAlert.properties()) {
                         if (firedAlert.properties().hasOwnProperty(key)) {
                            console.log("\t", key, ":", firedAlert.properties()[key]);
@@ -88,5 +88,5 @@ exports.main = function(opts, done) {
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function() { /* Empty function */ });
 }

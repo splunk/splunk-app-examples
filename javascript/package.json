@@ -20,5 +20,8 @@
         "readable-stream": "3.6.0",
         "uglify-js": "3.14.1"
     },
-    "author": "Splunk"
+    "author": "Splunk",
+    "engine": {
+        "node": ">=0.8.0"
+    }
 }

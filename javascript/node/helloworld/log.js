@@ -19,78 +19,78 @@
 let splunkjs = require('splunk-sdk');
 
 let Logger = splunkjs.Class.extend({
-    init: function(service, opts) {
+    init: function (service, opts) {
         this.service = service;
-        
+
         opts = opts || {};
-        
+
         this.params = {};
-        if (opts.index)      { this.params.index      = opts.index; }
-        if (opts.host)       { this.params.host       = opts.host; }
-        if (opts.source)     { this.params.source     = opts.source; }
+        if (opts.index) { this.params.index = opts.index; }
+        if (opts.host) { this.params.host = opts.host; }
+        if (opts.source) { this.params.source = opts.source; }
         if (opts.sourcetype) { this.params.sourcetype = opts.sourcetype || "demo-logger"; }
-        
+
         if (!this.service) {
             throw new Error("Must supply a valid service");
         }
     },
-    
-    log: function(data) {
+
+    log: function (data) {
         let message = {
             __time: (new Date()).toUTCString(),
             level: "LOG",
             data: data
         };
-        
+
         this.service.log(message, this.params);
         console.log(data);
     },
-    
-    error: function(data) {
+
+    error: function (data) {
         let message = {
             __time: (new Date()).toUTCString(),
             level: "ERROR",
             data: data
         };
-        
+
         this.service.log(message, this.params);
         console.error(data);
     },
-    
-    info: function(data) {
+
+    info: function (data) {
         let message = {
             __time: (new Date()).toUTCString(),
             level: "INFO",
             data: data
         };
-        
+
         this.service.log(message, this.params);
         console.info(data);
     },
-    
-    warn: function(data) {
+
+    warn: function (data) {
         let message = {
             __time: (new Date()).toUTCString(),
             level: "WARN",
             data: data
         };
-        
+
         this.service.log(message, this.params);
         console.warn(data);
     }
 });
 
-exports.main = function(opts, done) {
+exports.main = function (opts, done) {
     // This is just for testing - ignore it
     opts = opts || {};
-    
+
     let username = opts.username    || "admin";
     let password = opts.password    || "changed!";
     let scheme   = opts.scheme      || "https";
     let host     = opts.host        || "localhost";
     let port     = opts.port        || "8089";
     let version  = opts.version     || "default";
-    
+
     let service = new splunkjs.Service({
         username: username,
         password: password,
@@ -101,31 +101,31 @@ exports.main = function(opts, done) {
     });
 
     // First, we log in
-    service.login(function(err, success) {
+    service.login(function (err, success) {
         // We check for both errors in the connection as well
         // as if the login itself failed.
         if (err || !success) {
             console.log("Error in logging in");
             done(err || "Login failed");
             return;
-        } 
-        
+        }
+
         // Create our logger
         let logger = new Logger(service, { sourcetype: "mylogger", source: "test" });
-        
+
         // Log the various types of messages. Note how we are sending
         // both strings and JSON objects, which will be auto-encoded and
         // understood by Splunk 4.3+
-        logger.log({hello: "world"});
+        logger.log({ hello: "world" });
         logger.error("ERROR HAPPENED");
         logger.info(["useful", "info"]);
-        logger.warn({"this": {"is": ["a", "warning"]}});
-        
+        logger.warn({ "this": { "is": ["a", "warning"] } });
+
         // Say we are done with this sample.
         done();
     });
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function () { /* Empty function */ });
 }

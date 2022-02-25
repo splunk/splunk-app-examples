@@ -17,19 +17,19 @@
 // it is done, and then print out the raw results and some key-value pairs
 
 let splunkjs = require('splunk-sdk');
-let Async  = splunkjs.Async;
+let Async = splunkjs.Async;
 
-exports.main = function(opts, callback) {
+exports.main = function (opts, callback) {
     // This is just for testing - ignore it
     opts = opts || {};
-    
+
     let username = opts.username    || "admin";
     let password = opts.password    || "changed!";
     let scheme   = opts.scheme      || "https";
     let host     = opts.host        || "localhost";
     let port     = opts.port        || "8089";
     let version  = opts.version     || "default";
-    
+
     let service = new splunkjs.Service({
         username: username,
         password: password,
@@ -40,57 +40,57 @@ exports.main = function(opts, callback) {
     });
 
     Async.chain([
-            // First, we log in
-            function(done) {
-                service.login(done);
-            },
-            // Perform the search
-            function(success, done) {
-                if (!success) {
-                    done("Error logging in");
-                }
-                
-                service.search("search index=_internal | head 3", {}, done);
-            },
-            // Wait until the job is done
-            function(job, done) {
-                job.track({}, function(job) {
-                    // Ask the server for the results
-                    job.results({}, done);
-                });
-            },
-            // Print out the statistics and get the results
-            function(results, job, done) {
-                // Print out the statics
-                console.log("Job Statistics: ");
-                console.log("  Event Count: " + job.properties().eventCount);
-                console.log("  Disk Usage: " + job.properties().diskUsage + " bytes");
-                console.log("  Priority: " + job.properties().priority);
-
-                // Find the index of the fields we want
-                let rawIndex = results.fields.indexOf("_raw");
-                let sourcetypeIndex = results.fields.indexOf("sourcetype");
-                let userIndex = results.fields.indexOf("user");
-                
-                // Print out each result and the key-value pairs we want
-                console.log("Results: ");
-                for(let i = 0; i < results.rows.length; i++) {
-                    console.log("  Result " + i + ": ");
-                    console.log("    sourcetype: " + results.rows[i][sourcetypeIndex]);
-                    console.log("    user: " + results.rows[i][userIndex]);
-                    console.log("    _raw: " + results.rows[i][rawIndex]);
-                }
-                
-                // Once we're done, cancel the job.
-                job.cancel(done);
+        // First, we log in
+        function (done) {
+            service.login(done);
+        },
+        // Perform the search
+        function (success, done) {
+            if (!success) {
+                done("Error logging in");
             }
-        ],
-        function(err) {
-            callback(err);        
+
+            service.search("search index=_internal | head 3", {}, done);
+        },
+        // Wait until the job is done
+        function (job, done) {
+            job.track({}, function (job) {
+                // Ask the server for the results
+                job.results({}, done);
+            });
+        },
+        // Print out the statistics and get the results
+        function (results, job, done) {
+            // Print out the statics
+            console.log("Job Statistics: ");
+            console.log("  Event Count: " + job.properties().eventCount);
+            console.log("  Disk Usage: " + job.properties().diskUsage + " bytes");
+            console.log("  Priority: " + job.properties().priority);
+
+            // Find the index of the fields we want
+            let rawIndex = results.fields.indexOf("_raw");
+            let sourcetypeIndex = results.fields.indexOf("sourcetype");
+            let userIndex = results.fields.indexOf("user");
+
+            // Print out each result and the key-value pairs we want
+            console.log("Results: ");
+            for (let i = 0; i < results.rows.length; i++) {
+                console.log("  Result " + i + ": ");
+                console.log("    sourcetype: " + results.rows[i][sourcetypeIndex]);
+                console.log("    user: " + results.rows[i][userIndex]);
+                console.log("    _raw: " + results.rows[i][rawIndex]);
+            }
+
+            // Once we're done, cancel the job.
+            job.cancel(done);
+        }
+    ],
+        function (err) {
+            callback(err);
         }
     );
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function () { /* Empty function */ });
 }

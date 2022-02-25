@@ -71,21 +71,21 @@ splunkjs.Service.Roles = splunkjs.Service.Collection.extend({
 // To finish off integrating the new endpoint,
 // we need to add a function to the service object
 // which will retrieve the Roles collection.
-splunkjs.Service.prototype.roles = function(namespace) {
+splunkjs.Service.prototype.roles = function (namespace) {
     return new splunkjs.Service.Roles(this, namespace);
 };
 
-exports.main = function(opts, done) {
+exports.main = function (opts, done) {
     // This is just for testing - ignore it
     opts = opts || {};
-    
+
     let username = opts.username    || "admin";
     let password = opts.password    || "changed!";
     let scheme   = opts.scheme      || "https";
     let host     = opts.host        || "localhost";
     let port     = opts.port        || "8089";
     let version  = opts.version     || "default";
-    
+
     let service = new splunkjs.Service({
         username: username,
         password: password,
@@ -96,7 +96,7 @@ exports.main = function(opts, done) {
     });
 
     // First, we log in
-    service.login(function(err, success) {
+    service.login(function (err, success) {
         // We check for both errors in the connection as well
         // as if the login itself failed.
         if (err || !success) {
@@ -106,7 +106,7 @@ exports.main = function(opts, done) {
         }
 
         // Now that we're logged in, we can just retrieve system roles!
-        service.roles({user:"admin", app: "search"}).fetch(function(rolesErr, roles) {
+        service.roles({ user: "admin", app: "search" }).fetch(function (rolesErr, roles) {
             if (rolesErr) {
                 console.log("There was an error retrieving the list of roles:", err);
                 done(err);
@@ -124,5 +124,5 @@ exports.main = function(opts, done) {
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function () { /* Empty function */ });
 }

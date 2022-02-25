@@ -17,19 +17,19 @@
 // except that it uses the Async library
 
 let splunkjs = require('splunk-sdk');
-let Async  = splunkjs.Async;
+let Async = splunkjs.Async;
 
-exports.main = function(opts, callback) {
+exports.main = function (opts, callback) {
     // This is just for testing - ignore it.
     opts = opts || {};
-    
+
     let username = opts.username    || "admin";
     let password = opts.password    || "changed!";
     let scheme   = opts.scheme      || "https";
     let host     = opts.host        || "localhost";
     let port     = opts.port        || "8089";
     let version  = opts.version     || "default";
-    
+
     let service = new splunkjs.Service({
         username: username,
         password: password,
@@ -40,55 +40,55 @@ exports.main = function(opts, callback) {
     });
 
     Async.chain([
-            // First, we log in.
-            function(done) {
-                service.login(done);
-            },
-            
-            function(success, done) {
-                if (!success) {
-                    done("Error logging in");
-                }
+        // First, we log in.
+        function (done) {
+            service.login(done);
+        },
 
-                // Now that we're logged in, let's get a listing of all the fired alert groups.
-                service.firedAlertGroups().fetch(done);
-            },
-            // Print them out.
-            function(firedAlertGroups, done) {
-                // Get the list of all fired alert groups, including the all group (represented by "-").
-                let groups = firedAlertGroups.list();
-
-                console.log("Fired alert groups:");
-                Async.seriesEach(
-                    groups,
-                    function(firedAlertGroup, index, seriescallback) {
-                        firedAlertGroup.list(function(err, firedAlerts){
-                            // How many times was this alert fired?
-                            console.log(firedAlertGroup.name, "(Count:", firedAlertGroup.count(), ")");
-                            // Print the properties for each fired alert (default of 30 per alert group).
-                            for(let i = 0; i < firedAlerts.length; i++) {
-                                let firedAlert = firedAlerts[i];
-                                for (let key in firedAlert.properties()) {
-                                    if (firedAlert.properties().hasOwnProperty(key)) {
-                                        console.log("\t", key, ":", firedAlert.properties()[key]);
-                                    }
-                                }
-                                console.log();
-                            }
-                            console.log("======================================");
-                        });
-                        seriescallback();
-                    },
-                    function(err) {
-                        if (err) {
-                            done(err);
-                        }
-                        done();
-                    }
-                );
+        function (success, done) {
+            if (!success) {
+                done("Error logging in");
             }
-        ],
-        function(err) {
+
+            // Now that we're logged in, let's get a listing of all the fired alert groups.
+            service.firedAlertGroups().fetch(done);
+        },
+        // Print them out.
+        function (firedAlertGroups, done) {
+            // Get the list of all fired alert groups, including the all group (represented by "-").
+            let groups = firedAlertGroups.list();
+
+            console.log("Fired alert groups:");
+            Async.seriesEach(
+                groups,
+                function (firedAlertGroup, index, seriescallback) {
+                    firedAlertGroup.list(function (err, firedAlerts) {
+                        // How many times was this alert fired?
+                        console.log(firedAlertGroup.name, "(Count:", firedAlertGroup.count(), ")");
+                        // Print the properties for each fired alert (default of 30 per alert group).
+
+                        for (const firedAlert of firedAlerts) {
+                            for (let key in firedAlert.properties()) {
+                                if (firedAlert.properties().hasOwnProperty(key)) {
+                                    console.log("\t", key, ":", firedAlert.properties()[key]);
+                                }
+                            }
+                            console.log();
+                        }
+                        console.log("======================================");
+                    });
+                    seriescallback();
+                },
+                function (err) {
+                    if (err) {
+                        done(err);
+                    }
+                    done();
+                }
+            );
+        }
+    ],
+        function (err) {
             if (err) {
                 console.log("ERROR", err);
                 callback(err);
@@ -99,5 +99,5 @@ exports.main = function(opts, callback) {
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function () { /* Empty function */ });
 }

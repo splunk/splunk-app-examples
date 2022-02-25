@@ -58,3 +58,5 @@ jobs:
       - name: Test Execution
         working-directory: ./javascript
         run: ./node_modules/mocha/bin/mocha test_examples.js
+        env:
+          SPLUNK_HOME: /opt/splunk

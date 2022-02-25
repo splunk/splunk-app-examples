@@ -19,19 +19,19 @@
 // results in the response.
 
 let splunkjs = require('splunk-sdk');
-let Async  = splunkjs.Async;
+let Async = splunkjs.Async;
 
-exports.main = function(opts, callback) {
+exports.main = function (opts, callback) {
     // This is just for testing - ignore it
     opts = opts || {};
-    
+
     let username = opts.username    || "admin";
     let password = opts.password    || "changed!";
     let scheme   = opts.scheme      || "https";
     let host     = opts.host        || "localhost";
     let port     = opts.port        || "8089";
     let version  = opts.version     || "default";
-    
+
     let service = new splunkjs.Service({
         username: username,
         password: password,
@@ -42,43 +42,43 @@ exports.main = function(opts, callback) {
     });
 
     Async.chain([
-            // First, we log in
-            function(done) {
-                service.login(done);
-            },
-            // Perform the search
-            function(success, done) {
-                if (!success) {
-                    done("Error logging in");
-                }
-                
-                service.oneshotSearch("search index=_internal | head 3", {}, done);
-            },
-            // The job is done, and the results are returned inline
-            function(results, done) {
-                // Find the index of the fields we want
-                let rawIndex = results.fields.indexOf("_raw");
-                let sourcetypeIndex = results.fields.indexOf("sourcetype");
-                let userIndex = results.fields.indexOf("user");
-                
-                // Print out each result and the key-value pairs we want
-                console.log("Results: ");
-                for(let i = 0; i < results.rows.length; i++) {
-                    console.log("  Result " + i + ": ");
-                    console.log("    sourcetype: " + results.rows[i][sourcetypeIndex]);
-                    console.log("    user: " + results.rows[i][userIndex]);
-                    console.log("    _raw: " + results.rows[i][rawIndex]);
-                }
-                
-                done();
+        // First, we log in
+        function (done) {
+            service.login(done);
+        },
+        // Perform the search
+        function (success, done) {
+            if (!success) {
+                done("Error logging in");
             }
-        ],
-        function(err) {
-            callback(err);        
+
+            service.oneshotSearch("search index=_internal | head 3", {}, done);
+        },
+        // The job is done, and the results are returned inline
+        function (results, done) {
+            // Find the index of the fields we want
+            let rawIndex = results.fields.indexOf("_raw");
+            let sourcetypeIndex = results.fields.indexOf("sourcetype");
+            let userIndex = results.fields.indexOf("user");
+
+            // Print out each result and the key-value pairs we want
+            console.log("Results: ");
+            for (let i = 0; i < results.rows.length; i++) {
+                console.log("  Result " + i + ": ");
+                console.log("    sourcetype: " + results.rows[i][sourcetypeIndex]);
+                console.log("    user: " + results.rows[i][userIndex]);
+                console.log("    _raw: " + results.rows[i][rawIndex]);
+            }
+
+            done();
+        }
+    ],
+        function (err) {
+            callback(err);
         }
     );
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function () { /* Empty function */ });
 }

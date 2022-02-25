@@ -16,7 +16,6 @@ let splunkjs = require('splunk-sdk');
 
 exports.setup = function (svc, opts) {
     let assert = require('chai').assert;
-    // let splunkjs = require('splunk-sdk');
     let Async = splunkjs.Async;
     let idCounter = 0;
     let argv = ["program", "script"];
@@ -139,8 +138,8 @@ exports.setup = function (svc, opts) {
                     }
 
                     if (args) {
-                        for (let i = 0; i < args.length; i++) {
-                            combinedArgs.push(args[i]);
+                        for (let arg of args) {
+                            combinedArgs.push(arg);
                         }
                     }
 
@@ -336,7 +335,7 @@ exports.setup = function (svc, opts) {
 
                     }
                 );
-            })
+            });
         }),
 
         describe("Search Example Tests", function (done) {
@@ -351,8 +350,8 @@ exports.setup = function (svc, opts) {
                     }
 
                     if (args) {
-                        for (let i = 0; i < args.length; i++) {
-                            combinedArgs.push(args[i]);
+                        for (const arg of args) {
+                            combinedArgs.push(arg);
                         }
                     }
 
@@ -415,7 +414,7 @@ exports.setup = function (svc, opts) {
                     assert.ok(!err);
                     done();
                 });
-            })
+            });
         })
 
         // This test is commented out because it causes a failure/hang on

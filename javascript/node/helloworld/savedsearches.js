@@ -18,17 +18,17 @@
 
 let splunkjs = require('splunk-sdk');
 
-exports.main = function(opts, done) {
+exports.main = function (opts, done) {
     // This is just for testing - ignore it
     opts = opts || {};
-    
+
     let username = opts.username    || "admin";
     let password = opts.password    || "changed!";
     let scheme   = opts.scheme      || "https";
     let host     = opts.host        || "localhost";
     let port     = opts.port        || "8089";
     let version  = opts.version     || "default";
-    
+
     let service = new splunkjs.Service({
         username: username,
         password: password,
@@ -39,7 +39,7 @@ exports.main = function(opts, done) {
     });
 
     // First, we log in
-    service.login(function(err, success) {
+    service.login(function (err, success) {
         // We check for both errors in the connection as well
         // as if the login itself failed.
         if (err || !success) {
@@ -47,28 +47,28 @@ exports.main = function(opts, done) {
             done(err || "Login failed");
             return;
         }
-        
+
         // Now that we're logged in, let's get a listing of all the saved searches.
-        service.savedSearches().fetch(function(err, searches) {
+        service.savedSearches().fetch(function (err, searches) {
             if (err) {
                 console.log("There was an error retrieving the list of saved searches:", err);
                 done(err);
                 return;
             }
-            
+
             let searchList = searches.list();
             console.log("Saved searches:");
-            for(let i = 0; i < searchList.length; i++) {
+            for (let i = 0; i < searchList.length; i++) {
                 let search = searchList[i];
                 console.log("  Search " + i + ": " + search.name);
                 console.log("    " + search.properties().search);
-            } 
-            
+            }
+
             done();
         });
     });
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function () { /* Empty function */ });
 }

@@ -18,17 +18,17 @@
 
 let splunkjs = require('splunk-sdk');
 
-exports.main = function(opts, done) {
+exports.main = function (opts, done) {
     // This is just for testing - ignore it
     opts = opts || {};
-    
+
     let username = opts.username    || "admin";
     let password = opts.password    || "changed!";
     let scheme   = opts.scheme      || "https";
     let host     = opts.host        || "localhost";
     let port     = opts.port        || "8089";
     let version  = opts.version     || "default";
-    
+
     let service = new splunkjs.Service({
         username: username,
         password: password,
@@ -39,35 +39,35 @@ exports.main = function(opts, done) {
     });
 
     // First, we log in
-    service.login(function(err, success) {
+    service.login(function (err, success) {
         // We check for both errors in the connection as well
         // as if the login itself failed.
         if (err || !success) {
             console.log("Error in logging in");
             done(err || "Login failed");
             return;
-        } 
-        
+        }
+
         // Now that we're logged in, let's get a listing of all the apps.
-        service.apps().fetch(function(err, apps) {
+        service.apps().fetch(function (err, apps) {
             if (err) {
                 console.log("There was an error retrieving the list of applications:", err);
                 done(err);
                 return;
             }
-            
+
             let appList = apps.list();
             console.log("Applications:");
-            for(let i = 0; i < appList.length; i++) {
+            for (let i = 0; i < appList.length; i++) {
                 let app = appList[i];
                 console.log("  App " + i + ": " + app.name);
-            } 
-            
+            }
+
             done();
         });
     });
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function () { /* Empty function */ });
 }

@@ -17,19 +17,19 @@
 // fetching a collection of `Job`s.
 
 let splunkjs = require('splunk-sdk');
-let Async  = splunkjs.Async;
+let Async = splunkjs.Async;
 
-exports.main = function(opts, callback) {
+exports.main = function (opts, callback) {
     // This is just for testing - ignore it
     opts = opts || {};
-    
+
     let username = opts.username    || "admin";
     let password = opts.password    || "changed!";
     let scheme   = opts.scheme      || "https";
     let host     = opts.host        || "localhost";
     let port     = opts.port        || "8089";
     let version  = opts.version     || "default";
-    
+
     let service = new splunkjs.Service({
         username: username,
         password: password,
@@ -42,26 +42,26 @@ exports.main = function(opts, callback) {
     let sid;
 
     Async.chain([
-            // First, we log in
-            function(done) {
-                service.login(done);
-            },
-            // Perform the search
-            function(success, done) {
-                if (!success) {
-                    done("Error logging in");
-                }
-                
-                service.search("search index=_internal | head 1", {}, done);
-            },
-            function(job, done) {
-                // Store the sid for later use
-                sid = job.sid;
-                console.log("Created a search job with sid: " + job.sid);
-                done();
+        // First, we log in
+        function (done) {
+            service.login(done);
+        },
+        // Perform the search
+        function (success, done) {
+            if (!success) {
+                done("Error logging in");
             }
-        ],
-        function(err) {
+
+            service.search("search index=_internal | head 1", {}, done);
+        },
+        function (job, done) {
+            // Store the sid for later use
+            sid = job.sid;
+            console.log("Created a search job with sid: " + job.sid);
+            done();
+        }
+    ],
+        function (err) {
             if (err || !sid) {
                 if (err.hasOwnProperty("data") && err.data.hasOwnProperty("messages")) {
                     console.log(err.data.messages[0].text);
@@ -76,16 +76,16 @@ exports.main = function(opts, callback) {
             }
             else {
                 Async.chain([
-                        function(done) {
-                            // Since we have the job sid, we can get that job directly
-                            service.getJob(sid, done);
-                        },
-                        function(job, done) {
-                            console.log("Got the job with sid: " + job.sid);
-                            done();
-                        }
-                    ],
-                    function(err) {
+                    function (done) {
+                        // Since we have the job sid, we can get that job directly
+                        service.getJob(sid, done);
+                    },
+                    function (job, done) {
+                        console.log("Got the job with sid: " + job.sid);
+                        done();
+                    }
+                ],
+                    function (err) {
                         callback(err);
                     }
                 );
@@ -95,5 +95,5 @@ exports.main = function(opts, callback) {
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function () { /* Empty function */ });
 }

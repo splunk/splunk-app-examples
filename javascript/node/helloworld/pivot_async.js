@@ -25,19 +25,19 @@
  */
 
 let splunkjs = require('splunk-sdk');
-let Async  = splunkjs.Async;
+let Async = splunkjs.Async;
 
-exports.main = function(opts, callback) {
+exports.main = function (opts, callback) {
     // This is just for testing - ignore it.
     opts = opts || {};
-    
+
     let username = opts.username    || "admin";
     let password = opts.password    || "changed!";
     let scheme   = opts.scheme      || "https";
     let host     = opts.host        || "localhost";
     let port     = opts.port        || "8089";
     let version  = opts.version     || "default";
-    
+
     let service = new splunkjs.Service({
         username: username,
         password: password,
@@ -50,87 +50,87 @@ exports.main = function(opts, callback) {
     let searches; // We'll use this later
 
     Async.chain([
-            // First, we log in.
-            function(done) {
-                service.login(done);
-            },
-            
-            function(success, done) {
-                if (!success) {
-                    done("Error logging in");
-                }
+        // First, we log in.
+        function (done) {
+            service.login(done);
+        },
 
-                // Now that we're logged in, let's get the data models collection
-                service.dataModels().fetch(done);
-            },
-            function(dataModels, done) {
-                // ...and the specific data model we're concerned with
-                let dm = dataModels.item("internal_audit_logs");
-                // Get the "searches" object out of the "internal_audit_logs" data model
-                searches = dm.objectByName("searches");
-
-                console.log("Working with object", searches.displayName,
-                    "in model", dm.displayName);
-
-                console.log("\t Lineage:", searches.lineage.join(" -> "));
-                console.log("\t Internal name: " + searches.name);
-
-                // Run a data model search query, getting the first 5 results
-                searches.startSearch({}, "| head 5", done);
-            },
-            function(job, done) {
-                job.track({}, function(job) {
-                    job.results({}, done);
-                });
-            },
-            function(results, job, done) {
-                // Print out the results
-                console.log("Results:");
-                for (let i = 0; i < results.rows.length; i++) {
-                    let rowString = " result " + i + ":  ";
-                    let row = results.rows[i];
-                    for (let j = 0; j < results.fields.length; j++) {
-                        if (row[j] !== null && row[j] !== undefined) {
-                            rowString += results.fields[j] + "=" + row[j] + ", ";
-                        }
-                    }
-                    console.log(rowString);
-                    console.log("------------------------------");
-                }
-                
-                let pivotSpecification = searches.createPivotSpecification();
-                // Each function call here returns a pivotSpecification so we can chain them
-                pivotSpecification
-                    .addRowSplit("user", "Executing user")
-                    .addRangeColumnSplit("exec_time", {limit: 4})
-                    .addCellValue("search", "Search Query", "values")
-                    .run(done);
-            },
-            function(job, pivot, done) {
-                console.log("Query for binning search queries by execution time and executing user:");
-                console.log("\t", pivot.prettyQuery);
-                job.track({}, function(job) {
-                    job.results({}, done);
-                });
-            },
-            function(results, job, done) {
-                // Print out the results
-                console.log("Results:");
-                for (let i = 0; i < results.rows.length; i++) {
-                    let rowString = " result " + i + ":  ";
-                    let row = results.rows[i];
-                    for (let j = 0; j < results.fields.length; j++) {
-                        if (row[j] !== null && row[j] !== undefined) {
-                            rowString += results.fields[j] + "=" + row[j] + ", ";
-                        }
-                    }
-                    console.log(rowString);
-                    console.log("------------------------------");
-                }
-                job.cancel(done);
+        function (success, done) {
+            if (!success) {
+                done("Error logging in");
             }
-        ],
-        function(err) {
+
+            // Now that we're logged in, let's get the data models collection
+            service.dataModels().fetch(done);
+        },
+        function (dataModels, done) {
+            // ...and the specific data model we're concerned with
+            let dm = dataModels.item("internal_audit_logs");
+            // Get the "searches" object out of the "internal_audit_logs" data model
+            searches = dm.objectByName("searches");
+
+            console.log("Working with object", searches.displayName,
+                "in model", dm.displayName);
+
+            console.log("\t Lineage:", searches.lineage.join(" -> "));
+            console.log("\t Internal name: " + searches.name);
+
+            // Run a data model search query, getting the first 5 results
+            searches.startSearch({}, "| head 5", done);
+        },
+        function (job, done) {
+            job.track({}, function (job) {
+                job.results({}, done);
+            });
+        },
+        function (results, job, done) {
+            // Print out the results
+            console.log("Results:");
+            for (let i = 0; i < results.rows.length; i++) {
+                let rowString = " result " + i + ":  ";
+                let row = results.rows[i];
+                for (let j = 0; j < results.fields.length; j++) {
+                    if (row[j] !== null && row[j] !== undefined) {
+                        rowString += results.fields[j] + "=" + row[j] + ", ";
+                    }
+                }
+                console.log(rowString);
+                console.log("------------------------------");
+            }
+
+            let pivotSpecification = searches.createPivotSpecification();
+            // Each function call here returns a pivotSpecification so we can chain them
+            pivotSpecification
+                .addRowSplit("user", "Executing user")
+                .addRangeColumnSplit("exec_time", { limit: 4 })
+                .addCellValue("search", "Search Query", "values")
+                .run(done);
+        },
+        function (job, pivot, done) {
+            console.log("Query for binning search queries by execution time and executing user:");
+            console.log("\t", pivot.prettyQuery);
+            job.track({}, function (job) {
+                job.results({}, done);
+            });
+        },
+        function (results, job, done) {
+            // Print out the results
+            console.log("Results:");
+            for (let i = 0; i < results.rows.length; i++) {
+                let rowString = " result " + i + ":  ";
+                let row = results.rows[i];
+                for (let j = 0; j < results.fields.length; j++) {
+                    if (row[j] !== null && row[j] !== undefined) {
+                        rowString += results.fields[j] + "=" + row[j] + ", ";
+                    }
+                }
+                console.log(rowString);
+                console.log("------------------------------");
+            }
+            job.cancel(done);
+        }
+    ],
+        function (err) {
             if (err) {
                 console.log("ERROR", err);
                 callback(err);
@@ -141,5 +141,5 @@ exports.main = function(opts, callback) {
 };
 
 if (module === require.main) {
-    exports.main({}, function() {});
+    exports.main({}, function () { /* Empty function */ });
 }
