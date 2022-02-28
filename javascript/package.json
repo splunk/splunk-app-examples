@@ -5,20 +5,14 @@
     "main": "test_examples.js",
     "dependencies": {
         "splunk-sdk": ">=1.4.0",
-        "cookie": "0.4.1",
-        "dotenv": "^10.0.0",
-        "elementtree": "0.1.7"
+        "dotenv": "^10.0.0"
     },
     "devDependencies": {
         "browserify": "^17.0.0",
         "chai": "^4.3.4",
         "jshint": "^2.13.4",
         "mocha": "7.2.0",
-        "mochawesome": "^6.2.2",
-        "mustache": "4.2.0",
-        "nyc": "^15.1.0",
-        "readable-stream": "3.6.0",
-        "uglify-js": "3.14.1"
+        "mochawesome": "^6.2.2"
     },
     "author": "Splunk",
     "engine": {

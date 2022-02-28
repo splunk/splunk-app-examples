@@ -3,7 +3,7 @@ name: JS Examples CI
 on:
   push:
     paths:
-      - 'javascript/**'
+      - "javascript/**"
 
 jobs:
   build:
@@ -38,7 +38,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Use node ${{ matrix.node }}
         uses: actions/setup-node@v2
         with:
@@ -58,8 +58,10 @@ jobs:
         working-directory: ./javascript
         run: npm install
 
+      - name: Install mocha
+        working-directory: ./javascript
+        run: npm install -g mocha@7.2.0
+
       - name: Test Execution
         working-directory: ./javascript
-        run: ./node_modules/mocha/bin/mocha test_examples.js
-        env:
-          SPLUNK_HOME: /opt/splunk
+        run: mocha test_examples.js
