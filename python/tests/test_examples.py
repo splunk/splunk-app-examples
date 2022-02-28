@@ -104,6 +104,9 @@ class ExamplesTestCase(testlib.SDKTestCase):
             "event_types.py --help",
             "event_types.py")
 
+    def test_export(self):
+        self.check_commands("export.py --help")
+
     def test_fired_alerts(self):
         self.check_commands(
             "fired_alerts.py --help",
@@ -148,6 +151,18 @@ class ExamplesTestCase(testlib.SDKTestCase):
 
     def test_oneshot(self):
         self.check_commands(["oneshot.py", "search * | head 10"])
+
+    def test_saved_search(self):
+        temp_name = testlib.tmpname()
+        self.check_commands(
+            "saved_search.py",
+            ["saved_search.py", "--help"],
+            ["saved_search.py", "list-all"],
+            ["saved_search.py", "--operation", "create", "--name", temp_name, "--search", "search * | head 5"],
+            ["saved_search.py", "list", "--name", temp_name],
+            ["saved_search.py", "list", "--operation", "delete", "--name", temp_name],
+            ["saved_search.py", "list", "--name",  "Errors in the last 24 hours"]
+        )
 
     def test_saved_searches(self):
         self.check_commands(
