@@ -50,9 +50,7 @@ jobs:
       - name: Run npm install
         working-directory: ./javascript
         run: npm install
-      - name: List packages
-        working-directory: ./javascript
-        run: ls -lt node_modules/mocha/
       - name: Test Execution
         working-directory: ./javascript
-        run: node_modules/mocha/bin/mocha test_examples.js
+        run: ./node_modules/mocha/bin/mocha test_examples.js
+        shell: sh
