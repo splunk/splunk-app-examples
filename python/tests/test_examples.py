@@ -73,6 +73,11 @@ class ExamplesTestCase(testlib.SDKTestCase):
         # Ignore result, it might already exist
         run("index.py create sdk-tests")
 
+    def test_apicalls(self):
+        run("apicalls_binding.py")
+        run("apicalls_client.py")
+        #run("apicalls_httplib.py")
+
     def test_binding1(self):
         result = run("binding1.py")
         self.assertEqual(result, 0)
