@@ -4,18 +4,17 @@
     "description": "Splunk test examples",
     "main": "test_examples.js",
     "dependencies": {
-        "splunk-sdk": ">=1.4.0",
-        "dotenv": "^10.0.0"
+        "splunk-sdk": ">=1.4.0"
     },
     "devDependencies": {
-        "browserify": "^17.0.0",
         "chai": "^4.3.4",
-        "jshint": "^2.13.4",
-        "mocha": "7.2.0",
-        "mochawesome": "^6.2.2"
+        "mocha": "7.2.0"
     },
     "author": "Splunk",
     "engine": {
         "node": ">=0.8.0"
+    },
+    "scripts": {
+        "test": "mocha test_examples.js"
     }
 }
