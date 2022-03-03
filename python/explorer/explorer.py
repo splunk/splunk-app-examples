@@ -14,7 +14,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import
 import server
 import webbrowser
 import sys
@@ -23,10 +22,10 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 import python.utils as utils
-
 from splunklib.six.moves import urllib
 
 PORT = 8080
+
 
 def main(argv):
     usage = "usage: %prog [options]"
@@ -61,7 +60,8 @@ def main(argv):
 
     # And server the files
     server.serve(opts.kwargs["redirectport"])
-        
+
+
 if __name__ == "__main__":
     try:
         main(sys.argv[1:])
