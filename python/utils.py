@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""Utility module shared by the SDK examples & unit tests."""
+"""Utility module shared by the SDK examples """
 
 import sys
 from os import path
