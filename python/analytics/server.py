@@ -19,14 +19,14 @@ import sys
 
 from splunklib import six
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-
 from bottle import route, run, debug, template, static_file, request
 
 from time import strptime, mktime
 
 from input import AnalyticsTracker
 from output import AnalyticsRetriever, TimeRange
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 splunk_opts = None
 retrievers = {}

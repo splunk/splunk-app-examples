@@ -12,10 +12,6 @@ Copyright (c) 2011, Marcel Hellkamp.
 License: MIT (see LICENSE.txt for details)
 """
 
-from __future__ import with_statement
-
-from __future__ import absolute_import
-from __future__ import print_function
 from splunklib import six
 from six.moves import map
 from six.moves import zip
@@ -28,7 +24,6 @@ import cgi
 import email.utils
 import functools
 import hmac
-import splunklib.six.moves.http_client
 import imp
 import itertools
 import mimetypes
@@ -37,7 +32,6 @@ import re
 import subprocess
 import sys
 import tempfile
-import splunklib.six.moves._thread
 import threading
 import time
 import warnings
@@ -45,9 +39,7 @@ import warnings
 from six.moves.http_cookies import SimpleCookie
 from tempfile import TemporaryFile
 from traceback import format_exc
-# from urllib import urlencode, quote as urlquote, unquote as urlunquote
 from urllib import parse
-# from urlparse import urljoin, SplitResult as UrlSplitResult
 
 try: from collections import MutableMapping as DictMixin
 except ImportError: # pragma: no cover
@@ -506,7 +498,7 @@ class Bottle(object):
             on a non-match."""
         depr("This method will change semantics in 0.10.")
         return self._match(environ)
-        
+
     def _match(self, environ):
         handle, args = self.router.match(environ)
         environ['route.handle'] = handle # TODO move to router?
@@ -647,7 +639,7 @@ class Bottle(object):
         if isinstance(path, dict):
             return self._handle(path)
         return self._handle({'PATH_INFO': path, 'REQUEST_METHOD': method.upper()})
-        
+
     def _handle(self, environ):
         if not self.serve:
             depr("Bottle.serve will be removed in 0.10.")

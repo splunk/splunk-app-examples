@@ -14,14 +14,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import
-import sys, os
+import os
+import sys
+
 from splunklib import six
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
 from datetime import datetime
 import splunklib.client as client
 
 import python.utils as utils
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 __all__ = [
     "AnalyticsTracker",
@@ -35,15 +38,16 @@ DISTINCT_KEY = "distinct_id"
 EVENT_TERMINATOR = "\\r\\n-----end-event-----\\r\\n"
 PROPERTY_PREFIX = "analytics_prop__"
 
+
 class AnalyticsTracker:
-    def __init__(self, application_name, splunk_info, index = ANALYTICS_INDEX_NAME):
+    def __init__(self, application_name, splunk_info, index=ANALYTICS_INDEX_NAME):
         self.application_name = application_name
         self.splunk = client.connect(**splunk_info)
         self.index = index
 
         if not self.index in self.splunk.indexes:
             self.splunk.indexes.create(self.index)
-        assert(self.index in self.splunk.indexes)
+        assert (self.index in self.splunk.indexes)
 
         if ANALYTICS_SOURCETYPE not in self.splunk.confs['props']:
             self.splunk.confs["props"].create(ANALYTICS_SOURCETYPE)
@@ -53,17 +57,17 @@ class AnalyticsTracker:
                 "CHARSET": "UTF-8",
                 "SHOULD_LINEMERGE": "false"
             })
-        assert(ANALYTICS_SOURCETYPE in self.splunk.confs['props'])
+        assert (ANALYTICS_SOURCETYPE in self.splunk.confs['props'])
 
     @staticmethod
     def encode(props):
         encoded = " "
-        for k,v in six.iteritems(props):
+        for k, v in six.iteritems(props):
             # We disallow dictionaries - it doesn't quite make sense.
-            assert(not isinstance(v, dict))
+            assert (not isinstance(v, dict))
 
             # We do not allow lists
-            assert(not isinstance(v, list))
+            assert (not isinstance(v, list))
 
             # This is a hack to escape quotes
             if isinstance(v, str):
@@ -73,25 +77,26 @@ class AnalyticsTracker:
 
         return encoded
 
-    def track(self, event_name, time = None, distinct_id = None, **props):
+    def track(self, event_name, time=None, distinct_id=None, **props):
         if time is None:
             time = datetime.now().isoformat()
-            
+
         event = '%s %s="%s" %s="%s" ' % (
             time,
-            APPLICATION_KEY, self.application_name, 
+            APPLICATION_KEY, self.application_name,
             EVENT_KEY, event_name)
 
-        assert(not APPLICATION_KEY in list(props.keys()))
-        assert(not EVENT_KEY in list(props.keys()))
+        assert (not APPLICATION_KEY in list(props.keys()))
+        assert (not EVENT_KEY in list(props.keys()))
 
         if distinct_id is not None:
             event += ('%s="%s" ' % (DISTINCT_KEY, distinct_id))
-            assert(not DISTINCT_KEY in list(props.keys()))
+            assert (not DISTINCT_KEY in list(props.keys()))
 
         event += AnalyticsTracker.encode(props)
 
         self.splunk.indexes[self.index].submit(event, sourcetype=ANALYTICS_SOURCETYPE)
+
 
 def main():
     usage = ""
@@ -100,8 +105,9 @@ def main():
 
     splunk_opts = utils.parse(argv, {}, ".env", usage=usage)
     tracker = AnalyticsTracker("cli_app", splunk_opts.kwargs)
-    
-    #tracker.track("test_event", "abc123", foo="bar", bar="foo")
+
+    # tracker.track("test_event", "abc123", foo="bar", bar="foo")
+
 
 if __name__ == "__main__":
     main()

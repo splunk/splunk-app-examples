@@ -14,13 +14,16 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import
-import sys, os
+import os
+import sys
+
 from splunklib import six
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
 import splunklib.client as client
 import splunklib.results as results
 import python.utils as utils
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 __all__ = [
     "TimeRange",
@@ -35,10 +38,12 @@ DISTINCT_KEY = "distinct_id"
 EVENT_TERMINATOR = "\\r\\n-----end-event-----\\r\\n"
 PROPERTY_PREFIX = "analytics_prop__"
 
+
 class TimeRange:
-    DAY="1d"
-    WEEK="1w"
-    MONTH="1mon"    
+    DAY = "1d"
+    WEEK = "1w"
+    MONTH = "1mon"
+
 
 def counts(job, result_key):
     applications = []
@@ -46,20 +51,20 @@ def counts(job, result_key):
     for result in reader:
         if isinstance(result, dict):
             applications.append({
-                    "name": result[result_key],
-                    "count": int(result["count"] or 0)
-                    })
+                "name": result[result_key],
+                "count": int(result["count"] or 0)
+            })
     return applications
-    
+
 
 class AnalyticsRetriever:
-    def __init__(self, application_name, splunk_info, index = ANALYTICS_INDEX_NAME):
+    def __init__(self, application_name, splunk_info, index=ANALYTICS_INDEX_NAME):
         self.application_name = application_name
         self.splunk = client.connect(**splunk_info)
         self.index = index
 
     def applications(self):
-        query = "search index=%s | stats count by application" % (self.index)
+        query = "search index=%s | stats count by application" % self.index
         job = self.splunk.jobs.create(query, exec_mode="blocking")
         return counts(job, "application")
 
@@ -85,15 +90,15 @@ class AnalyticsRetriever:
                     continue
 
                 properties.append({
-                        "name": field,
-                        "count": int(count or 0)
-                        })
+                    "name": field,
+                    "count": int(count or 0)
+                })
 
         return properties
 
     def property_values(self, event_name, property):
         query = 'search index=%s application=%s event="%s" | stats count by %s | rename %s as %s' % (
-            self.index, self.application_name, event_name, 
+            self.index, self.application_name, event_name,
             PROPERTY_PREFIX + property,
             PROPERTY_PREFIX + property, property
         )
@@ -111,9 +116,9 @@ class AnalyticsRetriever:
 
         return values
 
-    def events_over_time(self, event_name = "", time_range = TimeRange.MONTH, property = ""):
+    def events_over_time(self, event_name="", time_range=TimeRange.MONTH, property=""):
         query = 'search index=%s application=%s event="%s" | timechart span=%s count by %s | fields - _span*' % (
-            self.index, self.application_name, (event_name or "*"), 
+            self.index, self.application_name, (event_name or "*"),
             time_range,
             (PROPERTY_PREFIX + property) if property else "event",
         )
@@ -129,7 +134,7 @@ class AnalyticsRetriever:
 
                 # The rest is in the form of [event/property]:count
                 # pairs, so we decode those
-                for key,count in six.iteritems(result):
+                for key, count in six.iteritems(result):
                     # Ignore internal ResultsReader properties
                     if key.startswith("$"):
                         continue
@@ -143,23 +148,25 @@ class AnalyticsRetriever:
 
         return over_time
 
+
 def main():
     usage = ""
 
     argv = sys.argv[1:]
 
     opts = utils.parse(argv, {}, ".env", usage=usage)
-    retriever = AnalyticsRetriever(opts.args[0], opts.kwargs)    
+    retriever = AnalyticsRetriever(opts.args[0], opts.kwargs)
 
-    #events = retriever.events()
-    #print events
-    #for event in events:
-    #    print retriever.properties(event["name"])
+    # events = retriever.events()
+    # print(events)
+    # for event in events:
+    #    print(retriever.properties(event["name"]))
 
-    #print retriever.property_values("critical", "version")
-    #print retriever.events_over_time(time_range = TimeRange.MONTH)
-    #print retriever.applications()
-    #print retriever.events_over_time()
+    # print(retriever.property_values("critical", "version"))
+    # print(retriever.events_over_time(time_range = TimeRange.MONTH))
+    # print(retriever.applications())
+    # print(retriever.events_over_time())
+
 
 if __name__ == "__main__":
     main()
