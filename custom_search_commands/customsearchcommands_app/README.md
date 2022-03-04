@@ -1,4 +1,4 @@
-splunk-sdk-python searchcommands_app example
+splunk-sdk-python customsearchcommands_app example
 =============================================
 
 This app provides several examples of custom search commands that illustrate each of the base command types:
@@ -61,15 +61,15 @@ docker ps
 ### Step 3
 Make sure STATUS is **healthy** for **splunk-app-examples** container.
 
-Copy the content of `searchcommands_app/package/` folder in `/etc/apps/searchcommands_app/` inside the container.
+Copy the content of `customsearchcommands_app/package/` folder in `/etc/apps/searchcommands_app/` inside the container.
 
 Execute the following command from the root of this directory.
 ```shell
-docker cp python/customsearchcommands_app/package/ splunk-app-examples:opt/splunk/etc/apps/customsearchcommands_app/
+docker cp custom_search_commands/customsearchcommands_app/package/ splunk-app-examples:opt/splunk/etc/apps/customsearchcommands_app/
 ```
 
 ### Step 4
-Install splunklib in `searchcommands_app/lib` folder. 
+Install splunklib in `customsearchcommands_app/lib` folder. 
 ```shell
 docker exec -it -u root splunk-app-examples /bin/bash
 ```
