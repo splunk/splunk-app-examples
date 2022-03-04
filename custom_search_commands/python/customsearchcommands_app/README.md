@@ -61,11 +61,11 @@ docker ps
 ### Step 3
 Make sure STATUS is **healthy** for **splunk-app-examples** container.
 
-Copy the content of `customsearchcommands_app/package/` folder in `/etc/apps/searchcommands_app/` inside the container.
+Copy the content of `custom_search_commands/python/customsearchcommands_app/package/` folder in `/etc/apps/searchcommands_app/` inside the container.
 
 Execute the following command from the root of this directory.
 ```shell
-docker cp custom_search_commands/customsearchcommands_app/package/ splunk-app-examples:opt/splunk/etc/apps/customsearchcommands_app/
+docker cp custom_search_commands/python/customsearchcommands_app/package/ splunk-app-examples:opt/splunk/etc/apps/customsearchcommands_app/
 ```
 
 ### Step 4
