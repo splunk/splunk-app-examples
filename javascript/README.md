@@ -59,13 +59,13 @@ To start a simple web server and open the Examples page in a web browser, enter 
 ## Node.js examples
 
 The Splunk App Examples includes several command-line examples, which are located in the **/splunk-app-examples/javascript/node** directory.
-These examples run altogether or using individual js files with Node.js and use the command-line arguments from the **.splunkrc** file, if you set this up with your login credentials.
+These examples can be executed individually or all together.
 
-For example, to execute all node examples altogether, open a command prompt/shell in the **/splunk-app-examples/javascript/** directory and enter:
+For example, to run all examples in single execution, open a command prompt/shell in the **/splunk-app-examples/javascript/** directory and enter:
     
     npm test
 
-To execute individual file such as **jobs.js** example, open a command prompt/shell in the **/splunk-app-examples/javascript/node** directory and enter:
+To execute individual example such as **jobs.js** file, open a command prompt/shell in the **/splunk-app-examples/javascript/node** directory and enter:
 
     node jobs.js list
 
