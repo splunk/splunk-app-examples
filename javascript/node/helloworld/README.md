@@ -98,20 +98,20 @@ application by using the `Service.log` method in the JavaScript SDK.
 We create a utility `Logger` class that encapsulates various logging levels,
 and we can then simply call `logger.log`, `logger.error`, etc.
 
-[`apps.js`]:                    https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/apps.js
-[`apps_async.js`]:              https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/apps_async.js
-[`endpoint_instantiation.js`]:  https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/endpoint_instantiation.js
-[`firedalerts.js`]:             https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/firedalerts.js
-[`firedalerts_async.js`]:       https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/firedalerts_async.js
-[`firedalerts_create.js`]:      https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/firedalerts_create.js
-[`firedalerts_delete.js`]:      https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/firedalerts_delete.js
-[`get_job.js`]:                     https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/get_job.js
-[`log.js`]:                     https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/log.js
-[`savedsearches.js`]:           https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/savedsearches.js
-[`savedsearches_async.js`]:     https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/savedsearches_async.js
-[`savedsearches_create.js`]:    https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/savedsearches_create.js
-[`savedsearches_delete.js`]:    https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/savedsearches_delete.js
-[`search_normal.js`]:           https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/search_normal.js
-[`search_blocking.js`]:         https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/search_blocking.js
-[`search_oneshot.js`]:          https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/search_oneshot.js
-[`search_realtime.js`]:         https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld/search_realtime.js
+[`apps.js`]:                    https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/apps.js
+[`apps_async.js`]:              https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/apps_async.js
+[`endpoint_instantiation.js`]:  https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/endpoint_instantiation.js
+[`firedalerts.js`]:             https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/firedalerts.js
+[`firedalerts_async.js`]:       https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/firedalerts_async.js
+[`firedalerts_create.js`]:      https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/firedalerts_create.js
+[`firedalerts_delete.js`]:      https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/firedalerts_delete.js
+[`get_job.js`]:                 https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/get_job.js
+[`log.js`]:                     https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/log.js
+[`savedsearches.js`]:           https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/savedsearches.js
+[`savedsearches_async.js`]:     https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/savedsearches_async.js
+[`savedsearches_create.js`]:    https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/savedsearches_create.js
+[`savedsearches_delete.js`]:    https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/savedsearches_delete.js
+[`search_normal.js`]:           https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/search_normal.js
+[`search_blocking.js`]:         https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/search_blocking.js
+[`search_oneshot.js`]:          https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/search_oneshot.js
+[`search_realtime.js`]:         https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/search_realtime.js

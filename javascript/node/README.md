@@ -33,8 +33,8 @@ form:
 [`results.js`] contains an example that shows how to handle result output from Splunk,
 including key-value extraction. It is meant to be used mostly in conjunction with [`search.js`]
 
-[`helloworld`]: https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/helloworld
-[`jobs.js`]:    https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/jobs.js
-[`conf.js`]:    https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/conf.js
-[`search.js`]:  https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/search.js
-[`results.js`]: https://github.com/splunk/splunk-sdk-javascript/tree/master/examples/node/results.js
+[`helloworld`]: https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld
+[`jobs.js`]:    https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/jobs.js
+[`conf.js`]:    https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/conf.js
+[`search.js`]:  https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/search.js
+[`results.js`]: https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/results.js
