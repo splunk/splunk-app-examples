@@ -1,4 +1,4 @@
-# SDK examples
+# Examples
 
 The Splunk App examples contains several server- and client-based examples.
 For details, see this [examples](https://dev.splunk.com/enterprise/docs/devtools/javascript/sdk-javascript/sdkjavascriptexamples) on the Splunk Developer Portal.
@@ -6,7 +6,7 @@ For details, see this [examples](https://dev.splunk.com/enterprise/docs/devtools
 ## Setup
 ### Create a .splunkrc convenience file
 
-To connect to Splunk Enterprise, many of the SDK examples and unit tests take command-line arguments that specify values for the host, port, and login credentials for Splunk Enterprise. For convenience during development, you can store these arguments as key-value pairs in a text file named **.splunkrc**. Then, the SDK examples and unit tests use the values from the **.splunkrc** file when you don't specify them.
+To connect to Splunk Enterprise, many of the SDK examples and unit tests take command-line arguments that specify values for the host, port, and login credentials for Splunk Enterprise. For convenience during development, you can store these arguments as key-value pairs in a text file named **.splunkrc**. Then, the examples and unit tests use the values from the **.splunkrc** file when you don't specify them.
 
 >**Note**: Storing login credentials in the **.splunkrc** file is only for convenience during development. This file isn't part of the Splunk platform and shouldn't be used for storing user credentials for production. And, if you're at all concerned about the security of your credentials, enter them at the command line rather than saving them in this file.
 
@@ -45,12 +45,12 @@ Save the file as **.splunkrc** in the current user's home directory.
 ### Configure NPM
 
 Set the `SPLUNK_HOME` environment variable to the root directory of your Splunk instance.
-* Navigate to directory splunk-app-examples/javascript
+* Navigate to directory **splunk-app-examples/javascript**, open command prompt/shell.
 * Run `npm install`.
 
 ## Client-side examples
 
-The Splunk Enterprise SDK for JavaScript includes several browser-based examples, which you can run from the Examples web page.
+The Splunk App Examples for JavaScript includes several browser-based examples, which you can run from the Examples web page.
 
 To start a simple web server and open the Examples page in a web browser, enter following command from **/splunk-app-examples/javascript** directory:
 
@@ -65,7 +65,7 @@ For example, to run all examples in single execution, open a command prompt/shel
     
     npm test
 
-To execute individual example such as **jobs.js** file, open a command prompt/shell in the **/splunk-app-examples/javascript/node** directory and enter:
+To run individual example such as **jobs.js** file, open a command prompt/shell in the **/splunk-app-examples/javascript/node** directory and enter:
 
     node jobs.js list
 
