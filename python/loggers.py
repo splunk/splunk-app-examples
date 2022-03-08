@@ -22,6 +22,7 @@ import splunklib.client as client
 
 from utils import parse
 
+
 def main(argv):
     usage = "usage: %prog [options]"
     opts = parse(argv, {}, ".env", usage=usage)
@@ -30,6 +31,6 @@ def main(argv):
     for logger in service.loggers:
         print("%s (%s)" % (logger.name, logger['level']))
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])
-

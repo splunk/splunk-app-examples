@@ -14,8 +14,6 @@
 # License for the specific language governing permissions and limitations 
 # under the License.  
 
-from __future__ import absolute_import
-from __future__ import print_function
 from pprint import pprint
 
 import base64
@@ -24,11 +22,8 @@ import splunklib.six.moves.http_client
 import json
 import socket
 import sys
-import os
 from splunklib import six
 from six.moves import input
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-
 
 import splunklib.client as client
 
@@ -40,8 +35,9 @@ TWITTER_STREAM_PATH = "/1/statuses/sample.json"
 DEFAULT_SPLUNK_HOST = "localhost"
 DEFAULT_SPLUNK_PORT = 9001
 
-ingest = None       # The splunk ingest socket
+ingest = None  # The splunk ingest socket
 verbose = 1
+
 
 class Twitter:
     def __init__(self, username, password):
@@ -68,12 +64,13 @@ class Twitter:
                 response.status, response.reason))
         return response
 
+
 RULES = {
     'tusername': {
         'flags': ["--twitter:username"],
         'help': "Twitter username",
     },
-    'tpassword': { 
+    'tpassword': {
         'flags': ["--twitter:password"],
         'help': "Twitter password",
     },
@@ -93,6 +90,7 @@ RULES = {
     }
 }
 
+
 def cmdline():
     kwargs = parse(sys.argv[1:], RULES, ".env").kwargs
 
@@ -110,13 +108,14 @@ def cmdline():
 
     return kwargs
 
+
 # Returns a str, dict or simple list
 def flatten(value, prefix=None):
     """Takes an arbitrary JSON(ish) object and 'flattens' it into a dict
        with values consisting of either simple types or lists of simple
        types."""
 
-    def issimple(value): # foldr(True, or, value)?
+    def issimple(value):  # foldr(True, or, value)?
         for item in value:
             if isinstance(item, dict) or isinstance(item, list):
                 return False
@@ -133,7 +132,7 @@ def flatten(value, prefix=None):
         for item in value:
             k = prefix % offset
             v = flatten(item, k)
-            if not isinstance(v, dict): v = {k:v}
+            if not isinstance(v, dict): v = {k: v}
             result.update(v)
             offset += 1
         return result
@@ -144,16 +143,18 @@ def flatten(value, prefix=None):
         for k, v in six.iteritems(value):
             k = prefix % str(k)
             v = flatten(v, k)
-            if not isinstance(v, dict): v = {k:v}
+            if not isinstance(v, dict): v = {k: v}
             result.update(v)
         return result
 
     return value
 
+
 # Sometimes twitter just stops sending us data on the HTTP connection.
 # In these cases, we'll try up to MAX_TRIES to read 2048 bytes, and if 
 # that fails we bail out.
 MAX_TRIES = 100
+
 
 def listen(username, password):
     try:
@@ -168,10 +169,10 @@ def listen(username, password):
         offset = buffer.find("\r\n")
         if offset != -1:
             status = buffer[:offset]
-            buffer = buffer[offset+2:]
+            buffer = buffer[offset + 2:]
             process(status)
             tries = 0
-            continue # Consume all statuses in buffer before reading more
+            continue  # Consume all statuses in buffer before reading more
         buffer += stream.read(2048)
         tries += 1
 
@@ -179,24 +180,25 @@ def listen(username, password):
         error("""Twitter seems to have closed the connection. Make sure 
 you don't have any other open instances of the 'twitted' sample app.""", 2)
 
+
 def output(record):
     print_record(record)
 
     for k in sorted(record.keys()):
-        if k.endswith("_str"): 
-            continue # Ignore
+        if k.endswith("_str"):
+            continue  # Ignore
 
         v = record[k]
 
         if v is None:
-            continue # Ignore
+            continue  # Ignore
 
         if isinstance(v, list):
             if len(v) == 0: continue
             v = ','.join([str(item) for item in v])
 
         # Field renames
-        k = { 'source': "status_source" }.get(k, k)
+        k = {'source': "status_source"}.get(k, k)
 
         if isinstance(v, str):
             format = '%s="%s" '
@@ -208,18 +210,19 @@ def output(record):
         ingest.send(result)
 
     end = "\r\n---end-status---\r\n"
-    try: 
+    try:
         ingest.send(end)
     except:
         error("There was an error with the TCP connection to Splunk.", 2)
 
+
 # Print some infor to stdout, depending on verbosity level.
 def print_record(record):
-    if verbose == 0: 
+    if verbose == 0:
         return
 
     if verbose > 1:
-        pprint(record) # Very chatty
+        pprint(record)  # Very chatty
         return
 
     # Otherwise print a nice summary of the record
@@ -229,14 +232,16 @@ def print_record(record):
             record['delete_status_user_id']))
     else:
         print("status %s %d %d" % (
-            record['created_at'], 
-            record['id'], 
+            record['created_at'],
+            record['id'],
             record['user_id']))
+
 
 def process(status):
     status = json.loads(status)
     record = flatten(status)
     output(record)
+
 
 def main():
     kwargs = cmdline()
@@ -264,14 +269,14 @@ def main():
         if verbose > 0: print("Creating input '%s'" % input_name)
         service.inputs.create(
             input_port, "tcp", index="twitter", sourcetype="twitter")
-    
+
     global ingest
     ingest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ingest.connect((input_host, input_port))
 
-    if verbose > 0: 
+    if verbose > 0:
         print("Listening (and sending data to %s:%s).." % (input_host, input_port))
-    try: 
+    try:
         listen(kwargs['tusername'], kwargs['tpassword'])
     except KeyboardInterrupt:
         pass
@@ -280,7 +285,7 @@ def main():
 you don't have other running instances of the 'twitted' sample app, and try 
 again.""", 2)
         print(e)
-        
+
+
 if __name__ == "__main__":
     main()
-

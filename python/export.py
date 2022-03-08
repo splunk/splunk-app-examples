@@ -56,7 +56,6 @@ from os import path
 
 # splunk support files
 from splunklib.binding import connect
-
 from utils import parse
 
 # hidden file

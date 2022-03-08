@@ -16,14 +16,11 @@
 
 """A command line utility for interacting with Splunk indexes."""
 
-import os
 import sys
 
 from splunklib.client import connect
 
 from utils import *
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 HELP_EPILOG = """
 Commands:

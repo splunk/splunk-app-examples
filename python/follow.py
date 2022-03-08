@@ -17,10 +17,7 @@
 """Follows (aka tails) a realtime search using the job endpoints and prints
    results to stdout."""
 
-# from __future__ import absolute_import
-# from __future__ import print_function
 
-import os
 import sys
 import time
 from pprint import pprint
@@ -29,8 +26,6 @@ import splunklib.client as client
 import splunklib.results as results
 
 import utils
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 
 def follow(job, count, items):

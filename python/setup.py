@@ -23,6 +23,7 @@ import splunklib
 
 failed = False
 
+
 def run_test_suite():
     import unittest
 
@@ -131,7 +132,7 @@ setup(
 
     license="http://www.apache.org/licenses/LICENSE-2.0",
 
-    classifiers = [
+    classifiers=[
         "Programming Language :: Python",
         "Development Status :: 6 - Mature",
         "Environment :: Other Environment",

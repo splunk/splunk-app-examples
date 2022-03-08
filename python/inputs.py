@@ -16,14 +16,11 @@
 
 """A command line utility for interacting with Splunk inputs."""
 
-import os
 import sys
 
 from splunklib.client import connect
 
 from utils import parse
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 
 def main():

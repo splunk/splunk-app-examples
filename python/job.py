@@ -21,15 +21,12 @@
 # jobs, eg: @0 would specify the first job in the list, @1 the second, and so
 # on.
 
-import os
 import sys
 from pprint import pprint
 
 from splunklib.client import connect
 
 from utils import error, parse, cmdline
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 HELP_EPILOG = """
 Commands:            

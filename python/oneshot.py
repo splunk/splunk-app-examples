@@ -24,11 +24,13 @@ import splunklib.results as results
 
 import utils
 
+
 def pretty(response):
     reader = results.ResultsReader(response)
     for result in reader:
         if isinstance(result, dict):
             pprint(result)
+
 
 def main():
     usage = "usage: oneshot.py <search>"
@@ -42,6 +44,7 @@ def main():
     response = service.jobs.oneshot(search)
 
     pretty(response)
+
 
 if __name__ == "__main__":
     main()

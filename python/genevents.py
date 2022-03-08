@@ -17,17 +17,13 @@
 """A tool to generate event data to a named index."""
 
 import datetime
-import os
 import socket
 import sys
 import time
 
-from six.moves import range
 from splunklib.client import connect
 
 from utils import parse
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 SPLUNK_HOST = "localhost"
 SPLUNK_PORT = 9002

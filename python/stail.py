@@ -26,6 +26,7 @@ from splunklib.results import ResultsReader
 
 import utils
 
+
 def main():
     usage = "usage: %prog <search>"
     opts = utils.parse(sys.argv[1:], {}, ".env", usage=usage)
@@ -40,8 +41,8 @@ def main():
         result = service.get(
             "search/jobs/export",
             search=search,
-            earliest_time="rt", 
-            latest_time="rt", 
+            earliest_time="rt",
+            latest_time="rt",
             search_mode="realtime")
 
         for result in ResultsReader(result.body):
@@ -51,6 +52,6 @@ def main():
     except KeyboardInterrupt:
         print("\nInterrupted.")
 
+
 if __name__ == "__main__":
     main()
-

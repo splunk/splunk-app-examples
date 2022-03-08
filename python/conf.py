@@ -16,18 +16,12 @@
 
 """Create, delete or list stanza information from/to Splunk confs."""
 
-# from __future__ import absolute_import
-# from __future__ import print_function
-
-import os
 import sys
 
 from splunklib import six
 from splunklib.client import connect
 
 from utils import error, parse
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 
 class Program:

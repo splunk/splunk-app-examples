@@ -20,38 +20,33 @@
 # in the README.
 
 
-from __future__ import absolute_import
-from __future__ import print_function
 import sys, os, urllib2, json
 from six.moves import zip
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from xml.etree import ElementTree
 
 import splunklib.client as client
 import splunklib.results as results
-try:
-    from utils import parse
-except ImportError:
-    raise Exception("Add the SDK repository to your PYTHONPATH to run the examples "
-                    "(e.g., export PYTHONPATH=~/splunk-sdk-python.")
-
+from utils import parse
 
 leftronic_access_key = ""
 
-def send_data(access_key, stream_name, point = None, command = None):
+
+def send_data(access_key, stream_name, point=None, command=None):
     data = {
         "accessKey": access_key,
         "streamName": stream_name
     }
-    
+
     if not point is None:
         data["point"] = point
     if not command is None:
-        data["command"] = command   
+        data["command"] = command
 
     request = urllib2.Request("https://www.leftronic.com/customSend/",
-        data = json.dumps(data)
-    )
+                              data=json.dumps(data)
+                              )
     response = urllib2.urlopen(request)
 
 
@@ -73,15 +68,16 @@ def top_sources(service):
                     except Exception as e:
                         print(status_source_xml)
                         raise e
-                
+
                 data.append({
                     "name": source,
                     "value": int(result["count"])
                 })
 
-        send_data(access_key = leftronic_access_key, stream_name = "top_sources", point = { "leaderboard": data })
+        send_data(access_key=leftronic_access_key, stream_name="top_sources", point={"leaderboard": data})
 
     return created_job, lambda job: iterate(job)
+
 
 def geo(service):
     query = "search index=twitter coordinates_type=Point coordinates_coordinates=* | fields coordinates_coordinates"
@@ -99,11 +95,11 @@ def geo(service):
                 }
                 points.append(point)
 
-                
-        send_data(access_key = leftronic_access_key, stream_name = "geo", command = "clear")
-        send_data(access_key = leftronic_access_key, stream_name = "geo", point = points)
+        send_data(access_key=leftronic_access_key, stream_name="geo", command="clear")
+        send_data(access_key=leftronic_access_key, stream_name="geo", point=points)
 
     return created_job, lambda job: iterate(job)
+
 
 def tweets(service):
     query = "search index=twitter | head 15 | fields user_name, user_screen_name, text, user_profile_image_url "
@@ -121,12 +117,13 @@ def tweets(service):
                     "msg": text,
                     "imgUrl": img
                 }
-                
-                send_data(access_key = leftronic_access_key, stream_name = "tweets", point = point)
-    
+
+                send_data(access_key=leftronic_access_key, stream_name="tweets", point=point)
+
     return created_job, lambda job: iterate(job)
 
-def counts(service):    
+
+def counts(service):
     query = "search index=twitter | stats count by user_id | fields user_id, count | stats count(user_id) as user_count, sum(count) as tweet_count"
     created_job = service.jobs.create(query, search_mode="realtime", earliest_time="rt-5m", latest_time="rt")
 
@@ -139,13 +136,14 @@ def counts(service):
 
                 # Send user count
                 point = int(user_count)
-                send_data(access_key = leftronic_access_key, stream_name = "users_count_5m", point = point)
+                send_data(access_key=leftronic_access_key, stream_name="users_count_5m", point=point)
 
                 # Send tweet count
                 point = int(tweet_count)
-                send_data(access_key = leftronic_access_key, stream_name = "tweets_count_5m", point = point)
+                send_data(access_key=leftronic_access_key, stream_name="tweets_count_5m", point=point)
 
     return created_job, lambda job: iterate(job)
+
 
 def top_tags(service):
     query = 'search index=twitter text=* | rex field=text max_match=1000 "#(?<tag>\w{1,})" | fields tag | mvexpand tag | top 5 tag'
@@ -165,9 +163,10 @@ def top_tags(service):
                     "value": int(count)
                 })
 
-        send_data(access_key = leftronic_access_key, stream_name = "top_tags", point = { "leaderboard": data })
-    
+        send_data(access_key=leftronic_access_key, stream_name="top_tags", point={"leaderboard": data})
+
     return created_job, lambda job: iterate(job)
+
 
 def main(argv):
     # Parse the command line args.
@@ -175,7 +174,7 @@ def main(argv):
 
     # Connect to Splunk
     service = client.connect(**opts.kwargs)
-    
+
     # This is the list of dashboard streams
     streams = [
         top_sources,
@@ -204,13 +203,13 @@ def main(argv):
             # from that job, and send them up to the dashboard
             for job, iterator in zip(jobs, iterators):
                 iterator(job)
-                
+
     except KeyboardInterrupt:
         pass
     finally:
         for job in jobs:
             job.cancel()
+
+
 if __name__ == "__main__":
     main(sys.argv)
-
-    
