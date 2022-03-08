@@ -26,6 +26,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.bin/
+node_modules/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -134,3 +136,6 @@ dmypy.json
 vendor/
 local/
 local.meta
+
+package-lock.json
+.idea/
