@@ -15,15 +15,13 @@
 # under the License.
 
 import os
-from subprocess import PIPE, Popen
 import sys
-
-import pytest
+from subprocess import PIPE, Popen
 
 import testlib
 
-import splunklib.client as client
 from splunklib import six
+from splunklib import client
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 EXAMPLES_PATH = os.path.join(DIR_PATH, '..')
@@ -120,6 +118,14 @@ class ExamplesTestCase(testlib.SDKTestCase):
     def test_follow(self):
         self.check_commands("follow.py --help")
 
+    def test_genevents(self):
+        self.check_commands(
+            "genevents.py --help",
+            "genevents.py '_internal'")
+
+    def test_get_job(self):
+        self.check_commands("get_job.py")
+
     def test_index(self):
         self.check_commands(
             "index.py --help",
@@ -178,8 +184,7 @@ class ExamplesTestCase(testlib.SDKTestCase):
         self.check_commands(
             "search.py --help",
             ["search.py", "search * | head 10"],
-            ["search.py",
-             "search * | head 10 | stats count", '--output_mode=csv'])
+            ["search.py", "search * | head 10 | stats count", "--output_mode", "csv"])
 
     def test_search_modes(self):
         self.check_commands("search_modes.py")
@@ -212,80 +217,80 @@ class ExamplesTestCase(testlib.SDKTestCase):
             "upload.py --help",
             "upload.py --index=sdk-tests %s" % file_to_upload)
 
-    # The following tests are for the Analytics example
-    # def test_analytics(self):
-    #     # We have to add the current path to the PYTHONPATH,
-    #     # otherwise the import doesn't work quite right
-    #     sys.path.append(EXAMPLES_PATH)
-    #     import analytics
-    #
-    #     # Create a tracker
-    #     tracker = analytics.input.AnalyticsTracker(
-    #         "sdk-test", self.opts.kwargs, index="sdk-test")
-    #
-    #     service = client.connect(**self.opts.kwargs)
-    #
-    #     # Before we start, we'll clean the index
-    #     index = service.indexes["sdk-test"]
-    #     index.clean()
-    #
-    #     tracker.track("test_event", distinct_id="abc123", foo="bar", abc="123")
-    #     tracker.track("test_event", distinct_id="123abc", abc="12345")
-    #
-    #     # Wait until the events get indexed
-    #     self.assertEventuallyTrue(lambda: index.refresh()['totalEventCount'] == '2', timeout=200)
-    #
-    #     # Now, we create a retriever to retrieve the events
-    #     retriever = analytics.output.AnalyticsRetriever(
-    #         "sdk-test", self.opts.kwargs, index="sdk-test")
-    #
-    #     # Assert applications
-    #     applications = retriever.applications()
-    #     self.assertEqual(len(applications), 1)
-    #     self.assertEqual(applications[0]["name"], "sdk-test")
-    #     self.assertEqual(applications[0]["count"], 2)
-    #
-    #     # Assert events
-    #     events = retriever.events()
-    #     self.assertEqual(len(events), 1)
-    #     self.assertEqual(events[0]["name"], "test_event")
-    #     self.assertEqual(events[0]["count"], 2)
-    #
-    #     # Assert properties
-    #     expected_properties = {
-    #         "abc": 2,
-    #         "foo": 1
-    #     }
-    #     properties = retriever.properties("test_event")
-    #     self.assertEqual(len(properties), len(expected_properties))
-    #     for prop in properties:
-    #         name = prop["name"]
-    #         count = prop["count"]
-    #         self.assertTrue(name in list(expected_properties.keys()))
-    #         self.assertEqual(count, expected_properties[name])
-    #
-    #     # Assert property values
-    #     expected_property_values = {
-    #         "123": 1,
-    #         "12345": 1
-    #     }
-    #     values = retriever.property_values("test_event", "abc")
-    #     self.assertEqual(len(values), len(expected_property_values))
-    #     for value in values:
-    #         name = value["name"]
-    #         count = value["count"]
-    #         self.assertTrue(name in list(expected_property_values.keys()))
-    #         self.assertEqual(count, expected_property_values[name])
-    #
-    #     # Assert event over time
-    #     over_time = retriever.events_over_time(
-    #         time_range=analytics.output.TimeRange.MONTH)
-    #     self.assertEqual(len(over_time), 1)
-    #     self.assertEqual(len(over_time["test_event"]), 1)
-    #     self.assertEqual(over_time["test_event"][0]["count"], 2)
-    #
-    #     # Now that we're done, we'll clean the index
-    #     index.clean()
+    #The following tests are for the Analytics example
+    def test_analytics(self):
+        # We have to add the current path to the PYTHONPATH,
+        # otherwise the import doesn't work quite right
+        sys.path.append(EXAMPLES_PATH)
+        import analytics
+
+        # Create a tracker
+        tracker = analytics.input.AnalyticsTracker(
+            "sdk-test", self.opts.kwargs, index="sdk-test")
+
+        service = client.connect(**self.opts.kwargs)
+
+        # Before we start, we'll clean the index
+        index = service.indexes["sdk-test"]
+        index.clean(timeout=300)
+
+        tracker.track("test_event", distinct_id="abc123", foo="bar", abc="123")
+        tracker.track("test_event", distinct_id="123abc", abc="12345")
+
+        # Wait until the events get indexed
+        self.assertEventuallyTrue(lambda: index.refresh()['totalEventCount'] == '2', timeout=200)
+
+        # Now, we create a retriever to retrieve the events
+        retriever = analytics.output.AnalyticsRetriever(
+            "sdk-test", self.opts.kwargs, index="sdk-test")
+
+        # Assert applications
+        applications = retriever.applications()
+        self.assertEqual(len(applications), 1)
+        self.assertEqual(applications[0]["name"], "sdk-test")
+        self.assertEqual(applications[0]["count"], 2)
+
+        # Assert events
+        events = retriever.events()
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]["name"], "test_event")
+        self.assertEqual(events[0]["count"], 2)
+
+        # Assert properties
+        expected_properties = {
+            "abc": 2,
+            "foo": 1
+        }
+        properties = retriever.properties("test_event")
+        self.assertEqual(len(properties), len(expected_properties))
+        for prop in properties:
+            name = prop["name"]
+            count = prop["count"]
+            self.assertTrue(name in list(expected_properties.keys()))
+            self.assertEqual(count, expected_properties[name])
+
+        # Assert property values
+        expected_property_values = {
+            "123": 1,
+            "12345": 1
+        }
+        values = retriever.property_values("test_event", "abc")
+        self.assertEqual(len(values), len(expected_property_values))
+        for value in values:
+            name = value["name"]
+            count = value["count"]
+            self.assertTrue(name in list(expected_property_values.keys()))
+            self.assertEqual(count, expected_property_values[name])
+
+        # Assert event over time
+        over_time = retriever.events_over_time(
+            time_range=analytics.output.TimeRange.MONTH)
+        self.assertEqual(len(over_time), 1)
+        self.assertEqual(len(over_time["test_event"]), 1)
+        self.assertEqual(over_time["test_event"][0]["count"], 2)
+
+        # Now that we're done, we'll clean the index
+        index.clean(timeout=120)
 
 
 if __name__ == "__main__":
