@@ -38,12 +38,11 @@ class EventingCSC(EventingCommand):
     status = Option(
         doc='''**Syntax:** **status=***<value>*
         **Description:** record having same status value will be returned.''',
-        require=True, validate=validators.Integer(0))
+        require=True)
 
     def transform(self, records):
         for record in records:
-            record_status = int(record["status"]) if record["status"] else -1
-            if self.status == record_status:
+            if str(self.status) == record["status"]:
                 yield record
 
 
