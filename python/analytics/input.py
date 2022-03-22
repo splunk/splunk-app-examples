@@ -22,9 +22,8 @@ from splunklib import six
 from datetime import datetime
 import splunklib.client as client
 
-import python.utils as utils
-
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+import python.utils as utils
 
 __all__ = [
     "AnalyticsTracker",
