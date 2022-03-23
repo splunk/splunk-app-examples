@@ -16,6 +16,7 @@
 
 import sys
 import os
+import ssl
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
@@ -51,7 +52,7 @@ class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_DELETE(self):
         redirect_url, headers = self.get_url_and_headers()
 
-        self.make_request(redirect_url, "DELETE", "", headers)
+        self.make_request(redirect_url, "DELETE", b"", headers)
 
     def do_OPTIONS(self):
         # This is some capability checking, so we only need to send the cross domain
@@ -70,9 +71,9 @@ class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
         # Get the redirect URL and remove it from the headers
         redirect_url = None
-        if "x-redirect-url" in headers:
-            redirect_url = headers["x-redirect-url"]
-            del headers["x-redirect-url"]
+        if "X-Redirect-URL" in headers:
+            redirect_url = headers["X-Redirect-URL"]
+            del headers["X-Redirect-URL"]
         else:
             self.send_error(500, "Request is missing X-Redirect-URL header.")
 
@@ -82,11 +83,9 @@ class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.log_message("%s: %s", method, url)
         try:
             # Make the request
-            print(url)
             request = urllib.request.Request(url, data, headers)
-            print(request)
             request.get_method = lambda: method
-            response = urllib.urlopen(request)
+            response = urllib.request.urlopen(request, context=ssl._create_unverified_context())
 
             # We were successful, so send the response code
             self.send_response(response.code, message=response.msg)
