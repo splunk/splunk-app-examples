@@ -8,208 +8,182 @@
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+# License for the specific language governing permissions and limitations 
 # under the License.
-#
-# This example shows how to integrate Splunk with 3rd party services using
-# the Python SDK. In this case, we use Twitter data and Leftronic 
-# (http://www.leftronic.com) dashboards. You can find more information
-# in the README.
 
+import json
+import os
+import sys
+from getpass import getpass
 
-import sys, os, urllib2, json
-from six.moves import zip
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from xml.etree import ElementTree
-
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from splunklib import six
+from six.moves import input
 import splunklib.client as client
 import splunklib.results as results
-from utils import parse
-
-leftronic_access_key = ""
-
-
-def send_data(access_key, stream_name, point=None, command=None):
-    data = {
-        "accessKey": access_key,
-        "streamName": stream_name
-    }
-
-    if not point is None:
-        data["point"] = point
-    if not command is None:
-        data["command"] = command
-
-    request = urllib2.Request("https://www.leftronic.com/customSend/",
-                              data=json.dumps(data)
-                              )
-    response = urllib2.urlopen(request)
+from python.utils import error, parse
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
-def top_sources(service):
-    query = "search index=twitter status_source=* | stats count(status_source) as count by status_source | sort -count | head 5"
-    created_job = service.jobs.create(query, search_mode="realtime", earliest_time="rt-5m", latest_time="rt")
+def plot_top_hash_tags(service):
+    job = service.jobs.create('search index=twitter | tophashtags top=10', **{"exec_mode": "normal"})
 
-    def iterate(job):
-        reader = results.ResultsReader(job.preview())
-        data = []
+    while True:
+        while not job.is_done():
+            pass
+        break
 
-        for result in reader:
-            if isinstance(result, dict):
-                status_source_xml = result["status_source"].strip()
-                source = status_source_xml
-                if status_source_xml.startswith("<a"):
-                    try:
-                        source = ElementTree.XML(status_source_xml).text
-                    except Exception as e:
-                        print(status_source_xml)
-                        raise e
+    events = []
+    for result in results.ResultsReader(job.results()):
+        events.append(result)
 
-                data.append({
-                    "name": source,
-                    "value": int(result["count"])
-                })
+    if len(events) <= 0:
+        print("No events found to plot")
+        return
 
-        send_data(access_key=leftronic_access_key, stream_name="top_sources", point={"leaderboard": data})
+    df = pd.DataFrame(events)
+    df["hashtag"] = df["hashtag"].astype(str)
+    df["count"] = df["count"].astype(float)
+    df["percent"] = df["percent"].astype(float)
 
-    return created_job, lambda job: iterate(job)
+    plt.bar(df["hashtag"], df["count"])
+    plt.xlabel("Hashtags")
+    plt.ylabel("Count")
+    plt.show()
 
 
-def geo(service):
-    query = "search index=twitter coordinates_type=Point coordinates_coordinates=* | fields coordinates_coordinates"
-    created_job = service.jobs.create(query, search_mode="realtime", earliest_time="rt-5m", latest_time="rt")
+def plot_top_sources(service):
+    query = 'search index=twitter | spath | rename data.source as source | stats count(source) as count by source | sort -count | head 10'
+    job = service.jobs.create(query, **{"exec_mode": "normal"})
 
-    def iterate(job):
-        reader = results.ResultsReader(job.preview())
-        points = []
-        for result in reader:
-            if isinstance(result, dict):
-                lng, lat = result["coordinates_coordinates"].split(",")
-                point = {
-                    "latitude": lat,
-                    "longitude": lng,
-                }
-                points.append(point)
+    while True:
+        while not job.is_done():
+            pass
+        break
 
-        send_data(access_key=leftronic_access_key, stream_name="geo", command="clear")
-        send_data(access_key=leftronic_access_key, stream_name="geo", point=points)
+    events = []
 
-    return created_job, lambda job: iterate(job)
+    for result in results.ResultsReader(job.results()):
+        events.append(result)
 
+    if len(events) <= 0:
+        print("No events found to plot")
+        return
 
-def tweets(service):
-    query = "search index=twitter | head 15 | fields user_name, user_screen_name, text, user_profile_image_url "
-    created_job = service.jobs.create(query, search_mode="realtime", earliest_time="rt-5m", latest_time="rt")
+    df = pd.DataFrame(events)
+    df["source"] = df["source"].astype(str)
+    df["count"] = df["count"].astype(float)
 
-    def iterate(job):
-        reader = results.ResultsReader(job.preview())
-        for result in reader:
-            if isinstance(result, dict):
-                user = result.get("user_name", result.get("user_screen_name", ""))
-                text = result.get("text", "")
-                img = result.get("user_profile_image_url", "")
-                point = {
-                    "title": user,
-                    "msg": text,
-                    "imgUrl": img
-                }
-
-                send_data(access_key=leftronic_access_key, stream_name="tweets", point=point)
-
-    return created_job, lambda job: iterate(job)
+    plt.bar(df["source"], df["count"])
+    plt.xlabel("Source")
+    plt.ylabel("Count")
+    plt.show()
 
 
-def counts(service):
-    query = "search index=twitter | stats count by user_id | fields user_id, count | stats count(user_id) as user_count, sum(count) as tweet_count"
-    created_job = service.jobs.create(query, search_mode="realtime", earliest_time="rt-5m", latest_time="rt")
+def plot_lang(service):
+    query = 'search index=twitter | rename data.lang as language | stats count(language) as count by language'
+    job = service.jobs.create(query, **{"exec_mode": "normal"})
 
-    def iterate(job):
-        reader = results.ResultsReader(job.preview())
-        for result in reader:
-            if isinstance(result, dict):
-                user_count = result["user_count"]
-                tweet_count = result.get("tweet_count", 0)
+    while True:
+        while not job.is_done():
+            pass
+        break
 
-                # Send user count
-                point = int(user_count)
-                send_data(access_key=leftronic_access_key, stream_name="users_count_5m", point=point)
+    events = []
 
-                # Send tweet count
-                point = int(tweet_count)
-                send_data(access_key=leftronic_access_key, stream_name="tweets_count_5m", point=point)
+    for result in results.ResultsReader(job.results()):
+        events.append(result)
 
-    return created_job, lambda job: iterate(job)
+    if len(events) <= 0:
+        print("No events found to plot")
+        return
 
+    df = pd.DataFrame(events)
+    df["language"] = df["language"].astype(str)
+    df["count"] = df["count"].astype(float)
 
-def top_tags(service):
-    query = 'search index=twitter text=* | rex field=text max_match=1000 "#(?<tag>\w{1,})" | fields tag | mvexpand tag | top 5 tag'
-    created_job = service.jobs.create(query, search_mode="realtime", earliest_time="rt-5m", latest_time="rt")
-
-    def iterate(job):
-        reader = results.ResultsReader(job.preview())
-        data = []
-
-        for result in reader:
-            if isinstance(result, dict):
-                tag = result["tag"]
-                count = result["count"]
-
-                data.append({
-                    "name": tag,
-                    "value": int(count)
-                })
-
-        send_data(access_key=leftronic_access_key, stream_name="top_tags", point={"leaderboard": data})
-
-    return created_job, lambda job: iterate(job)
+    plt.bar(df["language"], df["count"])
+    plt.xlabel("Language")
+    plt.ylabel("Count")
+    plt.show()
 
 
-def main(argv):
-    # Parse the command line args.
-    opts = parse(argv, {}, ".env")
+def plot_annotations(service):
+    query = 'search index=twitter | rename includes.tweets{}.entities.annotations{}.type as type | stats count(type) as count by type'
+    job = service.jobs.create(query, **{"exec_mode": "normal"})
 
-    # Connect to Splunk
-    service = client.connect(**opts.kwargs)
+    while True:
+        while not job.is_done():
+            pass
+        break
 
-    # This is the list of dashboard streams
-    streams = [
-        top_sources,
-        geo,
-        tweets,
-        counts,
-        top_tags,
-    ]
+    events = []
 
-    jobs = []
-    iterators = []
+    for result in results.ResultsReader(job.results()):
+        events.append(result)
 
-    # For each stream, we get back the created job
-    # that feeds the stream, and also the iterator
-    # that will poll the job and forward the data
-    # to the dashboard
-    for stream in streams:
-        job, iterator = stream(service)
-        jobs.append(job)
-        iterators.append(iterator)
+    if len(events) <= 0:
+        print("No events found to plot")
+        return
 
+    df = pd.DataFrame(events)
+    df["type"] = df["type"].astype(str)
+    df["count"] = df["count"].astype(float)
+
+    plt.bar(df["type"], df["count"])
+    plt.xlabel("Type")
+    plt.ylabel("Count")
+    plt.show()
+
+
+def cmdline():
+    kwargs = parse(sys.argv[1:], {}, ".env").kwargs
+
+    # Prompt for Splunk username/password if not provided on command line / in .env
+    if 'username' not in kwargs:
+        kwargs['username'] = input("Splunk username: ")
+    if 'password' not in kwargs:
+        kwargs['password'] = getpass("Splunk password:")
+
+    if len(sys.argv) > 1:
+        kwargs["function"] = sys.argv[1]
+    else:
+        kwargs["function"] = None
+
+    return kwargs
+
+
+functions_dict = {"tophashtags": plot_top_hash_tags,
+                  "topsources": plot_top_sources,
+                  "lang": plot_lang,
+                  "annotations": plot_annotations}
+
+
+def main():
     try:
-        while True:
-            # For each (job,iterator) pair, we invoke the
-            # iterator, which in turn will pull new results
-            # from that job, and send them up to the dashboard
-            for job, iterator in zip(jobs, iterators):
-                iterator(job)
+        kwargs = cmdline()
 
-    except KeyboardInterrupt:
-        pass
-    finally:
-        for job in jobs:
-            job.cancel()
+        if kwargs["function"] in functions_dict:
+
+            # Force the owner namespace, if not provided
+            if 'owner' not in list(kwargs.keys()):
+                kwargs['owner'] = kwargs['username']
+
+            print("Initializing Splunk ..")
+
+            service = client.connect(**kwargs)
+
+            functions_dict[kwargs["function"]](service)
+        else:
+            raise NameError("Please provide a function name from %s as an argument." % list(functions_dict.keys()) )
+    except Exception as e:
+        print(str(e))
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main()
+
