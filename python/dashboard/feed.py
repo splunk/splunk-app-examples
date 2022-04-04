@@ -38,7 +38,7 @@ def plot_top_hash_tags(service):
         break
 
     events = []
-    for result in results.ResultsReader(job.results()):
+    for result in results.JSONResultsReader(job.results(output_mode='json')):
         events.append(result)
 
     if len(events) <= 0:
@@ -67,7 +67,7 @@ def plot_top_sources(service):
 
     events = []
 
-    for result in results.ResultsReader(job.results()):
+    for result in results.JSONResultsReader(job.results(output_mode='json')):
         events.append(result)
 
     if len(events) <= 0:
@@ -95,7 +95,7 @@ def plot_lang(service):
 
     events = []
 
-    for result in results.ResultsReader(job.results()):
+    for result in results.JSONResultsReader(job.results(output_mode='json')):
         events.append(result)
 
     if len(events) <= 0:
@@ -123,7 +123,7 @@ def plot_annotations(service):
 
     events = []
 
-    for result in results.ResultsReader(job.results()):
+    for result in results.JSONResultsReader(job.results(output_mode='json')):
         events.append(result)
 
     if len(events) <= 0:

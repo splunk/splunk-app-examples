@@ -47,7 +47,7 @@ class TimeRange:
 
 def counts(job, result_key):
     applications = []
-    reader = results.ResultsReader(job.results())
+    reader = results.JSONResultsReader(job.results(output_mode='json'))
     for result in reader:
         if isinstance(result, dict):
             applications.append({
@@ -80,12 +80,12 @@ class AnalyticsRetriever:
         job = self.splunk.jobs.create(query, exec_mode="blocking")
 
         properties = []
-        reader = results.ResultsReader(job.results())
+        reader = results.JSONResultsReader(job.results(output_mode='json'))
         for result in reader:
             if not isinstance(result, dict):
                 continue
             for field, count in six.iteritems(result):
-                # Ignore internal ResultsReader properties
+                # Ignore internal JSONResultsReader properties
                 if field.startswith("$"):
                     continue
 
@@ -105,7 +105,7 @@ class AnalyticsRetriever:
         job = self.splunk.jobs.create(query, exec_mode="blocking")
 
         values = []
-        reader = results.ResultsReader(job.results())
+        reader = results.JSONResultsReader(job.results(output_mode='json'))
         for result in reader:
             if isinstance(result, dict):
                 if result[property]:
@@ -125,7 +125,7 @@ class AnalyticsRetriever:
         job = self.splunk.jobs.create(query, exec_mode="blocking")
 
         over_time = {}
-        reader = results.ResultsReader(job.results())
+        reader = results.JSONResultsReader(job.results())
         for result in reader:
             if isinstance(result, dict):
                 # Get the time for this entry
@@ -135,7 +135,7 @@ class AnalyticsRetriever:
                 # The rest is in the form of [event/property]:count
                 # pairs, so we decode those
                 for key, count in six.iteritems(result):
-                    # Ignore internal ResultsReader properties
+                    # Ignore internal JSONResultsReader properties
                     if key.startswith("$"):
                         continue
 
