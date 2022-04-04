@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding=utf-8
 #
 # Copyright 2011-2015 Splunk, Inc.
 #
@@ -14,192 +15,66 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import
-import csv, sys, urllib, re
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import os
+import sys
+import json
+from collections import Counter
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, os.pardir)))
-from collections import OrderedDict
-
-from splunklib import six
-from splunklib.six.moves import zip
-from splunklib.six.moves import urllib
-
-
-# Tees output to a logfile for debugging
-class Logger:
-    def __init__(self, filename, buf = None):
-        self.log = open(filename, 'w')
-        self.buf = buf
-
-    def flush(self):
-        self.log.flush()
-
-        if self.buf is not None:
-            self.buf.flush()
-
-    def write(self, message):
-        self.log.write(message)
-        self.log.flush()
-        
-        if self.buf is not None:
-            self.buf.write(message)
-            self.buf.flush()
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
+from splunklib.searchcommands import dispatch, ReportingCommand, Configuration, Option, validators
+from splunklib.searchcommands import splunklib_logger
 
 
-# Tees input as it is being read, also logging it to a file
-class Reader:
-    def __init__(self, buf, filename = None):
-        self.buf = buf
-        if filename is not None:
-            self.log = open(filename, 'w')
-        else:
-            self.log = None
+@Configuration(requires_preop=True)
+class TopHashTags(ReportingCommand):
 
-    def __iter__(self):
-        return self
+    top = Option(require=True, validate=validators.Integer(0))
 
-    def next(self):
-        return self.readline()
+    @Configuration()
+    def map(self, records):
 
-    __next__ = next
+        for record in records:
+            try:
+                raw_record = record.get("_raw")
+                python_record = json.loads(raw_record, strict=False)
 
-    def readline(self):
-        line = self.buf.readline()
+                users = python_record.get("includes").get("users")
+                for user in users:
+                    entities = user.get("entities")
+                    if entities:
+                        description = entities.get("description")
+                        if description:
+                            hashtags = description.get("hashtags")
+                            if hashtags:
+                                for hashtag in hashtags:
+                                    if hashtag:
+                                        yield {"hashtag": hashtag.get("tag")}
+            except Exception as e:
+                print(e)
 
-        if not line:
-            raise StopIteration
+    def reduce(self, hashtags):
+        hashtags_list = []
+        top_5_tags = []
 
-        # Log to a file if one is present
-        if self.log is not None:
-            self.log.write(line)
-            self.log.flush()
+        for hashtag in hashtags:
+            hashtags_list.append(hashtag.get("hashtag"))
 
-        # Return to the caller
-        return line
+        c = Counter(hashtags_list)
 
+        tags = {}
+        for tag,count in c.most_common(self.top):
+            tags[tag] = count
 
-def output_results(results, mvdelim = '\n', output = sys.stdout):
-    """Given a list of dictionaries, each representing
-    a single result, and an optional list of fields,
-    output those results to stdout for consumption by the
-    Splunk pipeline"""
+        percent = []
+        sum_of_hash = sum(list(tags.values()))
 
-    # We collect all the unique field names, as well as 
-    # convert all multivalue keys to the right form
-    fields = set()
-    for result in results:    
-        for key in list(result.keys()):
-            if(isinstance(result[key], list)):
-                result['__mv_' + key] = encode_mv(result[key])
-                result[key] = mvdelim.join(result[key])
-        fields.update(list(result.keys()))
+        for i in list(tags.values()):
+            percent.append("{:.2f}".format((i/sum_of_hash)*100))
 
-    # convert the fields into a list and create a CSV writer
-    # to output to stdout
-    fields = sorted(list(fields))
-
-    writer = csv.DictWriter(output, fields)
-
-    # Write out the fields, and then the actual results
-    writer.writerow(dict(list(zip(fields, fields))))
-    writer.writerows(results)
+        for index in range(len(tags)):
+            yield {"hashtag": list(tags.keys())[index], "count": list(tags.values())[index], "percent": percent[index]}
 
 
-def read_input(buf, has_header = True):
-    """Read the input from the given buffer (or stdin if no buffer)
-    is supplied. An optional header may be present as well"""
-
-    # Use stdin if there is no supplied buffer
-    if buf == None:
-        buf = sys.stdin
-
-    # Attempt to read a header if necessary
-    header = {}
-    if has_header:
-        # Until we get a blank line, read "attr:val" lines, 
-        # setting the values in 'header'
-        last_attr = None
-        while True:
-            line = buf.readline()
-
-            # remove lastcharacter (which is a newline)
-            line = line[:-1] 
-
-            # When we encounter a newline, we are done with the header
-            if len(line) == 0:
-                break
-
-            colon = line.find(':')
-
-            # If we can't find a colon, then it might be that we are
-            # on a new line, and it belongs to the previous attribute
-            if colon < 0:
-                if last_attr:
-                    header[last_attr] = header[last_attr] + '\n' + urllib.parse.unquote(line)
-                else:
-                    continue
-
-            # extract it and set value in settings
-            last_attr = attr = line[:colon]
-            val  = urllib.parse.unquote(line[colon+1:])
-            header[attr] = val
-
-    return buf, header
-
-
-def encode_mv(vals):
-    """For multivalues, values are wrapped in '$' and separated using ';'
-    Literal '$' values are represented with '$$'"""
-    s = ""
-    for val in vals:
-        val = val.replace('$', '$$')
-        if len(s) > 0:
-            s += ';'
-        s += '$' + val + '$'
-
-    return s
-
-
-def main(argv):
-    stdin_wrapper = Reader(sys.stdin)
-    buf, settings = read_input(stdin_wrapper, has_header = True)
-    events = csv.DictReader(buf)
-    
-    hashtags = OrderedDict()
-    
-    for event in events:
-        # For each event, 
-        text = event["text"]
-        
-        hash_regex = re.compile(r'\s+(#[0-9a-zA-Z+_]+)', re.IGNORECASE)
-        for hashtag_match in hash_regex.finditer(text):
-            hashtag = hashtag_match.group(0).strip().lower()
-    
-            hashtag_count = 0
-            if hashtag in hashtags:
-                hashtag_count = hashtags[hashtag]
-            
-            hashtags[hashtag] = hashtag_count + 1
-            
-    num_hashtags = sum(hashtags.values())
-
-    from decimal import Decimal
-    results = []
-    for k, v in six.iteritems(hashtags):
-        results.insert(0, {
-            "hashtag": k, 
-            "count": v, 
-            "percentage": (Decimal(v) / Decimal(num_hashtags))
-        })
-
-    # And output it to the next stage of the pipeline
-    output_results(results)
-
-
-if __name__ == "__main__":
-    try: 
-        main(sys.argv)
-    except Exception:
-        import traceback
-        traceback.print_exc(file=sys.stdout)
+dispatch(TopHashTags, sys.argv, sys.stdin, sys.stdout, __name__)
