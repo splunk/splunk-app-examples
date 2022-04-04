@@ -125,7 +125,7 @@ class AnalyticsRetriever:
         job = self.splunk.jobs.create(query, exec_mode="blocking")
 
         over_time = {}
-        reader = results.JSONResultsReader(job.results())
+        reader = results.JSONResultsReader(job.results(output_mode='json'))
         for result in reader:
             if isinstance(result, dict):
                 # Get the time for this entry
