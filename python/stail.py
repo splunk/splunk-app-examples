@@ -22,7 +22,7 @@ import sys
 from pprint import pprint
 
 from splunklib.client import connect
-from splunklib.results import ResultsReader
+from splunklib.results import JSONResultsReader
 
 import utils
 
@@ -43,9 +43,11 @@ def main():
             search=search,
             earliest_time="rt",
             latest_time="rt",
-            search_mode="realtime")
+            search_mode="realtime",
+            output_mode="json")
+        print(result.body)
 
-        for result in ResultsReader(result.body):
+        for result in JSONResultsReader(result.body):
             if result is not None:
                 print(pprint(result))
 

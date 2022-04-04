@@ -201,8 +201,8 @@ class ExamplesTestCase(testlib.SDKTestCase):
             "spurl.py /services",
             "spurl.py apps/local")
 
-    # def test_stail(self):
-    #     self.check_commands(["stail.py", "search _internal | head 10"])
+    def test_stail(self):
+        self.check_commands(["stail.py", "search index='_internal'"])
 
     def test_submit(self):
         self.check_commands("submit.py --help")
@@ -232,7 +232,7 @@ class ExamplesTestCase(testlib.SDKTestCase):
 
         # Before we start, we'll clean the index
         index = service.indexes["sdk-test"]
-        index.clean(timeout=300)
+        index.clean(timeout=120)
 
         tracker.track("test_event", distinct_id="abc123", foo="bar", abc="123")
         tracker.track("test_event", distinct_id="123abc", abc="12345")

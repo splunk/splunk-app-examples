@@ -20,13 +20,13 @@ from pprint import pprint
 import socket
 
 from splunklib.client import connect
-import splunklib.results as results
+from splunklib.results import JSONResultsReader
 
 import utils
 
 
 def pretty(response):
-    reader = results.ResultsReader(response)
+    reader = JSONResultsReader(response)
     for result in reader:
         if isinstance(result, dict):
             pprint(result)
@@ -41,7 +41,7 @@ def main():
     search = opts.args[0]
     service = connect(**opts.kwargs)
     socket.setdefaulttimeout(None)
-    response = service.jobs.oneshot(search)
+    response = service.jobs.oneshot(search, output_mode="json")
 
     pretty(response)
 
