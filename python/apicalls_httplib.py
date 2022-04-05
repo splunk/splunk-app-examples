@@ -22,8 +22,9 @@ API.
 """
 
 import urllib
+import ssl
 from xml.etree import ElementTree
-from splunklib import six
+import http.client
 
 
 def main():
@@ -33,13 +34,13 @@ def main():
     PASSWORD = "changed!"
 
     # Present credentials to Splunk and retrieve the session key
-    connection = six.moves.http_client.HTTPSConnection(HOST, PORT)
-    body = urllib.urlencode({'username': USERNAME, 'password': PASSWORD})
+    connection = http.client.HTTPSConnection(HOST, PORT, context= ssl._create_unverified_context())
+    body = urllib.parse.urlencode({'username': USERNAME, 'password': PASSWORD})
     headers = {
         'Content-Type': "application/x-www-form-urlencoded",
         'Content-Length': str(len(body)),
         'Host': HOST,
-        'User-Agent': "a.py/1.0",
+        'User-Agent': "apicalls_httplib.py/1.0",
         'Accept': "*/*"
     }
     try:
@@ -50,10 +51,11 @@ def main():
     if response.status != 200:
         raise Exception("%d (%s)" % (response.status, response.reason))
     body = response.read()
+    print(response)
     sessionKey = ElementTree.XML(body).findtext("./sessionKey")
 
     # Now make the request to Splunk for list of installed apps
-    connection = six.moves.http_client.HTTPSConnection(HOST, PORT)
+    connection = http.client.HTTPSConnection(HOST, PORT)
     headers = {
         'Content-Length': "0",
         'Host': HOST,
