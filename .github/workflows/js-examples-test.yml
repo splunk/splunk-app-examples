@@ -1,0 +1,56 @@
+name: JS Examples CI
+
+on:
+  push:
+    paths:
+      - "javascript/**"
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        node:
+          - 14
+          - 8.17.0
+        splunk-version:
+          - "8.0"
+          - "latest"
+
+    services:
+      splunk:
+        image: splunk/splunk:${{matrix.splunk-version}}
+        env:
+          SPLUNK_START_ARGS: --accept-license
+          SPLUNK_HEC_TOKEN: 11111111-1111-1111-1111-1111111111113
+          SPLUNK_PASSWORD: changed!
+          SPLUNK_APPS_URL: https://github.com/splunk/sdk-app-collection/releases/download/v1.1.0/sdkappcollection.tgz
+        ports:
+          - 8000:8000
+          - 8088:8088
+          - 8089:8089
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Create .splunkrc file
+        run: |
+          cd ~
+          echo host=localhost > .splunkrc
+          echo port=8089 >> .splunkrc
+          echo username=admin >> .splunkrc
+          echo password=changed! >> .splunkrc
+          echo scheme=https >> .splunkrc
+          echo version=${{ matrix.splunk }} >> .splunkrc
+      - name: Run npm install
+        working-directory: ./javascript
+        run: npm install
+      - name: Test Execution
+        working-directory: ./javascript
+        run: ./node_modules/mocha/bin/mocha test_examples.js
+        shell: sh

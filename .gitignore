@@ -26,6 +26,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.bin/
+node_modules/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -134,21 +136,7 @@ dmypy.json
 vendor/
 local/
 local.meta
-.idea/inspectionProfiles/profiles_settings.xml
-.idea/inspectionProfiles/Project_Default.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/splunk-app-examples.iml
-.idea/vcs.xml
-.idea/inspectionProfiles/profiles_settings.xml
-.idea/inspectionProfiles/Project_Default.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/splunk-app-examples.iml
-.idea/vcs.xml
-.idea/inspectionProfiles/profiles_settings.xml
-.idea/inspectionProfiles/Project_Default.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/splunk-app-examples.iml
-.idea/vcs.xml
+
+package-lock.json
+.idea/
+

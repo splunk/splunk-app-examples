@@ -1,0 +1,24 @@
+{
+    "name": "test_examples",
+    "version": "0.0.1",
+    "description": "Splunk test examples",
+    "main": "test_examples.js",
+    "dependencies": {
+        "splunk-sdk": ">=1.4.0",
+        "needle": "3.0.0"
+    },
+    "devDependencies": {
+        "browserify": "^17.0.0",
+        "chai": "^4.3.4",
+        "mocha": "7.2.0",
+        "mustache": "4.2.0"
+    },
+    "author": "Splunk",
+    "engine": {
+        "node": ">=0.8.0"
+    },
+    "scripts": {
+        "test": "mocha test_examples.js",
+        "browser-examples": "node test_browser_examples"
+    }
+}
