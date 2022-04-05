@@ -48,16 +48,13 @@ class HashTags(ReportingCommand):
                             if hashtags:
                                 for hashtag in hashtags:
                                     if hashtag:
-                                        yield {"hashtag": hashtag.get("tag")}
+                                        yield {"hashtag": hashtag.get("tag"), "_time": record.get("_time")}
             except Exception as e:
                 print(e)
 
-    def reduce(self, hashtags):
-        hashtags_list = []
-        for hashtag in hashtags:
-            hashtags_list.append(hashtag.get("hashtag"))
-
-        yield {"Hashtags": hashtags_list}
+    def reduce(self, events):
+        for event in events:
+            yield event
 
 
 dispatch(HashTags, sys.argv, sys.stdin, sys.stdout, __name__)
