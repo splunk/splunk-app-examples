@@ -34,7 +34,7 @@ Use `pip`:
 You'll need `docker` and `docker-compose` to get up and running using this method.
 
 ```
-make up SPLUNK_VERSION=8.0
+make up SPLUNK_VERSION=latest
 make wait_up
 make test
 make down
