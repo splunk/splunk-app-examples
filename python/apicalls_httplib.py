@@ -47,15 +47,17 @@ def main():
         connection.request("POST", "/services/auth/login", body, headers)
         response = connection.getresponse()
     finally:
-        connection.close()
+        print('')
     if response.status != 200:
+        connection.close()
         raise Exception("%d (%s)" % (response.status, response.reason))
     body = response.read()
-    print(response)
+    connection.close()
+
     sessionKey = ElementTree.XML(body).findtext("./sessionKey")
 
     # Now make the request to Splunk for list of installed apps
-    connection = http.client.HTTPSConnection(HOST, PORT)
+    connection = http.client.HTTPSConnection(HOST, PORT, context= ssl._create_unverified_context())
     headers = {
         'Content-Length': "0",
         'Host': HOST,
@@ -67,11 +69,13 @@ def main():
         connection.request("GET", "/services/apps/local", "", headers)
         response = connection.getresponse()
     finally:
-        connection.close()
+        print('')
     if response.status != 200:
+        connection.close()
         raise Exception("%d (%s)" % (response.status, response.reason))
 
     body = response.read()
+    connection.close()
     data = ElementTree.XML(body)
     apps = data.findall("{http://www.w3.org/2005/Atom}entry/{http://www.w3.org/2005/Atom}title")
     for app in apps:
