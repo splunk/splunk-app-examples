@@ -23,80 +23,68 @@ import sys
 splunkhome = os.environ['SPLUNK_HOME']
 sys.path.append(os.path.join(splunkhome, 'etc', 'apps', 'customsearchcommands_app', 'lib'))
 from splunklib.searchcommands import dispatch, EventingCommand, Configuration, Option
-from splunklib.searchcommands.validators import Code
+
 
 @Configuration()
 class FilterCommand(EventingCommand):
-    """ Filters, augments, and updates records on the events stream.
+    """ Filters and updates records on the events stream.
 
-    ##Syntax
+    :code:`filter contains="value1" replace="value to be replaced,value to replace with"`
 
-    .. code-block::
-        filter predicate=<expression> update=<statements>
+    **Description**
 
-    ##Description
-
-    The :code:`filter` command filters records from the events stream returning only those for which the
-    :code:`predicate` is true after applying :code:`update` statements. If no :code:`predicate` is specified, all
-    records are returned. If no :code:`update` is specified, records are returned unmodified.
-
-    The :code:`predicate` and :code:`update` operations execute in a restricted scope that includes the standard Python
-    built-in module and the current record. Within this scope fields are accessible by name as local variables.
+    The :code:`filter` command filters records from the events stream returning only those which has
+    :code:`contains` in them and replaces :code:`replace_array[0]` with :code:`replace_array[1]`.
+    If no :code:`contains` is specified, all records are returned.
+    If no :code:`update` is specified, records are returned unmodified.
 
     ##Example
 
-    Excludes odd-numbered records and replaces all occurrences of "world" with "Splunk" in the _raw field produced by
-    the :code:`generatetext` command.
+    Only include the events which has 'World' in them and then replace 'World' with 'There'
 
-    .. code-block::
-        | generatetext text="Hello world! How the heck are you?" count=6
-        | filter predicate="(int(_serial) & 1) == 0" update="_raw = _raw.replace('world', 'Splunk')"
+    :code:`index="*" | filter contains="World" replace_array="World,There"`
 
     """
-    predicate = Option(doc='''
-        **Syntax:** **predicate=***<expression>*
-        **Description:** Filters records from the events stream returning only those for which the predicate is True.
 
-        ''', validate=Code('eval'))
-
-    update = Option(doc='''
-        **Syntax:** **update=***<statements>*
-        **Description:** Augments or modifies records for which the predicate is True before they are returned.
-
-        ''', validate=Code('exec'))
+    contains = Option()
+    replace_array = Option()
 
     def transform(self, records):
-        predicate = self.predicate
-        update = self.update
+        contains = self.contains
+        replace_array = self.replace_array
 
-        if predicate and update:
-            predicate = predicate.object
-            update = update.object
+        if contains and replace_array:
+            arr = replace_array.split(",")
+            if len(arr) != 2:
+                raise ValueError("Please provide only two arguments, separated by comma for 'replace'")
 
             for record in records:
-                if eval(predicate, FilterCommand._globals, record):
-                    exec(update, FilterCommand._globals, record)
+                _raw = record.get("_raw")
+                if contains in _raw:
+                    record["_raw"] = _raw.replace(arr[0], arr[1])
                     yield record
             return
 
-        if predicate:
-            predicate = predicate.object
+        if contains:
             for record in records:
-                if eval(predicate, FilterCommand._globals, record):
+                _raw = record.get("_raw")
+                if contains in _raw:
                     yield record
             return
 
-        if update:
-            update = update.object
+        if replace_array:
+            arr = replace_array.split(",")
+            if len(arr) != 2:
+                raise ValueError("Please provide only two arguments, separated by comma for 'replace'")
+
             for record in records:
-                exec(update, FilterCommand._globals, record)
+                _raw = record.get("_raw")
+                record["_raw"] = _raw.replace(arr[0], arr[1])
                 yield record
             return
 
         for record in records:
             yield record
-
-    _globals = {'__builtins__': __builtins__}
 
 
 dispatch(FilterCommand, sys.argv, sys.stdin, sys.stdout, __name__)
