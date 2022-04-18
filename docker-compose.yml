@@ -9,13 +9,53 @@ services:
             - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
             - SPLUNK_PASSWORD=changed!
         ports:
-            - 8000:8000
-            - 8088:8088
-            - 8089:8089
+            - "8000:8000"
+            - "8088:8088"
+            - "8089:8089"
         volumes:
+            # Weather App
             - ./setup_pages/weather_app_example:/opt/splunk/etc/apps/weather_app_example
+            - ./lib/splunklib:/opt/splunk/etc/apps/weather_app_example/lib/splunklib
+
+            # Dependency checking app example
             - ./setup_pages/dependency_checking_app_example:/opt/splunk/etc/apps/dependency_checking_app_example
+            - ./lib/splunklib:/opt/splunk/etc/apps/dependency_checking_app_example/lib/splunklib
+
+            # Setup page simple
             - ./setup_pages/setup_page_simple:/opt/splunk/etc/apps/setup_page_simple
+
+            # Custom search commands app
+            - ./custom_search_commands/python/customsearchcommands_app/package:/opt/splunk/etc/apps/customsearchcommands_app
+            - ./lib/splunklib:/opt/splunk/etc/apps/customsearchcommands_app/lib/splunklib
+
+            # Eventing commands app
+            - ./custom_search_commands/python/eventingsearchcommands_app:/opt/splunk/etc/apps/eventingsearchcommands_app
+            - ./lib/splunklib:/opt/splunk/etc/apps/eventingsearchcommands_app/lib/splunklib
+
+            # Generating commands app
+            - ./custom_search_commands/python/generatingsearchcommands_app:/opt/splunk/etc/apps/generatingsearchcommands_app
+            - ./lib/splunklib:/opt/splunk/etc/apps/generatingsearchcommands_app/lib/splunklib
+
+            # Reporting commands app
+            - ./custom_search_commands/python/reportingsearchcommands_app:/opt/splunk/etc/apps/reportingsearchcommands_app
+            - ./lib/splunklib:/opt/splunk/etc/apps/reportingsearchcommands_app/lib/splunklib
+
+            # Streaming commands app
+            - ./custom_search_commands/python/streamingsearchcommands_app:/opt/splunk/etc/apps/streamingsearchcommands_app
+            - ./lib/splunklib:/opt/splunk/etc/apps/streamingsearchcommands_app/lib/splunklib
+
+            # GitHub commits
+            - ./modularinputs/python/github_commits:/opt/splunk/etc/apps/github_commits
+            - ./lib/splunklib:/opt/splunk/etc/apps/github_commits/lib/splunklib
+
+            # GitHub forks
+            - ./modularinputs/python/github_forks:/opt/splunk/etc/apps/github_forks
+            - ./lib/splunklib:/opt/splunk/etc/apps/github_forks/lib/splunklib
+
+            # Random numbers
+            - ./modularinputs/python/random_numbers:/opt/splunk/etc/apps/random_numbers
+            - ./lib/splunklib:/opt/splunk/etc/apps/random_numbers/lib/splunklib
+
         healthcheck:
             test: ['CMD', 'curl', '-f', 'http://localhost:8000']
             interval: 5s

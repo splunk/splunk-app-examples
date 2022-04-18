@@ -31,6 +31,7 @@ modules:
 .PHONY: up
 up:
 	@echo "$(ATTN_COLOR)==> up $(NO_COLOR)"
+	@pip install splunk-sdk -t lib
 	@docker-compose up -d
 
 .PHONY: remove
