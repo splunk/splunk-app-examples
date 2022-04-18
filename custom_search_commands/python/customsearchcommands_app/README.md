@@ -109,6 +109,7 @@ Log in into the Splunk UI.
 | inputlookup tweets | countmatches fieldname=word_count pattern="\\w+" text
 ```
 Results:
+
 text | word_count
 :----|:---|
 excellent review my friend loved it yours always guppyman @GGreeny62... http://t.co/fcvq7NDHxl | 14
@@ -117,21 +118,22 @@ Tú novia te ama mucho | 5
 
 ### filter
 ```
-| generatetext text="Hello world! How the heck are you?" count=6 \
-| filter predicate="(int(_serial) & 1) == 0" update="_raw = _raw.replace('world', 'Splunk')"
+| generatetext count=3 text="Hello there" | filter contains="there" replace_array="there,World"
 ```
 Results:
+
 Event |
 :-----|
-2. Hello Splunk! How the heck are you? |
-4. Hello Splunk! How the heck are you? |
-6. Hello Splunk! How the heck are you? |
+1. Hello World |
+2. Hello World |
+3. Hello World |
 
 ### generatetext
 ```
 | generatetext count=3 text="Hello there"
 ```
 Results:
+
 Event |
 :-----|
 1. Hello there | 
@@ -143,6 +145,7 @@ Event |
 | simulate csv="/opt/splunk/etc/apps/searchcommands_app/default/data/population.csv" rate=10 interval=00:00:01 duration=00:00:02 seed=9
 ```
 Results:
+
 Event |
 :-----|
 text = Margarita (8) |
@@ -156,6 +159,7 @@ text = @dudaribeiro_13 q engraçado em. |
 | sum total=word_counts word_count
 ```
 Results:
+
 word_counts |
 :-----|
 4497.0 |
