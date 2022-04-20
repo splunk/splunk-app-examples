@@ -8,58 +8,14 @@ This app provides an example of a modular input that Pulls down commit data from
 ### Step 1
 Execute the following command from the root of this repository.
 ```shell
-SPLUNK_VERSION=latest docker compose up -d
+make up
 ```
 
 ### Step 2
-
-Check the container health, run:
+Make sure the Splunk is in `healthy` state., run:
 ```shell
 docker ps
 ```
-
-### Step 3
-
-Make sure STATUS is **healthy** for **splunk-app-examples** container.
-
-Copy the `github_commits` folder in `etc/apps/` inside the container.
-
-Execute the following command from the root of this directory.
-```shell
-docker cp modularinputs/python/github_commits splunk-app-examples:/opt/splunk/etc/apps/github_commits
-```
-
-### Step 4
-
-Install splunklib in `github_commits/lib` folder. 
-```shell
-docker exec -it -u root splunk-app-examples /bin/bash
-```
-```shell
-pip install splunk-sdk -t ${SPLUNK_HOME}/etc/apps/github_commits/lib
-```
-*If the last command fails, manually copy the `splunklib` in `/etc/apps/github_commits/lib` directory inside container*
-
-### Step 5
-
-Restart the container.
-
-From UI:
-```markdown
-Settings > Server controls > Restart Splunk
-```
-
-From Terminal:
-```shell
-docker stop splunk-app-examples
-```
-```shell
-docker start splunk-app-examples
-```
-
-### Step 6
-
-Make sure the Splunk is in `healthy` state.
 
 Log in into the Splunk UI, Go to `Settings > DATA > Data inputs`
 

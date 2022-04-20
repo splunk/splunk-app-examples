@@ -10,59 +10,17 @@ This app provides an example of Streaming Custom search commands which will retu
 ### Step 1
 Execute the following command from the root of this repository.
 ```shell
-SPLUNK_VERSION=latest docker compose up -d
+make up
 ```
 
 ### Step 2
-
-Check the container health, run:
+Make sure the Splunk is in `healthy` state., run:
 ```shell
 docker ps
 ```
+Log in into the Splunk UI.
 
-### Step 3
-
-Make sure STATUS is **healthy** for **splunk-app-examples** container.
-
-Copy the `streamingsearchcommands_app` folder in `etc/apps/` inside the container.
-
-Execute the following command from the root of this directory.
-```shell
-docker cp custom_search_commands/python/streamingsearchcommands_app splunk-app-examples:/opt/splunk/etc/apps/streamingsearchcommands_app
-```
-
-### Step 4
-
-Install splunklib in `streamingsearchcommands_app/lib` folder. 
-```shell
-docker exec -it -u root splunk-app-examples /bin/bash
-```
-```shell
-pip install splunk-sdk -t ${SPLUNK_HOME}/etc/apps/streamingsearchcommands_app/lib
-```
-*If the last command fails, manually copy the `splunklib` in `/etc/apps/streamingsearchcommands_app/lib` directory inside container*
-
-### Step 5
-
-Restart the container.
-
-From UI:
-```markdown
-Settings > Server controls > Restart Splunk
-```
-
-From Terminal:
-```shell
-docker stop splunk-app-examples
-```
-```shell
-docker start splunk-app-examples
-```
-
-### Step 6
-Make sure the Splunk is in `healthy` state.
-
-Log in into the Splunk UI, Go to http://localhost:8000/en-US/app/streamingsearchcommands_app/search page and run the following search query:
+Go to http://localhost:8000/en-US/app/streamingsearchcommands_app/search page and run the following search query:
 ```
 | makeresults count=5 | eval celsius = random()%100 | streamingcsc
 ```

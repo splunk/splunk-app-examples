@@ -10,59 +10,17 @@ This app provides an example of Generating Custom search commands which will ret
 ### Step 1
 Execute the following command from the root of this repository.
 ```shell
-SPLUNK_VERSION=latest docker compose up -d
+make up
 ```
 
 ### Step 2
-
-Check the container health, run:
+Make sure the Splunk is in `healthy` state., run:
 ```shell
 docker ps
 ```
+Log in into the Splunk UI.
 
-### Step 3
-
-Make sure STATUS is **healthy** for **splunk-app-examples** container.
-
-Copy the `generatingsearchcommands_app` folder in `etc/apps/` inside the container.
-
-Execute the following command from the root of this directory.
-```shell
-docker cp custom_search_commands/python/generatingsearchcommands_app splunk-app-examples:/opt/splunk/etc/apps/generatingsearchcommands_app
-```
-
-### Step 4
-
-Install splunklib in `generatingsearchcommands_app/lib` folder. 
-```shell
-docker exec -it -u root splunk-app-examples /bin/bash
-```
-```shell
-pip install splunk-sdk -t ${SPLUNK_HOME}/etc/apps/generatingsearchcommands_app/lib
-```
-*If the last command fails, manually copy the `splunklib` in `/etc/apps/generatingsearchcommands_app/lib` directory inside container*
-
-### Step 5
-
-Restart the container.
-
-From UI:
-```markdown
-Settings > Server controls > Restart Splunk
-```
-
-From Terminal:
-```shell
-docker stop splunk-app-examples
-```
-```shell
-docker start splunk-app-examples
-```
-
-### Step 6
-Make sure the Splunk is in `healthy` state.
-
-Log in into the Splunk UI, Go to http://localhost:8000/en-US/app/generatingsearchcommands_app/search page and run the following search query:
+Go to http://localhost:8000/en-US/app/generatingsearchcommands_app/search page and run the following search query:
 ```
 | generatingcsc count=4
 ```

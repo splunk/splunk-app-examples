@@ -49,56 +49,14 @@ The app is tested on Splunk 8. Here is its manifest:
 ### Step 1
 Execute the following command from the root of this repository.
 ```shell
-SPLUNK_VERSION=latest docker compose up -d
+make up
 ```
 
 ### Step 2
-Check the container health, run:
+Make sure the Splunk is in `healthy` state., run:
 ```shell
 docker ps
 ```
-  
-### Step 3
-Make sure STATUS is **healthy** for **splunk-app-examples** container.
-
-Copy the content of `custom_search_commands/python/customsearchcommands_app/package/` folder in `/etc/apps/searchcommands_app/` inside the container.
-
-Execute the following command from the root of this directory.
-```shell
-docker cp custom_search_commands/python/customsearchcommands_app/package/ splunk-app-examples:opt/splunk/etc/apps/customsearchcommands_app/
-```
-
-### Step 4
-Install splunklib in `customsearchcommands_app/lib` folder. 
-```shell
-docker exec -it -u root splunk-app-examples /bin/bash
-```
-```shell
-pip install splunk-sdk -t ${SPLUNK_HOME}/etc/apps/customsearchcommands_app/lib
-```
-*If the last command fails, manually copy the `splunklib` in `/etc/apps/searchcommands_app/lib` directory inside container*
-
-
-### Step 5
-Restart the container.
-
-From UI:
-```markdown
-Settings > Server controls > Restart Splunk
-```
-
-From Terminal:
-```shell
-docker stop splunk-app-examples
-```
-```shell
-docker start splunk-app-examples
-```
-
-### Step 6
-
-Make sure the Splunk is in `healthy` state.
-
 Log in into the Splunk UI.
 
 
