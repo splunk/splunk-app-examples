@@ -23,15 +23,10 @@ all: restart
 init:
 	@echo "$(ATTN_COLOR)==> init $(NO_COLOR)"
 
-.PHONY: modules
-modules:
-	@echo "$(ATTN_COLOR)==> modules $(NO_COLOR)"
-	cd setup_pages/weather_app_example && pip install -r requirements.txt -t vendor --upgrade
-
 .PHONY: up
 up:
 	@echo "$(ATTN_COLOR)==> up $(NO_COLOR)"
-	@pip install splunk-sdk -t lib
+	@pip install -r requirements.txt -t lib --upgrade
 	@docker-compose up -d
 
 .PHONY: remove

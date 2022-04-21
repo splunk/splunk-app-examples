@@ -15,11 +15,11 @@ services:
         volumes:
             # Weather App
             - ./setup_pages/weather_app_example:/opt/splunk/etc/apps/weather_app_example
-            - ./lib/splunklib:/opt/splunk/etc/apps/weather_app_example/lib/splunklib
+            - ./lib:/opt/splunk/etc/apps/weather_app_example/vendor
 
             # Dependency checking app example
             - ./setup_pages/dependency_checking_app_example:/opt/splunk/etc/apps/dependency_checking_app_example
-            - ./lib/splunklib:/opt/splunk/etc/apps/dependency_checking_app_example/lib/splunklib
+            - ./lib:/opt/splunk/etc/apps/dependency_checking_app_example/vendor
 
             # Setup page simple
             - ./setup_pages/setup_page_simple:/opt/splunk/etc/apps/setup_page_simple
