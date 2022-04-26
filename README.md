@@ -7,14 +7,8 @@
 - Python
 - Docker
 
-### First Time Setup
-
-```
-make modules
-```
-
 ### Starting up
 
 ```
-make
+make up
 ```
