@@ -1,35 +1,18 @@
-#!/usr/bin/env python
+""" This is an example external lookup script for the tutorial, "Module 3: Create an external lookup for Splunk Cloud Platform or Splunk Enterprise".
+It matches the 'host' and 'ip' fields in your search results with information from an external DNS server.
+Save the script in $SPLUNK_HOME/etc/apps/devtutorial/bin and modify $SPLUNK_HOME/etc/apps/devtutorial/default/transforms.conf to add the script to your app configuration.
+To run the script, use the lookup command in a search in Splunk Web.
+"""
 
+# Enter import statements
 import csv
 import sys
 import socket
 
-""" An adapter that takes CSV as input, performs a lookup to the operating
-    system hostname resolution facilities, then returns the CSV results 
-
-    This is intended as an example of creating external lookups in general.
-
-    Note that the script offers mapping both ways, from host to IP and from IP
-    to host.  
-    
-    Bidrectional mapping is always required when using an external lookup as an
-    'automatic' lookup: one configured to be used without explicit reference in
-    a search.
-
-    In the other use mode, eg in a search string as "|lookup lookupname", it is
-    sufficient to provide only the mappings that will be used.
-
-    WARNING: DNS is not unambiguously reversible, so this script will produce
-             unusual results when used for values that do not reverse-resolve to
-             their original values in your environment.
-
-             For example, if your events have host=foo, and you search for
-             ip=1.2.3.4, the generated search expression may be
-             host=foo.yourcompany.com, which will not match.
-"""
 
 
-# Given a host, find the ip
+
+# Enter code to return ip if given host
 def lookup(host):
     try:
         hostname, aliaslist, ipaddrlist = socket.gethostbyname_ex(host)
@@ -37,7 +20,7 @@ def lookup(host):
     except:
         return []
 
-# Given an ip, return the host
+# Enter code to return host if given ip
 def rlookup(ip):
     try:
         hostname, aliaslist, ipaddrlist = socket.gethostbyaddr(ip)
@@ -45,9 +28,10 @@ def rlookup(ip):
     except:
         return ''
 
+    # Enter code to define the main() function
 def main():
     if len(sys.argv) != 3:
-        print("Usage: python external_lookup.py [host field] [ip field]")
+        print("Usage: python dns_external_lookup.py [host field] [ip field]")
         sys.exit(1)
 
     hostfield = sys.argv[1]
@@ -62,6 +46,7 @@ def main():
     w = csv.DictWriter(outfile, fieldnames=r.fieldnames)
     w.writeheader()
 
+    # Create for loop to populate missing values and return data to search results
     for result in r:
         # Perform the lookup or reverse lookup if necessary
         if result[hostfield] and result[ipfield]:
