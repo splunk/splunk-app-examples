@@ -14,10 +14,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import
 import os
 import sys
 import json
+from http import client
 # NOTE: splunklib must exist within github_forks/lib/splunklib for this
 # example to run! To run this locally use `SPLUNK_VERSION=latest docker compose up -d`
 # from the root of this repo which mounts this example and the latest splunklib
@@ -25,8 +25,6 @@ import json
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 
 from splunklib.modularinput import *
-from splunklib import six
-from six.moves import http_client
 
 
 class MyScript(Script):
@@ -100,17 +98,13 @@ class MyScript(Script):
         # Call Github to retrieve repo information
         jsondata = _get_github_repos(owner, repo_name)
 
-        with open(os.path.dirname(__file__)+'/data.txt', 'w') as fo:
-            fo.write(str(jsondata))
-            fo.write(json.dumps(jsondata))
-            # fo.write(jsondata)
-
         if "message" in jsondata:
             raise ValueError(jsondata["message"])
+
         # If there is only 1 field in the jsondata object,some kind or error occurred
         # with the Github API.
         # Typically, this will happen with an invalid repository.
-        elif len(jsondata) == 1:
+        if len(jsondata) == 1:
             raise ValueError("The Github repository was not found.")
 
         # If the API response seems normal, validate the fork count
@@ -118,7 +112,7 @@ class MyScript(Script):
         try:
             fork_count = int(jsondata["forks_count"])
         except ValueError as ve:
-            raise ValueError("Invalid fork count: %s", ve.message)
+            raise ValueError(f"Invalid fork count: {ve.message}")
 
     def stream_events(self, inputs, ew):
         """This function handles all the action: splunk calls this modular input
@@ -133,7 +127,7 @@ class MyScript(Script):
         :param ew: an EventWriter object
         """
         # Go through each input for this modular input
-        for input_name, input_item in six.iteritems(inputs.inputs):
+        for input_name, input_item in iter(inputs.inputs):
             # Get fields from the InputDefinition object
             owner = input_item["owner"]
             repo_name = input_item["repo_name"]
@@ -158,8 +152,8 @@ class MyScript(Script):
 
 def _get_github_repos(owner, repo_name):
     # Read the response from the Github API, then parse the JSON data into an object
-    repo_path = "/repos/%s/%s" % (owner, repo_name)
-    connection = http_client.HTTPSConnection('api.github.com')
+    repo_path = f"/repos/{owner}/{repo_name}"
+    connection = client.HTTPSConnection('api.github.com')
     headers = {
         'Content-type': 'application/json',
         'User-Agent': 'splunk-sdk-python',
