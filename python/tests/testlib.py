@@ -15,25 +15,21 @@
 # under the License.
 
 """Shared unit test utilities."""
-
 import contextlib
-import sys
-sys.path.insert(0, '../')
-from splunklib import six
-
-
-import splunklib.client as client
-from time import sleep
-from datetime import datetime, timedelta
-
-import unittest
-
-from python.utils import parse
-
 import os
 import time
-
 import logging
+import sys
+
+# Run the test suite on the SDK without installing it.
+sys.path.insert(0, '../')
+
+import unittest
+from time import sleep
+from datetime import datetime, timedelta
+from utils import parse
+from splunklib import client
+
 
 logging.basicConfig(
     filename='test.log',
@@ -52,10 +48,9 @@ class WaitTimedOutError(Exception):
 def to_bool(x):
     if x == '1':
         return True
-    elif x == '0':
+    if x == '0':
         return False
-    else:
-        raise ValueError("Not a boolean value: %s", x)
+    raise ValueError("Not a boolean value: %s", x)
 
 
 def tmpname():
@@ -92,7 +87,7 @@ class SDKTestCase(unittest.TestCase):
             logging.debug("wait finished after %s seconds", datetime.now() - start)
 
     def check_content(self, entity, **kwargs):
-        for k, v in six.iteritems(kwargs):
+        for k, v in list(kwargs):
             self.assertEqual(entity[k], str(v))
 
     def check_entity(self, entity):
@@ -144,9 +139,7 @@ class SDKTestCase(unittest.TestCase):
         try:
             self.service.delete("messages/restart_required")
         except client.HTTPError as he:
-            if he.status == 404:
-                pass
-            else:
+            if he.status != 404:
                 raise
 
     @contextlib.contextmanager
@@ -169,7 +162,7 @@ class SDKTestCase(unittest.TestCase):
             self.service.post("apps/local", **kwargs)
         except client.HTTPError as he:
             if he.status == 400:
-                raise IOError("App %s not found in app collection" % name)
+                raise IOError(f"App {name} not found in app collection")
         if self.service.restart_required:
             self.service.restart(120)
         self.installedApps.append(name)
@@ -227,7 +220,7 @@ class SDKTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.opts = parse([], {}, ".env")
-
+        cls.opts.kwargs.update({'retries': 3})
         # Before we start, make sure splunk doesn't need a restart.
         service = client.connect(**cls.opts.kwargs)
         if service.restart_required:
@@ -235,6 +228,7 @@ class SDKTestCase(unittest.TestCase):
 
     def setUp(self):
         unittest.TestCase.setUp(self)
+        self.opts.kwargs.update({'retries': 3})
         self.service = client.connect(**self.opts.kwargs)
         # If Splunk is in a state requiring restart, go ahead
         # and restart. That way we'll be sane for the rest of
@@ -257,6 +251,6 @@ class SDKTestCase(unittest.TestCase):
                 except HTTPError as error:
                     if not (os.name == 'nt' and error.status == 500):
                         raise
-                    print('Ignoring failure to delete {0} during tear down: {1}'.format(appName, error))
+                    print(f'Ignoring failure to delete {appName} during tear down: {error}')
         if self.service.restart_required:
             self.clear_restart_message()
