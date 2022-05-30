@@ -15,13 +15,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
 import os, sys
 import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration, Option, validators
-from splunklib.six.moves import range
 
 
 @Configuration()
@@ -41,7 +39,7 @@ class GeneratingCSC(GeneratingCommand):
     def generate(self):
         self.logger.debug("Generating %s events" % self.count)
         for i in range(1, self.count + 1):
-            text = 'Test Event %d' % i
+            text = f'Test Event {i}'
             yield {'_time': time.time(), 'event_no': i, '_raw': text}
 
 
