@@ -8,25 +8,22 @@
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software 
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
-# License for the specific language governing permissions and limitations 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
 # under the License.
 
-import json
 import os
 import sys
 from getpass import getpass
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from splunklib import six
-from six.moves import input
-import splunklib.client as client
-import splunklib.results as results
-from python.utils import error, parse
 import pandas as pd
 import matplotlib.pyplot as plt
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from splunklib import client
+from splunklib import results
+from python.utils import parse
 
 
 def plot_top_hash_tags(service):
@@ -186,4 +183,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -18,7 +18,7 @@
 
 import sys
 
-import splunklib.client as client
+from splunklib import client
 
 from utils import *
 
@@ -42,14 +42,15 @@ def main(argv):
     usage = 'usage: %prog [options] <index>'
     opts = parse(argv, RULES, ".env", usage=usage)
 
-    if len(opts.args) == 0: error("Index name required", 2)
+    if len(opts.args) == 0:
+        error("Index name required", 2)
     index = opts.args[0]
 
     kwargs_splunk = dslice(opts.kwargs, FLAGS_SPLUNK)
     service = client.connect(**kwargs_splunk)
 
     if index not in service.indexes:
-        error("Index '%s' does not exist." % index, 2)
+        error(f"Index '{index}' does not exist.", 2)
 
     kwargs_submit = dslice(opts.kwargs,
                            {'eventhost': 'host'}, 'source', 'sourcetype')
@@ -59,7 +60,7 @@ def main(argv):
     # to reduce the buffering of event data read from stdin, which makes
     # this tool a little friendlier for submitting large event streams,
     # however if the buffering is not a concern, you can achieve the
-    # submit somewhat more directly using Splunk's 'simple' receiver, 
+    # submit somewhat more directly using Splunk's 'simple' receiver,
     # as follows:
     #
     #   event = sys.stdin.read()
@@ -70,7 +71,8 @@ def main(argv):
     try:
         while True:
             line = sys.stdin.readline().rstrip('\r\n')
-            if len(line) == 0: break
+            if len(line) == 0:
+                break
             cn.write(line)
     finally:
         cn.close()

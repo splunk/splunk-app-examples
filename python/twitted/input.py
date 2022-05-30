@@ -18,12 +18,9 @@ import json
 import os
 import sys
 from getpass import getpass
-from pprint import pprint
 import requests
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from splunklib import six
-from six.moves import input
 import splunklib.client as client
 from python.utils import error, parse
 
@@ -48,7 +45,7 @@ def process_tweets():
 def stream_generator():
     try:
         global count
-        token = "Bearer %s" % TWITTER_BEARER_TOKEN
+        token = f"Bearer {TWITTER_BEARER_TOKEN}"
         headers = {
             'Authorization': token,
             'User-Agent': "twitted.py/0.1",
@@ -79,7 +76,7 @@ def stream_generator():
         print(count, "events sent to HEC")
 
     except Exception as e:
-        error("Error occurred while fetching stream from Twitter: %s" % str(e), 2)
+        error(f"Error occurred while fetching stream from Twitter: {str(e)}", 2)
 
 
 def send_tweets(record):
@@ -88,7 +85,7 @@ def send_tweets(record):
 
         url = "http://localhost:8088/services/collector"
         event = {"event": record_dict, "sourcetype": "_json"}
-        token = "Splunk %s" % SPLUNK_HEC_TOKEN
+        token = f"Splunk {SPLUNK_HEC_TOKEN}"
         headers = {"Authorization": token}
 
         response = requests.post(url, headers=headers, json=event)
@@ -97,7 +94,7 @@ def send_tweets(record):
             raise Exception(response.json())
 
     except Exception as e:
-        error("Error occurred while sending tweets to HEC: %s" % str(e), 2)
+        error(f"Error occurred while sending tweets to HEC: {str(e)}", 2)
 
 
 RULES = {
@@ -118,7 +115,7 @@ def cmdline():
 
     if 'splunk_hec_token' not in kwargs:
         kwargs['splunk_hec_token'] = getpass("Splunk HEC token: ")
-
+    print(kwargs)
     # Prompt for Splunk username/password if not provided on command line
     if 'username' not in kwargs:
         kwargs['username'] = input("Splunk username: ")
@@ -157,12 +154,12 @@ def main():
             service.indexes.create("twitter")
 
         if verbose > 0:
-            print("Sending data to HEC at %s:%s ..." % ("localhost", 8088))
+            print(f"Sending data to HEC at {'localhost'}:{8088} ...")
 
         process_tweets()
 
     except Exception as e:
-        error("Exception occurred during operation:\n%s" % str(e), 2)
+        error(f"Exception occurred during operation:\n{str(e)}", 2)
 
 
 if __name__ == "__main__":

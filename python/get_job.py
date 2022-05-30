@@ -21,7 +21,7 @@ a search Job by its sid.
 import sys
 import time
 
-import splunklib.client as client
+from splunklib import client
 
 from utils import parse
 
@@ -40,7 +40,7 @@ def main(argv):
     while not job.is_done():
         time.sleep(1)
 
-    print("Number of events found: %d" % int(job["eventCount"]))
+    print(f"Number of events found: {int(job['eventCount'])}")
 
 
 if __name__ == "__main__":

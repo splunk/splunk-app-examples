@@ -28,13 +28,13 @@ def main():
     service = connect(**opts.kwargs)
 
     for item in service.inputs:
-        header = "%s (%s)" % (item.name, item.kind)
+        header = f"{item.name} ({item.kind})"
         print(header)
         print('=' * len(header))
         content = item.content
         for key in sorted(content.keys()):
             value = content[key]
-            print("%s: %s" % (key, value))
+            print(f"{key}: {value}")
         print()
 
 

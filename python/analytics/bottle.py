@@ -11,10 +11,7 @@ Homepage and documentation: http://bottlepy.org/
 Copyright (c) 2011, Marcel Hellkamp.
 License: MIT (see LICENSE.txt for details)
 """
-
-from splunklib import six
-from six.moves import map
-from six.moves import zip
+from inspect import ismethoddescriptor
 __author__ = 'Marcel Hellkamp'
 __version__ = '0.9.6'
 __license__ = 'MIT'
@@ -24,7 +21,6 @@ import cgi
 import email.utils
 import functools
 import hmac
-import imp
 import itertools
 import mimetypes
 import os
@@ -34,22 +30,24 @@ import sys
 import tempfile
 import threading
 import time
+import types
+import imp
 import warnings
-
-from six.moves.http_cookies import SimpleCookie
+import _thread
+import http.client as http_client
+from http.cookies import SimpleCookie
 from tempfile import TemporaryFile
 from traceback import format_exc
 from urllib import parse
 
-try: from collections import MutableMapping as DictMixin
+try: from collections.abc import MutableMapping as DictMixin
 except ImportError: # pragma: no cover
     from UserDict import DictMixin
 
 try: from urlparse import parse_qs
 except ImportError: # pragma: no cover
     from cgi import parse_qs
-
-try: import splunklib.six.moves.cPickle as pickle
+try: import pickle
 except ImportError: # pragma: no cover
     import pickle
 
@@ -62,34 +60,19 @@ except ImportError: # pragma: no cover
             json_dumps = None
 
 NCTextIOWrapper = None
-if sys.version_info >= (3,0,0): # pragma: no cover
-    # See Request.POST
-    from io import BytesIO
-    def touni(x, enc='utf8', err='strict'):
-        """ Convert anything to unicode """
-        return str(x, enc, err) if isinstance(x, bytes) else str(x)
-    if sys.version_info < (3,2,0):
-        from io import TextIOWrapper
-        class NCTextIOWrapper(TextIOWrapper):
-            ''' Garbage collecting an io.TextIOWrapper(buffer) instance closes
-                the wrapped buffer. This subclass keeps it open. '''
-            def close(self): pass
-else:
-    from StringIO import StringIO as BytesIO
-    bytes = str
-    def touni(x, enc='utf8', err='strict'):
-        """ Convert anything to unicode """
-        return x if isinstance(x, six.text_type) else six.text_type(str(x), enc, err)
+# See Request.POST
+from io import BytesIO
+def touni(x, enc='utf8', err='strict'):
+    """ Convert anything to unicode """
+    return str(x, enc, err) if isinstance(x, bytes) else str(x)
 
 def tob(data, enc='utf8'):
     """ Convert anything to bytes """
-    return data.encode(enc) if isinstance(data, six.text_type) else bytes(data)
+    return data.encode(enc) if isinstance(data, str) else bytes(data)
 
 # Convert strings and unicode to native strings
-if sys.version_info >= (3,0,0):
-    tonat = touni
-else:
-    tonat = tob
+
+tonat = touni
 tonat.__doc__ = """ Convert anything to native strings """
 
 
@@ -357,23 +340,23 @@ class Router(object):
             fpat = re.sub(r'(\\*)(\(\?P<[^>]*>|\((?!\?))', fpat_sub, gpat.pattern)
             gpat = gpat if gpat.groupindex else None
             try:
-                combined = '%s|(%s)' % (self.dynamic[-1][0].pattern, fpat)
+                combined = f'{self.dynamic[-1][0].pattern}|({fpat})'
                 self.dynamic[-1] = (re.compile(combined), self.dynamic[-1][1])
                 self.dynamic[-1][1].append((gpat, target))
             except (AssertionError, IndexError) as e: # AssertionError: Too many groups
-                self.dynamic.append((re.compile('(^%s$)'%fpat),
+                self.dynamic.append((re.compile(f'(^{fpat}$)'),
                                     [(gpat, target)]))
             except re.error as e:
-                raise RouteSyntaxError("Could not add Route: %s (%s)" % (rule, e))
+                raise RouteSyntaxError(f"Could not add Route: {rule} ({e})")
 
     def _compile_pattern(self, rule):
         ''' Return a regular expression with named groups for each wildcard. '''
         out = ''
         for i, part in enumerate(self.syntax.split(rule)):
             if i%3 == 0:   out += re.escape(part.replace('\\:',':'))
-            elif i%3 == 1: out += '(?P<%s>' % part if part else '(?:'
+            elif i%3 == 1: out += f'(?P<{part}>' if part else '(?:'
             else:          out += '%s)' % (part or '[^/]+')
-        return re.compile('^%s$'%out)
+        return re.compile(f'^{out}$')
 
 
 
@@ -431,12 +414,12 @@ class Bottle(object):
             raise TypeError('Empty prefix. Perhaps you want a merge()?')
         for other in self.mounts:
             if other.startswith(prefix):
-                raise TypeError('Conflict with existing mount: %s' % other)
+                raise TypeError(f'Conflict with existing mount: {other}')
         path_depth = prefix.count('/') + 1
         options.setdefault('method', 'ANY')
         options.setdefault('skip', True)
         self.mounts[prefix] = app
-        @self.route('/%s/:#.*#' % prefix, **options)
+        @self.route(f'/{prefix}/:#.*#', **options)
         def mountpoint():
             request.path_shift(path_depth)
             return app._handle(request.environ)
@@ -671,10 +654,10 @@ class Bottle(object):
             return []
         # Join lists of byte or unicode strings. Mixed lists are NOT supported
         if isinstance(out, (tuple, list))\
-        and isinstance(out[0], (bytes, six.text_type)):
+        and isinstance(out[0], (bytes, str)):
             out = out[0][0:0].join(out) # b'abc'[0:0] -> b''
         # Encode unicode strings
-        if isinstance(out, six.text_type):
+        if isinstance(out, str):
             out = out.encode(response.charset)
         # Byte Strings are just returned
         if isinstance(out, bytes):
@@ -718,7 +701,7 @@ class Bottle(object):
             return self._cast(first, request, response)
         if isinstance(first, bytes):
             return itertools.chain([first], out)
-        if isinstance(first, six.text_type):
+        if isinstance(first, str):
             return itertools.imap(lambda x: x.encode(response.charset),
                                   itertools.chain([first], out))
         return self._cast(HTTPError(500, 'Unsupported response type: %s'\
@@ -746,8 +729,8 @@ class Bottle(object):
             err = '<h1>Critical error while processing request: %s</h1>' \
                   % environ.get('PATH_INFO', '/')
             if DEBUG:
-                err += '<h2>Error:</h2>\n<pre>%s</pre>\n' % repr(e)
-                err += '<h2>Traceback:</h2>\n<pre>%s</pre>\n' % format_exc(10)
+                err += f'<h2>Error:</h2>\n<pre>{repr(e)}</pre>\n'
+                err += f'<h2>Traceback:</h2>\n<pre>{format_exc(10)}</pre>\n'
             environ['wsgi.errors'].write(err) #TODO: wsgi.error should not get html
             start_response('500 INTERNAL SERVER ERROR', [('Content-Type', 'text/html')])
             return [tob(err)]
@@ -881,7 +864,7 @@ class Request(threading.local, DictMixin):
         """ The QUERY_STRING parsed into an instance of :class:`MultiDict`. """
         data = parse_qs(self.query_string, keep_blank_values=True)
         get = self.environ['bottle.get'] = MultiDict()
-        for key, values in six.iteritems(data):
+        for key, values in data.items():
             for value in values:
                 get[key] = value
         return get
@@ -982,7 +965,7 @@ class Request(threading.local, DictMixin):
         """
         raw_dict = SimpleCookie(self.headers.get('Cookie',''))
         cookies = {}
-        for cookie in six.itervalues(raw_dict):
+        for cookie in raw_dict.values():
             cookies[cookie.key] = cookie.value
         return cookies
 
@@ -1093,11 +1076,11 @@ class Response(threading.local):
         '''
         if secret:
             value = touni(cookie_encode((key, value), secret))
-        elif not isinstance(value, six.string_types):
+        elif not isinstance(value, str):
             raise TypeError('Secret missing for non-string Cookie.')
 
         self.COOKIES[key] = value
-        for k, v in six.iteritems(kargs):
+        for k, v in kargs.items():
             self.COOKIES[key][k.replace('_', '-')] = v
 
     def delete_cookie(self, key, **kwargs):
@@ -1163,7 +1146,7 @@ class HooksPlugin(object):
     def add(self, name, func):
         ''' Attach a callback to a hook. '''
         if name not in self.hooks:
-            raise ValueError("Unknown hook name %s" % name)
+            raise ValueError(f"Unknown hook name {name}")
         was_empty = self._empty()
         self.hooks[name].append(func)
         if self.app and was_empty and not self._empty(): self.app.reset()
@@ -1171,7 +1154,7 @@ class HooksPlugin(object):
     def remove(self, name, func):
         ''' Remove a callback from a hook. '''
         if name not in self.hooks:
-            raise ValueError("Unknown hook name %s" % name)
+            raise ValueError(f"Unknown hook name {name}")
         was_empty = self._empty()
         self.hooks[name].remove(func)
         if self.app and not was_empty and self._empty(): self.app.reset()
@@ -1199,7 +1182,7 @@ class TypeFilterPlugin(object):
 
     def add(self, ftype, func):
         if not isinstance(ftype, type):
-            raise TypeError("Expected type object, got %s" % type(ftype))
+            raise TypeError(f"Expected type object, got {type(ftype)}")
         self.filter = [(t, f) for (t, f) in self.filter if t != ftype]
         self.filter.append((ftype, func))
         if len(self.filter) == 1 and self.app: self.app.reset()
@@ -1242,7 +1225,9 @@ class _ImportRedirect(object):
         ''' Create a virtual package that redirects imports (see PEP 302). '''
         self.name = name
         self.impmask = impmask
+        # print(name)
         self.module = sys.modules.setdefault(name, imp.new_module(name))
+        # self.module = sys.modules.setdefault(name, types.ModuleType(name))
         self.module.__dict__.update({'__file__': __file__, '__path__': [],
                                     '__all__': [], '__loader__': self})
         sys.meta_path.append(self)
@@ -1278,7 +1263,7 @@ class MultiDict(DictMixin):
     # collections.MutableMapping would be better for Python >= 2.6
     def __init__(self, *a, **k):
         self.dict = dict()
-        for k, v in six.iteritems(dict(*a, **k)):
+        for k, v in dict(*a, **k).items():
             self[k] = v
 
     def __len__(self): return len(self.dict)
@@ -1299,7 +1284,7 @@ class MultiDict(DictMixin):
         return self.dict[key][index]
 
     def iterallitems(self):
-        for key, values in six.iteritems(self.dict):
+        for key, values in self.dict.items():
             for value in values:
                 yield key, value
 
@@ -1355,10 +1340,10 @@ class WSGIHeaderDict(DictMixin):
         return tonat(self.environ[self._ekey(key)], 'latin1')
 
     def __setitem__(self, key, value):
-        raise TypeError("%s is read-only." % self.__class__)
+        raise TypeError(f"{self.__class__} is read-only.")
 
     def __delitem__(self, key):
-        raise TypeError("%s is read-only." % self.__class__)
+        raise TypeError(f"{self.__class__} is read-only.")
 
     def __iter__(self):
         for key in self.environ:
@@ -1463,7 +1448,7 @@ def static_file(filename, root, mimetype='auto', guessmime=True, download=False)
 
     if download:
         download = os.path.basename(filename if download == True else download)
-        header['Content-Disposition'] = 'attachment; filename="%s"' % download
+        header['Content-Disposition'] = f'attachment; filename="{download}"'
 
     stats = os.stat(filename)
     header['Content-Length'] = stats.st_size
@@ -1562,7 +1547,7 @@ def yieldroutes(func):
     path += ('/:%s' * argc) % tuple(spec[0][:argc])
     yield path
     for arg in spec[0][argc:]:
-        path += '/:%s' % arg
+        path += f'/:{arg}'
         yield path
 
 
@@ -1590,7 +1575,7 @@ def path_shift(script_name, path_info, shift=1):
         scriptlist = scriptlist[:shift]
     else:
         empty = 'SCRIPT_NAME' if shift < 0 else 'PATH_INFO'
-        raise AssertionError("Cannot shift. Nothing left from %s" % empty)
+        raise AssertionError(f"Cannot shift. Nothing left from {empty}")
     new_script_name = '/' + '/'.join(scriptlist)
     new_path_info = '/' + '/'.join(pathlist)
     if path_info.endswith('/') and pathlist: new_path_info += '/'
@@ -1608,13 +1593,13 @@ def validate(**vkargs):
     """
     def decorator(func):
         def wrapper(**kargs):
-            for key, value in six.iteritems(vkargs):
+            for key, value in vkargs.items():
                 if key not in kargs:
-                    abort(403, 'Missing parameter: %s' % key)
+                    abort(403, f'Missing parameter: {key}')
                 try:
                     kargs[key] = value(kargs[key])
                 except ValueError:
-                    abort(403, 'Wrong parameter format for: %s' % key)
+                    abort(403, f'Wrong parameter format for: {key}')
             return func(**kargs)
         return wrapper
     return decorator
@@ -1627,7 +1612,7 @@ def auth_basic(check, realm="private", text="Access denied"):
       def wrapper(*a, **ka):
         user, password = request.auth or (None, None)
         if user is None or not check(user, password):
-          response.headers['WWW-Authenticate'] = 'Basic realm="%s"' % realm
+          response.headers['WWW-Authenticate'] = f'Basic realm="{realm}"'
           return HTTPError(401, text)
         return func(*a, **ka)
       return wrapper
@@ -1674,8 +1659,8 @@ class ServerAdapter(object):
         pass
 
     def __repr__(self):
-        args = ', '.join(['%s=%s'%(k,repr(v)) for k, v in self.options.items()])
-        return "%s(%s)" % (self.__class__.__name__, args)
+        args = ', '.join([f'{k}={repr(v)}' for k, v in self.options.items()])
+        return f"{self.__class__.__name__}({args})"
 
 
 class CGIServer(ServerAdapter):
@@ -1822,7 +1807,7 @@ class GunicornServer(ServerAdapter):
     def run(self, handler):
         from gunicorn.arbiter import Arbiter
         from gunicorn.config import Config
-        handler.cfg = Config({'bind': "%s:%d" % (self.host, self.port), 'workers': 4})
+        handler.cfg = Config({'bind': f"{self.host}:{self.port}", 'workers': 4})
         arbiter = Arbiter(handler)
         arbiter.run()
 
@@ -1922,7 +1907,7 @@ def _load(target, **vars):
         return getattr(sys.modules[module], target)
     package_name = module.split('.')[0]
     vars[package_name] = sys.modules[package_name]
-    return eval('%s.%s' % (module, target), vars)
+    return eval(f'{module}.{target}', vars)
 
 
 def load_app(target):
@@ -1959,9 +1944,9 @@ def run(app=None, server='wsgiref', host='127.0.0.1', port=8082,
         :param options: Options passed to the server adapter.
      """
     app = app or default_app()
-    if isinstance(app, six.string_types):
+    if isinstance(app, str):
         app = load_app(app)
-    if isinstance(server, six.string_types):
+    if isinstance(server, str):
         server = server_names.get(server)
     if isinstance(server, type):
         server = server(host=host, port=port, **kargs)
@@ -1969,8 +1954,8 @@ def run(app=None, server='wsgiref', host='127.0.0.1', port=8082,
         raise RuntimeError("Server must be a subclass of ServerAdapter")
     server.quiet = server.quiet or quiet
     if not server.quiet and not os.environ.get('BOTTLE_CHILD'):
-        print("Bottle server starting up (using %s)..." % repr(server))
-        print("Listening on http://%s:%d/" % (server.host, server.port))
+        print(f"Bottle server starting up (using {repr(server)})...")
+        print(f"Listening on http://{server.host}:{server.port}/")
         print("Use Ctrl-C to quit.")
         print()
     try:
@@ -2007,7 +1992,7 @@ class FileCheckerThread(threading.Thread):
             if path[-4:] in ('.pyo', '.pyc'): path = path[:-1]
             if path and exists(path): files[path] = mtime(path)
         while not self.status:
-            for path, lmtime in six.iteritems(files):
+            for path, lmtime in files.items():
                 if not exists(path) or mtime(path) > lmtime:
                     self.status = 3
             if not exists(self.lockfile):
@@ -2017,7 +2002,7 @@ class FileCheckerThread(threading.Thread):
             if not self.status:
                 time.sleep(self.interval)
         if self.status != 5:
-            six.moves._thread.interrupt_main()
+            _thread.interrupt_main()
 
 
 def _reloader_child(server, app, interval):
@@ -2108,7 +2093,7 @@ class BaseTemplate(object):
         if not self.source and self.name:
             self.filename = self.search(self.name, self.lookup)
             if not self.filename:
-                raise TemplateError('Template %s not found.' % repr(name))
+                raise TemplateError(f'Template {repr(name)} not found.')
         if not self.source and not self.filename:
             raise TemplateError('No template specified.')
         self.prepare(**self.settings)
@@ -2123,8 +2108,8 @@ class BaseTemplate(object):
             if os.path.isfile(fname):
                 return fname
             for ext in cls.extentions:
-                if os.path.isfile('%s.%s' % (fname, ext)):
-                    return '%s.%s' % (fname, ext)
+                if os.path.isfile(f'{fname}.{ext}'):
+                    return f'{fname}.{ext}'
 
     @classmethod
     def global_config(cls, key, *args):
@@ -2302,8 +2287,8 @@ class SimpleTemplate(BaseTemplate):
             for line in ptrbuffer:
                 for token, value in line:
                     if token == 'TXT': cline += repr(value)
-                    elif token == 'RAW': cline += '_str(%s)' % value
-                    elif token == 'CMD': cline += '_escape(%s)' % value
+                    elif token == 'RAW': cline += f'_str({value})'
+                    elif token == 'CMD': cline += f'_escape({value})'
                     cline +=  ', '
                 cline = cline[:-2] + '\\\n'
             cline = cline[:-2]
@@ -2319,8 +2304,8 @@ class SimpleTemplate(BaseTemplate):
 
         for line in template.splitlines(True):
             lineno += 1
-            line = line if isinstance(line, six.text_type)\
-                        else six.text_type(line, encoding=self.encoding)
+            line = line if isinstance(line, str)\
+                        else str(line, encoding=self.encoding)
             if lineno <= 2:
                 m = re.search(r"%.*coding[:=]\s*([-\w\.]+)", line)
                 if m: self.encoding = m.group(1)
@@ -2341,19 +2326,19 @@ class SimpleTemplate(BaseTemplate):
                     if not oneline and not multiline:
                         stack.append(cmd)
                 elif cmd == 'end' and stack:
-                    code('#end(%s) %s' % (stack.pop(), line.strip()[3:]))
+                    code(f'#end({stack.pop()}) {line.strip()[3:]}')
                 elif cmd == 'include':
                     p = cline.split(None, 2)[1:]
                     if len(p) == 2:
-                        code("_=_include(%s, _stdout, %s)" % (repr(p[0]), p[1]))
+                        code(f"_=_include({repr(p[0])}, _stdout, {p[1]})")
                     elif p:
-                        code("_=_include(%s, _stdout)" % repr(p[0]))
+                        code(f"_=_include({repr(p[0])}, _stdout)")
                     else: # Empty %include -> reverse of %rebase
                         code("_printlist(_base)")
                 elif cmd == 'rebase':
                     p = cline.split(None, 2)[1:]
                     if len(p) == 2:
-                        code("globals()['_rebase']=(%s, dict(%s))" % (repr(p[0]), p[1]))
+                        code(f"globals()['_rebase']=({repr(p[0])}, dict({p[1]}))")
                     elif p:
                         code("globals()['_rebase']=(%s, {})" % repr(p[0]))
                 else:
@@ -2415,7 +2400,7 @@ def template(*args, **kwargs):
         else:
             TEMPLATES[tpl] = template_adapter(name=tpl, lookup=lookup, **settings)
     if not TEMPLATES[tpl]:
-        abort(500, 'Template (%s) not found' % tpl)
+        abort(500, f'Template ({tpl}) not found')
     for dictarg in args[1:]: kwargs.update(dictarg)
     return TEMPLATES[tpl].render(kwargs)
 
@@ -2468,7 +2453,7 @@ DEBUG = False
 MEMFILE_MAX = 1024*100
 
 #: A dict to map HTTP status codes (e.g. 404) to phrases (e.g. 'Not Found')
-HTTP_CODES = six.moves.http_client.responses
+HTTP_CODES = http_client.responses
 HTTP_CODES[418] = "I'm a teapot" # RFC 2324
 
 #: The default template used for error pages. Override with @error()

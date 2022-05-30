@@ -18,7 +18,7 @@
    current logging level."""
 import sys
 
-import splunklib.client as client
+from splunklib import client
 
 from utils import parse
 
@@ -29,7 +29,7 @@ def main(argv):
     service = client.connect(**opts.kwargs)
 
     for logger in service.loggers:
-        print("%s (%s)" % (logger.name, logger['level']))
+        print(f"{logger.name} ({logger['level']})")
 
 
 if __name__ == "__main__":

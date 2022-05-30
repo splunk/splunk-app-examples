@@ -14,14 +14,14 @@
 
 """
 This example uses Python's standard httplib module to make calls against the
-  Splunk REST API. This example does not use any SDK libraries to access
-  Splunk. (this example can used as a validation check to determine if an API call has failed due to SDK or due to Splunk platform(
+  Splunk REST API. This example does not use any SDK libraries to access Splunk. (this example can used
+  as a validation check to determine if an API call has failed due to SDK or due to Splunk platform.)
 The example happens to retrieve a list of installed apps from a given
 Splunk instance, but they could apply as easily to any other area of the REST
 API.
 """
 
-import urllib
+import urllib.parse
 import ssl
 from xml.etree import ElementTree
 import http.client
@@ -50,7 +50,7 @@ def main():
         print('')
     if response.status != 200:
         connection.close()
-        raise Exception("%d (%s)" % (response.status, response.reason))
+        raise Exception(f"{response.status} ({response.reason})")
     body = response.read()
     connection.close()
 
@@ -63,7 +63,7 @@ def main():
         'Host': HOST,
         'User-Agent': "a.py/1.0",
         'Accept': "*/*",
-        'Authorization': "Splunk %s" % sessionKey,
+        'Authorization': f"Splunk {sessionKey}",
     }
     try:
         connection.request("GET", "/services/apps/local", "", headers)
@@ -72,7 +72,7 @@ def main():
         print('')
     if response.status != 200:
         connection.close()
-        raise Exception("%d (%s)" % (response.status, response.reason))
+        raise Exception(f"{response.status} ({response.reason})")
 
     body = response.read()
     connection.close()

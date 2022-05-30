@@ -17,7 +17,6 @@
 import os
 import sys
 
-from splunklib import six
 
 from bottle import route, run, debug, template, static_file, request
 
@@ -92,7 +91,7 @@ def application(name):
 
     # We need to format the events to something the graphing library can handle
     data = []
-    for name, ticks in six.iteritems(events_over_time):
+    for name, ticks in events_over_time.items():
         # We ignore the cases
         if name == "VALUE" or name == "NULL":
             continue
