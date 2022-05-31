@@ -219,9 +219,7 @@ def _get_display_date(date):
     if mins < 10:
         mins = "0" + str(mins)
 
-    return "{month} {day}, {year} - {hour}:{minute} {period}".format(month=month_strings[date.month - 1], day=date.day,
-                                                                     year=date.year, hour=hours, minute=mins,
-                                                                     period="AM" if date.hour < 12 else "PM")
+    return f"{month_strings[date.month - 1]} {date.day}, {date.year} - {hours}:{mins} {'AM' if date.hour < 12 else 'PM'}"
 
 
 def _get_github_commits(owner, repo_name, per_page=1, page=1, token=None):
