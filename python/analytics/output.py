@@ -83,7 +83,7 @@ class AnalyticsRetriever:
         for result in reader:
             if not isinstance(result, dict):
                 continue
-            for field, count in result.items():
+            for field, count in list(result.items()):
                 # Ignore internal JSONResultsReader properties
                 if field.startswith("$"):
                     continue
@@ -133,7 +133,7 @@ class AnalyticsRetriever:
 
                 # The rest is in the form of [event/property]:count
                 # pairs, so we decode those
-                for key, count in result.items():
+                for key, count in list(result.items()):
                     # Ignore internal JSONResultsReader properties
                     if key.startswith("$"):
                         continue

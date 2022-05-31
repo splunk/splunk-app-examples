@@ -864,7 +864,7 @@ class Request(threading.local, DictMixin):
         """ The QUERY_STRING parsed into an instance of :class:`MultiDict`. """
         data = parse_qs(self.query_string, keep_blank_values=True)
         get = self.environ['bottle.get'] = MultiDict()
-        for key, values in data.items():
+        for key, values in list(data.items()):
             for value in values:
                 get[key] = value
         return get
@@ -965,7 +965,7 @@ class Request(threading.local, DictMixin):
         """
         raw_dict = SimpleCookie(self.headers.get('Cookie',''))
         cookies = {}
-        for cookie in raw_dict.values():
+        for cookie in list(raw_dict.values()):
             cookies[cookie.key] = cookie.value
         return cookies
 
@@ -1080,7 +1080,7 @@ class Response(threading.local):
             raise TypeError('Secret missing for non-string Cookie.')
 
         self.COOKIES[key] = value
-        for k, v in kargs.items():
+        for k, v in list(kargs.items()):
             self.COOKIES[key][k.replace('_', '-')] = v
 
     def delete_cookie(self, key, **kwargs):
@@ -1263,7 +1263,7 @@ class MultiDict(DictMixin):
     # collections.MutableMapping would be better for Python >= 2.6
     def __init__(self, *a, **k):
         self.dict = dict()
-        for k, v in dict(*a, **k).items():
+        for k, v in list(dict(*a, **k).items()):
             self[k] = v
 
     def __len__(self): return len(self.dict)
@@ -1284,7 +1284,7 @@ class MultiDict(DictMixin):
         return self.dict[key][index]
 
     def iterallitems(self):
-        for key, values in self.dict.items():
+        for key, values in list(self.dict.items()):
             for value in values:
                 yield key, value
 
@@ -1593,7 +1593,7 @@ def validate(**vkargs):
     """
     def decorator(func):
         def wrapper(**kargs):
-            for key, value in vkargs.items():
+            for key, value in list(vkargs.items()):
                 if key not in kargs:
                     abort(403, f'Missing parameter: {key}')
                 try:
@@ -1992,7 +1992,7 @@ class FileCheckerThread(threading.Thread):
             if path[-4:] in ('.pyo', '.pyc'): path = path[:-1]
             if path and exists(path): files[path] = mtime(path)
         while not self.status:
-            for path, lmtime in files.items():
+            for path, lmtime in list(files.items()):
                 if not exists(path) or mtime(path) > lmtime:
                     self.status = 3
             if not exists(self.lockfile):
