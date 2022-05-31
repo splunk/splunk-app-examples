@@ -91,7 +91,7 @@ class RedirectHandler(http.server.SimpleHTTPRequestHandler):
 
             # We were successful, so send the response code
             self.send_response(response.code, message=response.msg)
-            for key, value in dict(response.headers).items():
+            for key, value in list(dict(response.headers).items()):
                 # Optionally log the headers
                 # self.log_message("%s: %s" % (key, value))
 
@@ -111,7 +111,7 @@ class RedirectHandler(http.server.SimpleHTTPRequestHandler):
             # On errors, log the response code and message
             self.log_message("Code: %s (%s)", e.code, e.msg)
 
-            for key, value in dict(e.hdrs).items():
+            for key, value in list(dict(e.hdrs).items()):
                 # On errors, we always log the headers
                 self.log_message("%s: %s", key, value)
 
