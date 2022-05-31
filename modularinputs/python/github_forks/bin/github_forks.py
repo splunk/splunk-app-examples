@@ -143,8 +143,8 @@ class MyScript(Script):
             # Create an Event object, and set its fields
             event = Event()
             event.stanza = input_name
-            event.data = 'owner="%s" repository="%s" fork_count=%s' % \
-                         (owner.replace('"', '\\"'), repo_name.replace('"', '\\"'), fork_count)
+            event.data = 'owner="{}" repository="{}" fork_count={}' \
+                .format(owner.replace('"', '\\"'), repo_name.replace('"', '\\"'), fork_count)
 
             # Tell the EventWriter to write this event
             ew.write_event(event)
