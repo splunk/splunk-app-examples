@@ -93,7 +93,7 @@ def application(name):
     data = []
     for name, ticks in list(events_over_time.items()):
         # We ignore the cases
-        if name == "VALUE" or name == "NULL":
+        if name in ("VALUE", "NULL"):
             continue
 
         event_ticks = []
