@@ -1,14 +1,14 @@
 #!/usr/bin/python
 
 __doc__ = """Tiny HTTP Proxy.
- 
+
 This module implements GET, HEAD, POST, PUT and DELETE methods
 on http.server, and behaves as an HTTP proxy.  The CONNECT
 method is also implemented experimentally, but has not been
 tested yet.
- 
+
 Any help will be greatly appreciated.       SUZUKI Hisao
- 
+
 2009/11/23 - Modified by Mitko Haralanov
              * Added very simple FTP file retrieval
              * Added custom logging methods
@@ -114,7 +114,7 @@ class ProxyHandler (http.server.BaseHTTPRequestHandler):
                              f"{self.request_version}\r\n")
                     self.headers['Connection'] = 'close'
                     del self.headers['Proxy-Connection']
-                    for key_val in self.headers.items():
+                    for key_val in list(self.headers.items()):
                         soc.send("%s: %s\r\n" % key_val)
                     soc.send("\r\n")
                     self._read_write(soc)
