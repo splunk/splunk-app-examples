@@ -115,7 +115,7 @@ def cmdline():
 
     if 'splunk_hec_token' not in kwargs:
         kwargs['splunk_hec_token'] = getpass("Splunk HEC token: ")
-    print(kwargs)
+
     # Prompt for Splunk username/password if not provided on command line
     if 'username' not in kwargs:
         kwargs['username'] = input("Splunk username: ")
