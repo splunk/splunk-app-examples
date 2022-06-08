@@ -14,23 +14,20 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import
-
 import os
 import re
 import sys
 import json
+from http import client
+from datetime import datetime
+
 # NOTE: splunklib must exist within github_commits/lib/splunklib for this
 # example to run! To run this locally use `SPLUNK_VERSION=latest docker compose up -d`
 # from the root of this repo which mounts this example and the latest splunklib
 # code together at /opt/splunk/etc/apps/github_commits
-from datetime import datetime
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
-
 from splunklib.modularinput import *
-from splunklib import six
-from six.moves import http_client
 
 
 class MyScript(Script):
@@ -54,7 +51,8 @@ class MyScript(Script):
         # Splunk will display "Github Commits" to users for this input
         scheme = Scheme("Github Commits")
 
-        scheme.description = "Streams events of commits in the specified Github repository (must be public, unless setting a token)."
+        scheme.description = "Streams events of commits in the specified Github " \
+                             "repository (must be public, unless setting a token)."
         # If you set external validation to True, without overriding validate_input,
         # the script will accept anything as valid. Generally you only need external
         # validation if there are relationships you must maintain among the
@@ -120,12 +118,14 @@ class MyScript(Script):
         # If we get any kind of message, that's a bad sign.
         if "message" in res:
             raise ValueError(res["message"])
-        elif len(res) == 1 and "sha" in res[0]:
+
+        if len(res) == 1 and "sha" in res[0]:
             pass
         else:
-            raise ValueError("Expected only the latest commit, instead found " + str(len(res)) + " commits.")
+            raise ValueError(f"Expected only the latest commit, "
+                             f"instead found {str(len(res))} commits.")
 
-    def stream_events(self, inputs, ew):
+    def stream_events(self, inputs, event_writer):
         """This function handles all the action: splunk calls this modular input
         without arguments, streams XML describing the inputs to stdin, and waits
         for XML on stdout describing events.
@@ -135,11 +135,11 @@ class MyScript(Script):
         script.
 
         :param inputs: an InputDefinition object
-        :param ew: an EventWriter object
+        :param event_writer: an EventWriter object
         """
 
         # Go through each input for this modular input
-        for input_name, input_item in six.iteritems(inputs.inputs):
+        for input_name, input_item in list(inputs.inputs.items()):
             # Get fields from the InputDefinition object
             owner = input_item["owner"]
             repo_name = input_item["repo_name"]
@@ -165,15 +165,13 @@ class MyScript(Script):
 
             try:
                 # read sha values from file, if exist
-                file = open(checkpoint_file_path, 'r')
-                checkpoint_file_contents = file.read()
-                file.close()
+                with open(checkpoint_file_path, 'r') as file:
+                    checkpoint_file_contents = file.read()
             except:
                 # If there's an exception, assume the file doesn't exist
                 # Create the checkpoint file with an empty string
-                file = open(checkpoint_file_path, "a")
-                file.write("")
-                file.close()
+                with open(checkpoint_file_path, "a") as file:
+                    file.write("")
 
             per_page = 100  # The maximum per page value supported by the Github API.
             page = 1
@@ -184,27 +182,26 @@ class MyScript(Script):
                 if len(res) == 0:
                     break
 
-                file = open(checkpoint_file_path, "a")
+                with open(checkpoint_file_path, "a") as file:
 
-                for record in res:
-                    if error_found:
-                        break
+                    for record in res:
+                        if error_found:
+                            break
 
-                    # If the file exists and doesn't contain the sha, or if the file doesn't exist.
-                    if checkpoint_file_contents.find(record["sha"] + "\n") < 0:
-                        try:
-                            _stream_commit(ew, owner, repo_name, record)
-                            # Append this commit to the string we'll write at the end
-                            checkpoint_file_new_contents += record["sha"] + "\n"
-                        except:
-                            error_found = True
-                            file.write(checkpoint_file_new_contents)
+                        # If the file exists and doesn't contain the sha, or if the file doesn't exist.
+                        if checkpoint_file_contents.find(record["sha"] + "\n") < 0:
+                            try:
+                                _stream_commit(event_writer, owner, repo_name, record)
+                                # Append this commit to the string we'll write at the end
+                                checkpoint_file_new_contents += record["sha"] + "\n"
+                            except:
+                                error_found = True
+                                file.write(checkpoint_file_new_contents)
 
-                            # We had an error, die.
-                            return
+                                # We had an error, die.
+                                return
 
-                file.write(checkpoint_file_new_contents)
-                file.close()
+                    file.write(checkpoint_file_new_contents)
 
                 page += 1
 
@@ -222,15 +219,13 @@ def _get_display_date(date):
     if mins < 10:
         mins = "0" + str(mins)
 
-    return "{month} {day}, {year} - {hour}:{minute} {period}".format(month=month_strings[date.month - 1], day=date.day,
-                                                                     year=date.year, hour=hours, minute=mins,
-                                                                     period="AM" if date.hour < 12 else "PM")
+    return f"{month_strings[date.month - 1]} {date.day}, {date.year} - {hours}:{mins} {'AM' if date.hour < 12 else 'PM'}"
 
 
 def _get_github_commits(owner, repo_name, per_page=1, page=1, token=None):
     # Read the response from the Github API, then parse the JSON data into an object
-    repo_path = "/repos/%s/%s/commits?per_page=%d&page=%d" % (owner, repo_name, per_page, page)
-    connection = http_client.HTTPSConnection('api.github.com')
+    repo_path = f"/repos/{owner}/{repo_name}/commits?per_page={per_page}&page={page}"
+    connection = client.HTTPSConnection('api.github.com')
     headers = {
         'Content-type': 'application/json',
         'User-Agent': 'splunk-sdk-python'
@@ -247,7 +242,7 @@ def _stream_commit(ew, owner, repo_name, commitData):
     json_data = {
         "sha": commitData["sha"],
         "api_url": commitData["url"],
-        "url": "https://github.com/" + owner + "/" + repo_name + "/commit/" + commitData["sha"]
+        "url": f'https://github.com/{owner}/{repo_name}/commit/{commitData["sha"]}'
     }
     commit = commitData["commit"]
 

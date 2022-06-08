@@ -25,9 +25,9 @@ Click on the `+Add new` button in front of the `Random Numbers` which opens a co
 
 `name`: Name of your choice to refer to this modularinput later. i.e. randomnumber
 
-`Minimum`: Minimum random number to be produced by this input. i.e. Splunk
+`Minimum`: Minimum random number to be produced by this input. i.e. 1
 
-`Maximum`: Maximum random number to be produced by this input. i.e. splunk-sdk-python
+`Maximum`: Maximum random number to be produced by this input. i.e. 5
 
 Once the details are filled, click on `Next` and then click on `Start Searching`
 
