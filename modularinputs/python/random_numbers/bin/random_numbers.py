@@ -111,7 +111,7 @@ class MyScript(Script):
         :param event_writer: an EventWriter object
         """
         # Go through each input for this modular input
-        for input_name, input_item in iter(inputs.inputs):
+        for input_name, input_item in list(inputs.inputs.items()):
             # Get the values, cast them as floats
             minimum = float(input_item["min"])
             maximum = float(input_item["max"])
@@ -119,7 +119,7 @@ class MyScript(Script):
             # Create an Event object, and set its data fields
             event = Event()
             event.stanza = input_name
-            event.data = "number=\"{str(random.uniform(minimum, maximum))}\""
+            event.data = f"number=\"{str(random.uniform(minimum, maximum))}\""
 
             # Tell the EventWriter to write this event
             event_writer.write_event(event)

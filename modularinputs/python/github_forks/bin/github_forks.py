@@ -127,7 +127,7 @@ class MyScript(Script):
         :param ew: an EventWriter object
         """
         # Go through each input for this modular input
-        for input_name, input_item in iter(inputs.inputs):
+        for input_name, input_item in list(inputs.inputs.items()):
             # Get fields from the InputDefinition object
             owner = input_item["owner"]
             repo_name = input_item["repo_name"]
