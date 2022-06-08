@@ -15,8 +15,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import os
 import sys
 import time
@@ -24,8 +22,6 @@ import time
 splunkhome = os.environ['SPLUNK_HOME']
 sys.path.append(os.path.join(splunkhome, 'etc', 'apps', 'customsearchcommands_app', 'lib'))
 from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration, Option, validators
-from splunklib import six
-from splunklib.six.moves import range
 
 
 @Configuration()
@@ -38,6 +34,6 @@ class GenerateTextCommand(GeneratingCommand):
         text = self.text
         self.logger.debug("Generating %d events with text %s" % (self.count, self.text))
         for i in range(1, self.count + 1):
-            yield {'_serial': i, '_time': time.time(), '_raw': six.text_type(i) + '. ' + text}
+            yield {'_serial': i, '_time': time.time(), '_raw': str(i) + '. ' + text}
 
 dispatch(GenerateTextCommand, sys.argv, sys.stdin, sys.stdout, __name__)

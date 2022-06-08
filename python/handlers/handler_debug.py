@@ -21,9 +21,9 @@ import os
 import sys
 from pprint import pprint
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-import splunklib.binding as binding
-import splunklib.client as client
-import python.utils as utils
+from splunklib import binding
+from splunklib import client
+from python import utils
 
 
 def handler():
@@ -31,8 +31,7 @@ def handler():
 
     def request(url, message, **kwargs):
         response = default(url, message, **kwargs)
-        print("%s %s => %d (%s)" % (
-            message['method'], url, response['status'], response['reason']))
+        print(f"{message['method']} {url} => {response['status']} ({response['reason']})")
         return response
 
     return request

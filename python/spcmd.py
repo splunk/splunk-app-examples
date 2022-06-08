@@ -30,8 +30,7 @@ try:
 except ImportError:
     pass
 
-from splunklib.six.moves import input as raw_input
-import splunklib.client as client
+from splunklib import client
 import utils
 
 
@@ -60,35 +59,33 @@ class Session(InteractiveInterpreter):
     # Run the interactive interpreter
     def run(self):
         print("Welcome to Splunk SDK's Python interactive shell")
-        print("%s connected to %s:%s" % (
-            self.service.username,
-            self.service.host,
-            self.service.port))
+        print(f"{self.service.username} connected to {self.service.host}:{self.service.port}")
 
         while True:
             try:
-                input = raw_input("> ")
+                input_data = input("> ")
             except EOFError:
                 print("\n\nThanks for using Splunk>.\n")
                 return
 
-            if input is None:
+            if input_data is None:
                 return
 
-            if len(input) == 0:
+            if len(input_data) == 0:
                 continue  # Ignore
 
             try:
                 # Gather up lines until we have a fragment that compiles
                 while True:
-                    co = compile_command(input)
-                    if co is not None: break
-                    input = input + '\n' + raw_input(". ")  # Keep trying
+                    co = compile_command(input_data)
+                    if co is not None:
+                        break
+                    input_data = input_data + '\n' + input(". ")  # Keep trying
             except SyntaxError:
                 self.showsyntaxerror()
                 continue
             except Exception as e:
-                print("Error: %s" % e)
+                print(f"Error: {e}")
                 continue
 
             self.runcode(co)

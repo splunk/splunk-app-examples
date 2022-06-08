@@ -18,7 +18,7 @@
 import sys
 from os import path
 
-import splunklib.client as client
+from splunklib import client
 from utils import *
 
 RULES = {
@@ -59,7 +59,7 @@ def main(argv):
 
     name = opts.kwargs['index']
     if name not in service.indexes:
-        error("Index '%s' does not exist." % name, 2)
+        error(f"Index '{name}' does not exist.", 2)
     index = service.indexes[name]
 
     kwargs_submit = dslice(opts.kwargs,

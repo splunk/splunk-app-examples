@@ -33,12 +33,12 @@ def main():
         content = saved_search.content
         for key in sorted(content.keys()):
             value = content[key]
-            print("%s: %s" % (key, value))
+            print(f"{key}: {value}")
         history = saved_search.history()
         if len(history) > 0:
             print("history:")
             for job in history:
-                print("    %s" % job.name)
+                print(f"    {job.name}")
         print()
 
 

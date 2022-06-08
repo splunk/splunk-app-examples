@@ -17,7 +17,6 @@
 import os
 import sys
 
-from splunklib import six
 
 import splunklib.client as client
 import splunklib.results as results
@@ -64,12 +63,12 @@ class AnalyticsRetriever:
         self.index = index
 
     def applications(self):
-        query = "search index=%s | stats count by application" % self.index
+        query = f"search index={self.index} | stats count by application"
         job = self.splunk.jobs.create(query, exec_mode="blocking")
         return counts(job, "application")
 
     def events(self):
-        query = "search index=%s application=%s | stats count by event" % (self.index, self.application_name)
+        query = f"search index={self.index} application={self.application_name} | stats count by event"
         job = self.splunk.jobs.create(query, exec_mode="blocking")
         return counts(job, "event")
 
@@ -84,7 +83,7 @@ class AnalyticsRetriever:
         for result in reader:
             if not isinstance(result, dict):
                 continue
-            for field, count in six.iteritems(result):
+            for field, count in list(result.items()):
                 # Ignore internal JSONResultsReader properties
                 if field.startswith("$"):
                     continue
@@ -134,7 +133,7 @@ class AnalyticsRetriever:
 
                 # The rest is in the form of [event/property]:count
                 # pairs, so we decode those
-                for key, count in six.iteritems(result):
+                for key, count in list(result.items()):
                     # Ignore internal JSONResultsReader properties
                     if key.startswith("$"):
                         continue

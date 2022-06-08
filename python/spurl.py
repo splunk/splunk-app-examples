@@ -18,7 +18,7 @@
 import sys
 from xml.etree import ElementTree
 
-import splunklib.binding as binding
+from splunklib import binding
 
 import utils
 
@@ -31,7 +31,7 @@ def invoke(path, **kwargs):
 
 def print_response(response):
     if response.status != 200:
-        print("%d %s" % (response.status, response.reason))
+        print(f"{response.status} {response.reason}")
         return
     body = response.body.read()
     try:

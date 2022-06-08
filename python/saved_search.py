@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""A command line utility for manipulating saved searches 
+"""A command line utility for manipulating saved searches
    (list-all/create/list/delete).
 The saved search example supports `create`, `list`, `list-all` and `delete`
 saved search actions.
@@ -35,7 +35,7 @@ invoked as a result of the event firing. Scripts are run out of
 
 import sys
 
-import splunklib.binding as binding
+from splunklib import binding
 
 import utils
 
@@ -179,7 +179,7 @@ def main(argv):
 
     # Extract from command line and build into variable args
     kwargs = {}
-    for key in RULES.keys():
+    for key in RULES:
         if key in opts.kwargs:
             if key == "operation":
                 operation = opts.kwargs[key]
@@ -194,10 +194,8 @@ def main(argv):
             operation = 'list-all'
 
     # pre-sanitize
-    if (operation != "list" and operation != "create"
-            and operation != "delete"
-            and operation != "list-all"):
-        print("operation %s not one of list-all, list, create, delete" % operation)
+    if operation not in ('list', 'create', 'delete', 'list-all'):
+        print(f"operation {operation} not one of list-all, list, create, delete")
         sys.exit(0)
 
     if 'name' not in kwargs and operation != "list-all":
@@ -205,7 +203,7 @@ def main(argv):
         sys.exit(0)
 
     # remove arg 'name' from passing through to operation builder, except on create
-    if operation != "create" and operation != "list-all":
+    if operation not in ('create', 'list-all'):
         name = kwargs['name']
         kwargs.pop('name')
 
@@ -213,12 +211,12 @@ def main(argv):
     if operation == "list-all":
         result = context.get("saved/searches", **kwargs)
     elif operation == "list":
-        result = context.get("saved/searches/%s" % name, **kwargs)
+        result = context.get(f"saved/searches/{name}", **kwargs)
     elif operation == "create":
         result = context.post("saved/searches", **kwargs)
     else:
-        result = context.delete("saved/searches/%s" % name, **kwargs)
-    print("HTTP STATUS: %d" % result.status)
+        result = context.delete(f"saved/searches/{name}", **kwargs)
+    print(f"HTTP STATUS: {result.status}")
     xml_data = result.body.read().decode('utf-8')
     sys.stdout.write(xml_data)
 

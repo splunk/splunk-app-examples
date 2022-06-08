@@ -20,7 +20,6 @@ from subprocess import PIPE, Popen
 
 import testlib
 
-from splunklib import six
 from splunklib import client
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -29,15 +28,15 @@ EXAMPLES_PATH = os.path.join(DIR_PATH, '..')
 
 def check_multiline(testcase, first, second, message=None):
     """Assert that two multi-line strings are equal."""
-    testcase.assertTrue(isinstance(first, six.string_types),
+    testcase.assertTrue(isinstance(first, str),
                         'First argument is not a string')
-    testcase.assertTrue(isinstance(second, six.string_types),
+    testcase.assertTrue(isinstance(second, str),
                         'Second argument is not a string')
     # Unix-ize Windows EOL
     first = first.replace("\r", "")
     second = second.replace("\r", "")
     if first != second:
-        testcase.fail("Multiline strings are not equal: %s" % message)
+        testcase.fail(f"Multiline strings are not equal: {message}")
 
 
 # Run the given python script and return its exit code.
@@ -62,11 +61,11 @@ class ExamplesTestCase(testlib.SDKTestCase):
     def check_commands(self, *args):
         for arg in args:
             result = run(arg)
-            self.assertEqual(result, 0, '"{0}" run failed with result code {1}'.format(arg, result))
+            self.assertEqual(result, 0, f'"{arg}" run failed with result code {result}')
         self.service.login()  # Because a Splunk restart invalidates our session
 
     def setUp(self):
-        super(ExamplesTestCase, self).setUp()
+        super().setUp()
 
         # Ignore result, it might already exist
         run("index.py create sdk-tests")
@@ -131,7 +130,6 @@ class ExamplesTestCase(testlib.SDKTestCase):
             "index.py --help",
             "index.py",
             "index.py list")
-        return
 
     def test_info(self):
         self.check_commands(
@@ -215,7 +213,7 @@ class ExamplesTestCase(testlib.SDKTestCase):
         file_to_upload = os.path.expandvars(os.environ.get("INPUT_EXAMPLE_UPLOAD", "./upload.py"))
         self.check_commands(
             "upload.py --help",
-            "upload.py --index=sdk-tests %s" % file_to_upload)
+            f"upload.py --index=sdk-tests {file_to_upload}")
 
     #The following tests are for the Analytics example
     def test_analytics(self):
@@ -266,7 +264,7 @@ class ExamplesTestCase(testlib.SDKTestCase):
         for prop in properties:
             name = prop["name"]
             count = prop["count"]
-            self.assertTrue(name in list(expected_properties.keys()))
+            self.assertTrue(name in list(expected_properties))
             self.assertEqual(count, expected_properties[name])
 
         # Assert property values
@@ -279,7 +277,7 @@ class ExamplesTestCase(testlib.SDKTestCase):
         for value in values:
             name = value["name"]
             count = value["count"]
-            self.assertTrue(name in list(expected_property_values.keys()))
+            self.assertTrue(name in list(expected_property_values))
             self.assertEqual(count, expected_property_values[name])
 
         # Assert event over time

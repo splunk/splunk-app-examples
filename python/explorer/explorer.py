@@ -14,15 +14,15 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import server
 import webbrowser
 import sys
 import os
+import urllib.parse
+import server
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-import python.utils as utils
-from splunklib.six.moves import urllib
+from python import utils
 
 PORT = 8080
 
@@ -34,7 +34,7 @@ def main(argv):
         "redirectport": {
             "flags": ["--redirectport"],
             "default": PORT,
-            "help": "Port to use for redirect server (default: %s)" % PORT,
+            "help": f"Port to use for redirect server (default: {PORT})",
         },
     }
 
@@ -56,7 +56,7 @@ def main(argv):
     args = urllib.parse.urlencode(args)
 
     # Launch the browser
-    webbrowser.open("file://%s" % os.path.join(os.getcwd(), "explorer.html?%s" % args))
+    webbrowser.open(f"file://{os.path.join(os.getcwd(), f'explorer.html?{args}')}")
 
     # And server the files
     server.serve(opts.kwargs["redirectport"])

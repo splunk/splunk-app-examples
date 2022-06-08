@@ -13,20 +13,22 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-
 import sys
 import os
 import ssl
+import socketserver
+import http.server
+import io
+import urllib.request
+import urllib.error
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from splunklib.six import iteritems
-from splunklib.six.moves import socketserver, SimpleHTTPServer, StringIO, urllib
 
 PORT = 8080
 
 
-class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class RedirectHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         redirect_url, headers = self.get_url_and_headers()
         if redirect_url is None:
@@ -89,7 +91,7 @@ class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
             # We were successful, so send the response code
             self.send_response(response.code, message=response.msg)
-            for key, value in iteritems(dict(response.headers)):
+            for key, value in list(dict(response.headers).items()):
                 # Optionally log the headers
                 # self.log_message("%s: %s" % (key, value))
 
@@ -109,12 +111,12 @@ class RedirectHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             # On errors, log the response code and message
             self.log_message("Code: %s (%s)", e.code, e.msg)
 
-            for key, value in iteritems(dict(e.hdrs)):
+            for key, value in list(dict(e.hdrs).items()):
                 # On errors, we always log the headers
                 self.log_message("%s: %s", key, value)
 
             response_text = e.fp.read()
-            response_file = StringIO(response_text)
+            response_file = io.StringIO(response_text)
 
             # On errors, we also log the response text
             self.log_message("Response: %s", response_text)
@@ -147,7 +149,7 @@ def serve(port=PORT):
 
     httpd = ReuseableSocketTCPServer(("", int(port)), Handler)
 
-    print("API Explorer -- Port: %s" % int(port))
+    print(f"API Explorer -- Port: {int(port)}")
 
     httpd.serve_forever()
 
@@ -155,7 +157,7 @@ def serve(port=PORT):
 def main(argv):
     if len(argv) > 0:
         port = argv[0]
-        serve(port=PORT)
+        serve(port=port)
     else:
         serve()
 

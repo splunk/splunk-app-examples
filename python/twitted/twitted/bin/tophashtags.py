@@ -15,7 +15,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
 import sys
@@ -71,7 +70,7 @@ class TopHashTags(ReportingCommand):
         sum_of_hash = sum(list(tags.values()))
 
         for i in list(tags.values()):
-            percent.append("{:.2f}".format((i/sum_of_hash)*100))
+            percent.append(f"{i / sum_of_hash * 100:.2f}")
 
         for index in range(len(tags)):
             yield {"hashtag": list(tags.keys())[index], "count": list(tags.values())[index], "percent": percent[index]}
