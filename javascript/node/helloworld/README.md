@@ -7,28 +7,22 @@ of the examples hard-code the connection information for splunkjs.
 One note is that we do test the examples in our test harness, so there is
 a way to sideload connection information. However, you can safely ignore this.
 
-### Files: [`apps.js`] and [`apps_async.js`]
+### Files: [`apps.js`]
 
 These files demonstrate working with the `splunkjs.Service.Applications` collection
 and `splunkjs.Service.Application` entity. It will list all the apps, and for each
 one print its name.
-
-The only difference between the two files is that the latter uses the built-in
-`splunkjs.Async` module to make asynchronous control-flow easier.
 
 ### Files: [`endpoint_instantiation.js`]
 
 This example will show you how to add a new REST API endpoint to the Splunk SDK for
 JavaScript.
 
-### Files: [`firedalerts.js`] and [`firedalerts_async.js`]
+### Files: [`firedalerts.js`]
 
 These files demonstrate working with the `splunkjs.Service.FiredAlerts` collection
 and `splunkjs.Service.AlertGroup` entity. It will list all the alert groups, and 
 for each one print its name and the search query associated with it.
-
-The only difference between the two files is that the latter uses the built-in
-`splunkjs.Async` module to make asynchronous control-flow easier.
 
 ### Files: [`firedalerts_create.js`] and [`firedalerts_delete.js`]
 
@@ -38,14 +32,11 @@ entities.
 The only difference between the two files is that the latter uses the built-in
 `splunkjs.Async` module to make asynchronous control-flow easier.
 
-### Files: [`savedsearches.js`] and [`savedsearches_async.js`]
+### Files: [`savedsearches.js`]
 
 These files demonstrate working with the `splunkjs.Service.SavedSearches` collection
 and `splunkjs.Service.SavedSearch` entity. It will list all the saved searches, and 
 for each one print its name and the search query associated with it.
-
-The only difference between the two files is that the latter uses the built-in
-`splunkjs.Async` module to make asynchronous control-flow easier.
 
 ### Files: [`savedsearches_create.js`] and [`savedsearches_delete.js`]
 
@@ -99,16 +90,13 @@ We create a utility `Logger` class that encapsulates various logging levels,
 and we can then simply call `logger.log`, `logger.error`, etc.
 
 [`apps.js`]:                    https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/apps.js
-[`apps_async.js`]:              https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/apps_async.js
 [`endpoint_instantiation.js`]:  https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/endpoint_instantiation.js
 [`firedalerts.js`]:             https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/firedalerts.js
-[`firedalerts_async.js`]:       https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/firedalerts_async.js
 [`firedalerts_create.js`]:      https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/firedalerts_create.js
 [`firedalerts_delete.js`]:      https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/firedalerts_delete.js
 [`get_job.js`]:                 https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/get_job.js
 [`log.js`]:                     https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/log.js
 [`savedsearches.js`]:           https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/savedsearches.js
-[`savedsearches_async.js`]:     https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/savedsearches_async.js
 [`savedsearches_create.js`]:    https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/savedsearches_create.js
 [`savedsearches_delete.js`]:    https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/savedsearches_delete.js
 [`search_normal.js`]:           https://github.com/splunk/splunk-app-examples/tree/master/javascript/node/helloworld/search_normal.js
