@@ -36,106 +36,90 @@ let getNextId = function () {
 splunkjs.Logger.setLevel("ALL");
 
 
-describe("Hello World Tests", function (done) {
-    it("Apps", function (done) {
+describe("Hello World Tests", async function () {
+    it("Apps", async function () {
         let main = require("./node/helloworld/apps").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Apps#Async", function (done) {
-        let main = require("./node/helloworld/apps_async").main;
-        main(opts, done);
-    });
-
-    it("Pivot#Async", function (done) {
+    it("Pivot#Async", async function () {
         let main = require("./node/helloworld/pivot_async").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Fired Alerts", function (done) {
+    it("Fired Alerts", async function () {
         let main = require("./node/helloworld/firedalerts").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Fired Alerts#Async", function (done) {
-        let main = require("./node/helloworld/firedalerts_async").main;
-        main(opts, done);
-    });
-
-    it("Fired Alerts#Create", function (done) {
+    it("Fired Alerts#Create", async function () {
         let main = require("./node/helloworld/firedalerts_create").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Fired Alerts#Delete", function (done) {
+    it("Fired Alerts#Delete", async function () {
         let main = require("./node/helloworld/firedalerts_delete").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Get Job by sid", function (done) {
+    it("Get Job by sid", async function () {
         let main = require("./node/helloworld/get_job").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Endpoint Instantiation", function (done) {
+    it("Endpoint Instantiation", async function () {
         let main = require("./node/helloworld/endpoint_instantiation").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Saved Searches", function (done) {
+    it("Saved Searches", async function () {
         let main = require("./node/helloworld/savedsearches").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Saved Searches#Async", function (done) {
-        let main = require("./node/helloworld/savedsearches_async").main;
-        main(opts, done);
-    });
-
-    it("Saved Searches#Delete", function (done) {
+    it("Saved Searches#Delete", async function () {
         let main = require("./node/helloworld/savedsearches_delete").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Saved Searches#Create", function (done) {
+    it("Saved Searches#Create", async function () {
         let main = require("./node/helloworld/savedsearches_create").main;
-        main(opts, done);
+        main(opts);
     });
 
-    it("Saved Searches#Delete Again", function (done) {
+    it("Saved Searches#Delete Again", async function () {
         let main = require("./node/helloworld/savedsearches_delete").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Search#normal", function (done) {
+    it("Search#normal", async function () {
         let main = require("./node/helloworld/search_normal").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Search#blocking", function (done) {
+    it("Search#blocking", async function () {
         let main = require("./node/helloworld/search_blocking").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Search#oneshot", function (done) {
+    it("Search#oneshot", async function () {
         let main = require("./node/helloworld/search_oneshot").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Search#realtime", function (done) {
-
+    it("Search#realtime", async function () {
         this.timeout(40000)
         let main = require("./node/helloworld/search_realtime").main;
-        main(opts, done);
+        await main(opts);
     });
 
-    it("Logging", function (done) {
+    it("Logging", async function () {
         let main = require("./node/helloworld/log").main;
-        main(opts, done);
+        await main(opts);
     });
 });
 
-describe("Jobs Example Tests", function (done) {
+describe.skip("Jobs Example Tests", function (done) {
     beforeEach(function (done) {
         let context = this;
 
@@ -347,12 +331,12 @@ describe("Jobs Example Tests", function (done) {
     });
 });
 
-describe("Search Example Tests", function (done) {
-    beforeEach(function (done) {
+describe("Search Example Tests", async function () {
+    beforeEach(function () {
         let context = this;
 
         this.main = require("./node/search").main;
-        this.run = function (command, args, options, callback) {
+        this.run = async function (command, args, options) {
             let combinedArgs = argv.slice();
             if (command) {
                 combinedArgs.push(command);
@@ -373,55 +357,41 @@ describe("Search Example Tests", function (done) {
                 }
             }
 
-            return context.main(combinedArgs, callback);
+            return await context.main(combinedArgs);
         };
-
-        done();
     });
 
-    it("Create regular search", function (done) {
+    it("Create regular search", async function () {
         let options = {
             search: "search index=_internal | head 5"
         };
         this.timeout(40000);
-        this.run(null, null, options, function (err) {
-            assert.ok(!err);
-            done();
-        });
+        await this.run(null, null, options);
     });
 
-    it("Create regular search with verbose", function (done) {
+    it("Create regular search with verbose", async function () {
         let options = {
             search: "search index=_internal | head 5"
         };
         this.timeout(40000);
-        this.run(null, ["--verbose"], options, function (err) {
-            assert.ok(!err);
-            done();
-        });
+        await this.run(null, ["--verbose"], options);
     });
 
-    it("Create oneshot search", function (done) {
+    it("Create oneshot search", async function () {
         let options = {
             search: "search index=_internal | head 5",
             exec_mode: "oneshot"
         };
 
-        this.run(null, ["--verbose"], options, function (err) {
-            assert.ok(!err);
-            done();
-        });
+        await this.run(null, ["--verbose"], options);
     });
 
-    it("Create normal search with reduced count", function (done) {
+    it("Create normal search with reduced count", async function () {
         let options = {
             search: "search index=_internal | head 20",
             count: 10
         };
         this.timeout(40000);
-        this.run(null, ["--verbose"], options, function (err) {
-            assert.ok(!err);
-            done();
-        });
+        await this.run(null, ["--verbose"], options);
     });
 });
