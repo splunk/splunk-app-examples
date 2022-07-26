@@ -17,9 +17,8 @@
 // fetching a collection of `Job`s.
 
 let splunkjs = require('splunk-sdk');
-let Async = splunkjs.Async;
 
-exports.main = function (opts, callback) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it
     opts = opts || {};
 
@@ -41,59 +40,50 @@ exports.main = function (opts, callback) {
 
     let sid;
 
-    Async.chain([
-        // First, we log in
-        function (done) {
-            service.login(done);
-        },
-        // Perform the search
-        function (success, done) {
-            if (!success) {
-                done("Error logging in");
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
+            console.log("Error in logging in");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
             }
-
-            service.search("search index=_internal | head 1", {}, done);
-        },
-        function (job, done) {
-            // Store the sid for later use
-            sid = job.sid;
-            console.log("Created a search job with sid: " + job.sid);
-            done();
+            return;
         }
-    ],
-        function (err) {
-            if (err || !sid) {
-                if (err.hasOwnProperty("data") && err.data.hasOwnProperty("messages")) {
-                    console.log(err.data.messages[0].text);
-                }
-                else {
-                    console.log(err);
-                }
-                if (!sid) {
-                    console.log("Couldn't create search.");
-                }
-                callback(err);
+
+        // Perform the search
+        let job = await service.search("search index=_internal | head 1", {});
+        // Store the sid for later use
+        sid = job.sid;
+        console.log("Created a search job with sid: " + job.sid);
+        if (!sid) {
+            console.log("Couldn't create search.");
+            return;
+        }
+        // Since we have the job sid, we can get that job directly
+        let fetchedJob = await service.getJob(sid);
+        console.log("Got the job with sid: " + fetchedJob.sid);
+    } catch (err) {
+        if (err || !sid) {
+            if (err.hasOwnProperty("data") && err.data.hasOwnProperty("messages")) {
+                console.log(err.data.messages[0].text);
             }
             else {
-                Async.chain([
-                    function (done) {
-                        // Since we have the job sid, we can get that job directly
-                        service.getJob(sid, done);
-                    },
-                    function (job, done) {
-                        console.log("Got the job with sid: " + job.sid);
-                        done();
-                    }
-                ],
-                    function (err) {
-                        callback(err);
-                    }
-                );
+                console.log(err);
+            }
+            if (!sid) {
+                console.log("Couldn't create search.");
             }
         }
-    );
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }

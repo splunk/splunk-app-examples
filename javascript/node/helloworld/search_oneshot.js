@@ -19,9 +19,8 @@
 // results in the response.
 
 let splunkjs = require('splunk-sdk');
-let Async = splunkjs.Async;
 
-exports.main = function (opts, callback) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it
     opts = opts || {};
 
@@ -41,44 +40,42 @@ exports.main = function (opts, callback) {
         version: version
     });
 
-    Async.chain([
-        // First, we log in
-        function (done) {
-            service.login(done);
-        },
-        // Perform the search
-        function (success, done) {
-            if (!success) {
-                done("Error logging in");
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
+            console.log("Error in logging in");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
             }
-
-            service.oneshotSearch("search index=_internal | head 3", {}, done);
-        },
-        // The job is done, and the results are returned inline
-        function (results, done) {
-            // Find the index of the fields we want
-            let rawIndex = results.fields.indexOf("_raw");
-            let sourcetypeIndex = results.fields.indexOf("sourcetype");
-            let userIndex = results.fields.indexOf("user");
-
-            // Print out each result and the key-value pairs we want
-            console.log("Results: ");
-            for (let i = 0; i < results.rows.length; i++) {
-                console.log("  Result " + i + ": ");
-                console.log("    sourcetype: " + results.rows[i][sourcetypeIndex]);
-                console.log("    user: " + results.rows[i][userIndex]);
-                console.log("    _raw: " + results.rows[i][rawIndex]);
-            }
-
-            done();
+            return;
         }
-    ],
-        function (err) {
-            callback(err);
+        const results = await service.oneshotSearch("search index=_internal | head 3", {});
+        
+        // Find the index of the fields we want
+        let rawIndex = results.fields.indexOf("_raw");
+        let sourcetypeIndex = results.fields.indexOf("sourcetype");
+        let userIndex = results.fields.indexOf("user");
+
+        // Print out each result and the key-value pairs we want
+        console.log("Results: ");
+        for (let i = 0; i < results.rows.length; i++) {
+            console.log("  Result " + i + ": ");
+            console.log("    sourcetype: " + results.rows[i][sourcetypeIndex]);
+            console.log("    user: " + results.rows[i][userIndex]);
+            console.log("    _raw: " + results.rows[i][rawIndex]);
         }
-    );
+    } catch (err) {
+        console.log("Error:", err);
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }

@@ -17,7 +17,7 @@
 
 let splunkjs = require('splunk-sdk');
 
-exports.main = function (opts, done) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it
     opts = opts || {};
 
@@ -37,40 +37,41 @@ exports.main = function (opts, done) {
         version: version
     });
 
-    // First, we log in
-    service.login(function (err, success) {
-        // We check for both errors in the connection as well
-        // as if the login itself failed.
-        if (err || !success) {
+    let savedSearchOptions = {
+        name: "My Awesome Saved Search",
+        search: "index=_internal error sourcetype=splunkd* | head 10"
+    };
+
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
             console.log("Error in logging in");
-            done(err || "Login failed");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
+            }
             return;
         }
 
-        let savedSearchOptions = {
-            name: "My Awesome Saved Search",
-            search: "index=_internal error sourcetype=splunkd* | head 10"
-        };
-
         // Now that we're logged in, Let's create a saved search
-        service.savedSearches().create(savedSearchOptions, function (err, savedSearch) {
-            if (err && err.status === 409) {
-                console.error("ERROR: A saved search with the name '" + savedSearchOptions.name + "' already exists");
-                done();
-                return;
-            }
-            else if (err) {
-                console.error("There was an error creating the saved search:", err);
-                done(err);
-                return;
-            }
-
-            console.log("Created saved search: " + savedSearch.name);
-            done();
-        });
-    });
+        let savedSearch = await service.savedSearches().create(savedSearchOptions);
+        console.log("Created saved search: " + savedSearch.name);
+    } catch (err) {
+        if (err && err.status === 409) {
+            console.error("ERROR: A saved search with the name '" + savedSearchOptions.name + "' already exists");
+        }
+        else {
+            console.error("There was an error creating the saved search:", err);
+        }
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }

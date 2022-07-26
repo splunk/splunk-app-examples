@@ -15,12 +15,11 @@ let serviceWithSessionKey = new splunkjs.Service(
         version: '8',
     });
 
-serviceWithSessionKey.get("search/jobs", { count: 2 }, function (err, res) {
-    if (err)
-        console.log(err);
-    else
+serviceWithSessionKey.get("search/jobs", { count: 2 }).then((res) => {
         console.log("Login successful with sessionKey");
-});
+    }).catch ((err) => {
+        console.log(err);
+    });
 
 /* 
 ################ Login with token #################
@@ -40,9 +39,8 @@ let serviceWithBearerToken = new splunkjs.Service(
         version: '8',
     });
 
-serviceWithBearerToken.get("search/jobs", { count: 2 }, function (err, res) {
-    if (err)
-        console.log(err);
-    else
+serviceWithBearerToken.get("search/jobs", { count: 2 }).then((res) => {
         console.log("Login successful with bearer token");
-});
+    }).catch ((err) => {
+        console.log(err);
+    });

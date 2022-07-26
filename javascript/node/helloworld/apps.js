@@ -18,7 +18,7 @@
 
 let splunkjs = require('splunk-sdk');
 
-exports.main = function (opts, done) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it
     opts = opts || {};
 
@@ -38,36 +38,35 @@ exports.main = function (opts, done) {
         version: version
     });
 
-    // First, we log in
-    service.login(function (err, success) {
-        // We check for both errors in the connection as well
-        // as if the login itself failed.
-        if (err || !success) {
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
             console.log("Error in logging in");
-            done(err || "Login failed");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
+            }
             return;
         }
-
         // Now that we're logged in, let's get a listing of all the apps.
-        service.apps().fetch(function (err, apps) {
-            if (err) {
-                console.log("There was an error retrieving the list of applications:", err);
-                done(err);
-                return;
-            }
-
-            let appList = apps.list();
-            console.log("Applications:");
-            for (let i = 0; i < appList.length; i++) {
-                let app = appList[i];
-                console.log("  App " + i + ": " + app.name);
-            }
-
-            done();
-        });
-    });
+        let apps = await service.apps().fetch();
+        let appList = apps.list();
+        console.log("Applications:");
+        for (let i = 0; i < appList.length; i++) {
+            let app = appList[i];
+            console.log("  App " + i + ": " + app.name);
+        }
+    } catch (err) {
+        console.log("There was an error retrieving the list of applications:", err);
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    } 
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }

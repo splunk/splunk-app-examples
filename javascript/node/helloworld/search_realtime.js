@@ -18,9 +18,9 @@
 // this information every 1 second for a set number of iterations.
 
 let splunkjs = require('splunk-sdk');
-let Async = splunkjs.Async;
+let utils = splunkjs.Utils;
 
-exports.main = function (opts, callback) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it
     opts = opts || {};
 
@@ -40,77 +40,62 @@ exports.main = function (opts, callback) {
         version: version
     });
 
-    Async.chain([
-        // First, we log in
-        function (done) {
-            service.login(done);
-        },
-        // Perform the search
-        function (success, done) {
-            if (!success) {
-                done("Error logging in");
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
+            console.log("Error in logging in");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
             }
+            return;
+        }
 
-            service.search(
-                "search index=_internal | stats count by sourcetype",
-                { earliest_time: "rt", latest_time: "rt" },
-                done);
-        },
+        let job = await service.search(
+            "search index=_internal | stats count by sourcetype",
+            { earliest_time: "rt", latest_time: "rt" });
+
         // The search is never going to be done, so we simply poll it every second to get
         // more results
-        function (job, done) {
-            let MAX_COUNT = 5;
-            let count = 0;
+        let MAX_COUNT = 5;
+        let count = 0;
 
-            Async.whilst(
-                // Loop for N times
-                function () { return MAX_COUNT > count; },
-                // Every second, ask for preview results
-                function (iterationDone) {
-                    Async.sleep(1000, function () {
-                        job.preview({}, function (err, results) {
-                            if (err) {
-                                iterationDone(err);
-                                return;
-                            }
+        // Loop for N times
+        while(MAX_COUNT > count) {
+            // Every second, ask for preview results
+            await utils.sleep(1000);
+            let res = await job.preview({});
+            let results = res[0];
+            // Only do something if we have results
+            if (results && results.rows) {
+                // Up the iteration counter
+                count++;
+                console.log("========== Iteration " + count + " ==========");
+                let sourcetypeIndex = results.fields.indexOf("sourcetype");
+                let countIndex = results.fields.indexOf("count");
 
-                            // Only do something if we have results
-                            if (results && results.rows) {
-                                // Up the iteration counter
-                                count++;
+                for (const row of results.rows) {
+                    // This is a hacky "padding" solution
+                    let stat = ("  " + row[sourcetypeIndex] + "                         ").slice(0, 30);
 
-                                console.log("========== Iteration " + count + " ==========");
-                                let sourcetypeIndex = results.fields.indexOf("sourcetype");
-                                let countIndex = results.fields.indexOf("count");
-
-                                for (const row of results.rows) {
-                                    // This is a hacky "padding" solution
-                                    let stat = ("  " + row[sourcetypeIndex] + "                         ").slice(0, 30);
-
-                                    // Print out the sourcetype and the count of the sourcetype so far
-                                    console.log(stat + row[countIndex]);
-                                }
-                                console.log("=================================");
-                            }
-
-                            // And we're done with this iteration
-                            iterationDone();
-                        });
-                    });
-                },
-                // When we're done looping, just cancel the job
-                function (err) {
-                    job.cancel(done);
+                    // Print out the sourcetype and the count of the sourcetype so far
+                    console.log(stat + row[countIndex]);
                 }
-            );
+                console.log("=================================");
+            }
         }
-    ],
-        function (err) {
-            callback(err);
+        await job.cancel();
+    } catch (err) {
+        console.log("Error:", err);
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
         }
-    );
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }
