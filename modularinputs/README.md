@@ -4,7 +4,7 @@
 
 ## Workflow for creating a modular input
 
-## Modular inputs examples
+## Modular input examples
 
 This repository contains the following examples to help you get started creating modular inputs.
 
