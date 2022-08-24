@@ -2,6 +2,8 @@
 
 ## Use cases for setup pages
 
+## Workflow for creating a setup page
+
 ## Setup page examples
 
 This repository contains the following examples to help you get started creating setup pages.

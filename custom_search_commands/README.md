@@ -2,6 +2,8 @@
 
 ## Use cases for custom search commands
 
+## Workflow for creating a custom search command
+
 ## Custom search commands examples
 
 This repository contains the following examples to help you get started creating custom search commands.

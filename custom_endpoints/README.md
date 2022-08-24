@@ -2,6 +2,8 @@
 
 ## Use cases for custom REST endpoints
 
+## Workflow for creating a custom REST endpoint
+
 ## Custom REST endpoints examples
 
 This repository contains the following examples to help you get started creating custom REST endpoints.
