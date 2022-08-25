@@ -24,6 +24,14 @@ Follow this workflow to create a setup page.
 
 This repository contains the following examples to help you get started creating setup pages.
 
+| Example                         | Description                                                                                                                |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| dependency_checking_app_example | Uses a setup page to verify the installation of app dependencies                                                           |
+| developer_guidance_setup_page   | Demonstrates how to use a setup page that adheres to Splunk Application Certification standards                            |
+| react_setup_page_example        | Demonstrates how to configure a setup page using React                                                                     |
+| setup_page_simple               | Uses a setup page to store an encrypted credential with the storage/passwords endpoint using the Splunk SDK for Javascript |
+| weather_app_example             | Uses a setup page to call an external API                                                                                  |
+
 ## See also
 
 * [Enable first-run configuration with setup pages in Splunk Cloud Platform or Splunk Enterprise](https://dev.splunk.com/enterprise/docs/developapps/manageknowledge/setuppage) in the Splunk *Developer Guide*.
