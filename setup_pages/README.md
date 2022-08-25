@@ -17,7 +17,7 @@ Here are some use cases for setup pages.
 Follow this workflow to create a setup page.
 
 1. Write the JavaScript code to configure your app.
-2. Create a Simple XML dashboard to surface the JavaScript code in your app.
+2. Create a Simple XML dashboard to surface the JavaScript code in your app's UI.
 3. Update your app's app.conf file to add the setup page to your app configuration.
 
 ## Setup page examples
