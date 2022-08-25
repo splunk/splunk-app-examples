@@ -23,6 +23,14 @@ Follow this workflow to create a custom search command.
 
 This repository contains the following examples to help you get started creating custom search commands.
 
+| Example                      | Description                                                               |
+|------------------------------|---------------------------------------------------------------------------|
+| customsearchcommands_app     | App containing multiple example custom search commands of different types |
+| eventingsearchcommands_app   | App containing an example eventing custom search command                  |
+| generatingsearchcommands_app | App containing an example generating custom search command                |
+| reportingsearchcommands_app  | App containing an example reporting custom search command                 |
+| streamingsearchcommands_app  | App containing an example streaming custom search command                 |
+
 ## See also
 
 * [Create custom search commands for apps in Splunk Cloud Platform or Splunk Enterprise](https://dev.splunk.com/enterprise/docs/devtools/customsearchcommands) in the Splunk *Developer Guide*
