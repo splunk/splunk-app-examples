@@ -12,6 +12,13 @@ Here are some use cases for custom search commands.
 
 ## Workflow for creating a custom search command
 
+Follow this workflow to create a custom search command.
+
+1.
+2.
+3.
+4.
+
 ## Custom search command examples
 
 This repository contains the following examples to help you get started creating custom search commands.
