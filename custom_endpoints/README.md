@@ -10,4 +10,4 @@ This repository contains the following examples to help you get started creating
 
 ## See also
 
-* [Extend the Splunk platform REST API with custom endpoints](https://dev.splunk.com/enterprise/docs/devtools/customrestendpoints) in the Splunk *Developer Guide*.
+* [Extend the Splunk platform REST API with custom endpoints](https://dev.splunk.com/enterprise/docs/devtools/customrestendpoints) in the Splunk *Developer Guide*

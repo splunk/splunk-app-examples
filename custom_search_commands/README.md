@@ -10,4 +10,4 @@ This repository contains the following examples to help you get started creating
 
 ## See also
 
-* [Create custom search commands for apps in Splunk Cloud Platform or Splunk Enterprise](https://dev.splunk.com/enterprise/docs/devtools/customsearchcommands) in the Splunk *Developer Guide*.
+* [Create custom search commands for apps in Splunk Cloud Platform or Splunk Enterprise](https://dev.splunk.com/enterprise/docs/devtools/customsearchcommands) in the Splunk *Developer Guide*

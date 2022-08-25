@@ -10,4 +10,4 @@ This repository contains the following examples to help you get started creating
 
 ## See also
 
-* [Overview of modular inputs for Splunk Cloud Platform or Splunk Enterprise](https://dev.splunk.com/enterprise/docs/developapps/manageknowledge/custominputs/modinputsoverview) in the Splunk *Developer Guide*.
+* [Overview of modular inputs for Splunk Cloud Platform or Splunk Enterprise](https://dev.splunk.com/enterprise/docs/developapps/manageknowledge/custominputs/modinputsoverview) in the Splunk *Developer Guide*
