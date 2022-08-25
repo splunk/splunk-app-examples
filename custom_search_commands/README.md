@@ -17,7 +17,7 @@ Follow this workflow to create a custom search command.
 1. Install the Splunk SDK for Python in your app.
 2. Write the custom search command Python script.
 3. Register the search command in your app configuration.
-4. Enable search assitant text in your app configuration.
+4. Enable search assistant text in your app configuration.
 
 ## Custom search command examples
 
