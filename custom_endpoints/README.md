@@ -4,7 +4,7 @@ Custom REST endpoints are user-defined endpoints that let you extend the Splunk 
 
 ## Types of custom REST endpoints
 
-Here are the two type of custom REST endpoints, along with their associated use cases.
+Here are the two types of custom REST endpoints, along with their associated use cases.
 
 | Type                                      | Use case                                                                    |
 |-------------------------------------------|-----------------------------------------------------------------------------|
