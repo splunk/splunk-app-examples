@@ -3,6 +3,7 @@
 
 []
 access = read : [ * ], write : [ admin, power ]
+export = system
 
 ### EVENT TYPES
 
