@@ -100,7 +100,7 @@ Event |
 
 ### simulate
 ```
-| simulate csv="/opt/splunk/etc/apps/searchcommands_app/default/data/population.csv" rate=10 interval=00:00:01 duration=00:00:02 seed=9
+| simulate csv="/opt/splunk/etc/apps/customsearchcommands_app/default/data/population.csv" rate=10 interval=00:00:01 duration=00:00:02 seed=9
 ```
 Results:
 

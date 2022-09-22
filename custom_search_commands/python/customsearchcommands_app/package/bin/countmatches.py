@@ -22,7 +22,10 @@ import sys
 splunkhome = os.environ['SPLUNK_HOME']
 sys.path.append(os.path.join(splunkhome, 'etc', 'apps', 'customsearchcommands_app', 'lib'))
 from splunklib.searchcommands import dispatch, StreamingCommand, Configuration, Option, validators
-from splunklib import ensure_binary
+try:
+    from splunklib import ensure_binary
+except ImportError:
+    from splunklib.six import ensure_binary
 
 
 @Configuration()
