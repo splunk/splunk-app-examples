@@ -25,7 +25,7 @@ services:
             - ./setup_pages/setup_page_simple:/opt/splunk/etc/apps/setup_page_simple
 
             # Custom search commands app
-            - ./custom_search_commands/python/customsearchcommands_app/package:/opt/splunk/etc/apps/customsearchcommands_app
+            - ./custom_search_commands/python/customsearchcommands_app:/opt/splunk/etc/apps/customsearchcommands_app
             - ./lib/splunklib:/opt/splunk/etc/apps/customsearchcommands_app/lib/splunklib
 
             # Eventing commands app
