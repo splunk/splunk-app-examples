@@ -1,5 +1,7 @@
 function promisify(fn) {
-  console.log("promisify: Don't use this in production! Use a proper promisify library instead.")
+  console.log(
+    "promisify: Don't use this in production! Use a proper promisify library instead."
+  );
 
   // return a new promisified function
   return (...args) => {
@@ -13,14 +15,12 @@ function promisify(fn) {
         }
       }
 
-      args.push(callback)
+      args.push(callback);
 
       // pass the callback into the function
       fn.call(this, ...args);
-    })
-  }
+    });
+  };
 }
 
-export {
-  promisify,
-}
+export { promisify };
