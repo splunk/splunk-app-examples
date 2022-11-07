@@ -17,6 +17,7 @@
 import random
 import sys
 import os
+
 # NOTE: splunklib must exist within random_numbers/lib/splunklib for this
 # example to run! To run this locally use `SPLUNK_VERSION=latest docker compose up -d`
 # from the root of this repo which mounts this example and the latest splunklib
@@ -33,6 +34,7 @@ class MyScript(Script):
     if the scheme returned by get_scheme has Scheme.use_external_validation
     set to True, the validate_input function.
     """
+
     def get_scheme(self):
         """When Splunk starts, it looks for all the modular inputs defined by
         its configuration, and tries to run them with the argument --scheme.
@@ -123,6 +125,7 @@ class MyScript(Script):
 
             # Tell the EventWriter to write this event
             event_writer.write_event(event)
+
 
 if __name__ == "__main__":
     sys.exit(MyScript().run(sys.argv))

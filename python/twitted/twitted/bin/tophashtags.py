@@ -28,7 +28,6 @@ from splunklib.searchcommands import splunklib_logger
 
 @Configuration(requires_preop=True)
 class TopHashTags(ReportingCommand):
-
     top = Option(require=True, validate=validators.Integer(0))
 
     @Configuration()
@@ -63,7 +62,7 @@ class TopHashTags(ReportingCommand):
         c = Counter(hashtags_list)
 
         tags = {}
-        for tag,count in c.most_common(self.top):
+        for tag, count in c.most_common(self.top):
             tags[tag] = count
 
         percent = []

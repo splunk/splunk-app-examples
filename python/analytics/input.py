@@ -17,7 +17,6 @@
 import os
 import sys
 
-
 from datetime import datetime
 import splunklib.client as client
 

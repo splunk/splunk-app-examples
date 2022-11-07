@@ -16,7 +16,6 @@
 # under the License.
 
 
-
 import os
 import sys
 import time
@@ -28,13 +27,13 @@ from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration,
 
 @Configuration()
 class GenerateHelloCommand(GeneratingCommand):
-
     count = Option(require=True, validate=validators.Integer(0))
- 
+
     def generate(self):
         self.logger.debug("Generating %s events" % self.count)
         for i in range(1, self.count + 1):
             text = f'Hello World {i}'
             yield {'_time': time.time(), 'event_no': i, '_raw': text}
- 
+
+
 dispatch(GenerateHelloCommand, sys.argv, sys.stdin, sys.stdout, __name__)

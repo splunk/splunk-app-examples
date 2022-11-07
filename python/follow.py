@@ -17,7 +17,6 @@
 """Follows (aka tails) a realtime search using the job endpoints and prints
    results to stdout."""
 
-
 import sys
 import time
 from pprint import pprint

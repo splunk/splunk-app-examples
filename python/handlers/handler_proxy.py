@@ -33,10 +33,10 @@ import urllib.request
 import urllib.error
 from io import BytesIO
 from pprint import pprint
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from splunklib import client
 from python import utils
-
 
 RULES = {
     "proxy": {

@@ -99,4 +99,5 @@ class SimulateCommand(GeneratingCommand):
                 time.sleep(self.interval - interval)
             duration -= max(interval, self.interval)
 
+
 dispatch(SimulateCommand, sys.argv, sys.stdin, sys.stdout, __name__)

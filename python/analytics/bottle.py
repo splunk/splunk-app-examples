@@ -42,22 +42,28 @@ from traceback import format_exc
 from urllib import parse
 from io import BytesIO
 
-try:from collections.abc import MutableMapping as DictMixin
+try:
+    from collections.abc import MutableMapping as DictMixin
 except ImportError:  # pragma: no cover
     from UserDict import DictMixin
 
 from urllib.parse import parse_qs
 import pickle
 
-try:from json import dumps as json_dumps
+try:
+    from json import dumps as json_dumps
 except ImportError:  # pragma: no cover
-    try:from simplejson import dumps as json_dumps
+    try:
+        from simplejson import dumps as json_dumps
     except ImportError:  # pragma: no cover
-        try:from django.utils.simplejson import dumps as json_dumps
+        try:
+            from django.utils.simplejson import dumps as json_dumps
         except ImportError:  # pragma: no cover
             json_dumps = None
 
 NCTextIOWrapper = None
+
+
 def touni(x, enc='utf8', err='strict'):
     """ Convert anything to unicode """
     return str(x, enc, err) if isinstance(x, bytes) else str(x)
@@ -136,10 +142,6 @@ class lazy_attribute:  # Does not need configuration -> lower-case name
         return value
 
 
-
-
-
-
 ###############################################################################
 # Exceptions and Events ########################################################
 ###############################################################################
@@ -177,10 +179,6 @@ class HTTPError(HTTPResponse):
 
     def __repr__(self):
         return template(ERROR_PAGE_TEMPLATE, e=self)
-
-
-
-
 
 
 ###############################################################################
@@ -363,14 +361,13 @@ class Router:
         ''' Return a regular expression with named groups for each wildcard. '''
         out = ''
         for i, part in enumerate(self.syntax.split(rule)):
-            if i % 3 == 0: out += re.escape(part.replace('\\:', ':'))
-            elif i % 3 == 1: out += f'(?P<{part}>' if part else '(?:'
-            else: out += f"{(part or '[^/]+')})"
+            if i % 3 == 0:
+                out += re.escape(part.replace('\\:', ':'))
+            elif i % 3 == 1:
+                out += f'(?P<{part}>' if part else '(?:'
+            else:
+                out += f"{(part or '[^/]+')})"
         return re.compile(f'^{out}$')
-
-
-
-
 
 
 ###############################################################################
@@ -460,7 +457,7 @@ class Bottle:
         removed, remove = [], plugin
         for i, plugin in list(enumerate(self.plugins))[::-1]:
             if remove is True or remove is plugin or remove is type(plugin) \
-                or getattr(plugin, 'name', True) == remove:
+                    or getattr(plugin, 'name', True) == remove:
                 removed.append(plugin)
                 del self.plugins[i]
                 if hasattr(plugin, 'close'): plugin.close()
@@ -470,8 +467,10 @@ class Bottle:
     def reset(self, id=None):
         ''' Reset all routes (force plugins to be re-applied) and clear all
             caches. If an ID is given, only that specific route is affected. '''
-        if id is None: self.ccache.clear()
-        else: self.ccache.pop(id, None)
+        if id is None:
+            self.ccache.clear()
+        else:
+            self.ccache.pop(id, None)
         if DEBUG:
             for route in self.routes:
                 if route['id'] not in self.ccache:
@@ -669,7 +668,7 @@ class Bottle:
             return []
         # Join lists of byte or unicode strings. Mixed lists are NOT supported
         if isinstance(out, (tuple, list)) \
-            and isinstance(out[0], (bytes, str)):
+                and isinstance(out[0], (bytes, str)):
             out = out[0][0:0].join(out)  # b'abc'[0:0] -> b''
         # Encode unicode strings
         if isinstance(out, str):
@@ -709,7 +708,7 @@ class Bottle:
         except Exception as e:
             first = HTTPError(500, 'Unhandled exception', e, format_exc(10))
             if isinstance(e, (KeyboardInterrupt, SystemExit, MemoryError)) \
-                or not self.catchall:
+                    or not self.catchall:
                 raise
         # These are the inner types allowed in iterator or generator objects.
         if isinstance(first, HTTPResponse):
@@ -752,10 +751,6 @@ class Bottle:
 
     def __call__(self, environ, start_response):
         return self.wsgi(environ, start_response)
-
-
-
-
 
 
 ###############################################################################
@@ -1132,10 +1127,6 @@ class Response(threading.local):
                             get_content_type.__doc__)
 
 
-
-
-
-
 ###############################################################################
 # Plugins ######################################################################
 ###############################################################################
@@ -1195,11 +1186,13 @@ class HooksPlugin:
         if self._empty(): return callback
         before_request = self.hooks['before_request']
         after_request = self.hooks['after_request']
+
         def wrapper(*a, **ka):
             for hook in before_request: hook()
             rv = callback(*a, **ka)
             for hook in after_request[::-1]: hook()
             return rv
+
         return wrapper
 
 
@@ -1228,6 +1221,7 @@ class TypeFilterPlugin:
                 if isinstance(rv, testtype):
                     rv = filterfunc(rv)
             return rv
+
         return wrapper
 
 
@@ -1280,10 +1274,6 @@ class _ImportRedirect:
         setattr(self.module, modname, module)
         module.__loader__ = self
         return module
-
-
-
-
 
 
 ###############################################################################
@@ -1453,10 +1443,6 @@ class WSGIFileWrapper:
             yield part
 
 
-
-
-
-
 ###############################################################################
 # Application Helper ###########################################################
 ###############################################################################
@@ -1530,10 +1516,6 @@ def static_file(filename, root, mimetype='auto', guessmime=True, download=False)
 
     body = '' if request.method == 'HEAD' else open(filename, 'rb')
     return HTTPResponse(body, header=header)
-
-
-
-
 
 
 ###############################################################################
@@ -1648,7 +1630,6 @@ def path_shift(script_name, path_info, shift=1):
     return new_script_name, new_path_info
 
 
-
 # Decorators
 # TODO: Replace default_app() with app()
 
@@ -1711,10 +1692,6 @@ del name
 def default():
     depr("The default() decorator is deprecated. Use @error(404) instead.")
     return error(404)
-
-
-
-
 
 
 ###############################################################################
@@ -1960,10 +1937,6 @@ server_names = {
 }
 
 
-
-
-
-
 ###############################################################################
 # Application Control ##########################################################
 ###############################################################################
@@ -2143,10 +2116,6 @@ def _reloader_observer(server, app, interval):
     except KeyboardInterrupt:
         pass
     if os.path.exists(lockfile): os.unlink(lockfile)
-
-
-
-
 
 
 ###############################################################################
@@ -2371,18 +2340,24 @@ class SimpleTemplate(BaseTemplate):
         def yield_tokens(line):
             for i, part in enumerate(re.split(r'\{\{(.*?)\}\}', line)):
                 if i % 2:
-                    if part.startswith('!'): yield 'RAW', part[1:]
-                    else: yield 'CMD', part
-                else: yield 'TXT', part
+                    if part.startswith('!'):
+                        yield 'RAW', part[1:]
+                    else:
+                        yield 'CMD', part
+                else:
+                    yield 'TXT', part
 
         def flush():  # Flush the ptrbuffer
             if not ptrbuffer: return
             cline = ''
             for line in ptrbuffer:
                 for token, value in line:
-                    if token == 'TXT': cline += repr(value)
-                    elif token == 'RAW': cline += f'_str({value})'
-                    elif token == 'CMD': cline += f'_escape({value})'
+                    if token == 'TXT':
+                        cline += repr(value)
+                    elif token == 'RAW':
+                        cline += f'_str({value})'
+                    elif token == 'CMD':
+                        cline += f'_escape({value})'
                     cline += ', '
                 cline = cline[:-2] + '\\\n'
             cline = cline[:-2]
@@ -2498,6 +2473,7 @@ def template(*args, **kwargs):
     for dictarg in args[1:]: kwargs.update(dictarg)
     return TEMPLATES[tpl].render(kwargs)
 
+
 mako_template = functools.partial(template, template_adapter=MakoTemplate)
 cheetah_template = functools.partial(template, template_adapter=CheetahTemplate)
 jinja2_template = functools.partial(template, template_adapter=Jinja2Template)
@@ -2534,11 +2510,6 @@ mako_view = functools.partial(view, template_adapter=MakoTemplate)
 cheetah_view = functools.partial(view, template_adapter=CheetahTemplate)
 jinja2_view = functools.partial(view, template_adapter=Jinja2Template)
 simpletal_view = functools.partial(view, template_adapter=SimpleTALTemplate)
-
-
-
-
-
 
 ###############################################################################
 # Constants and Globals ########################################################

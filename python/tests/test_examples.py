@@ -73,7 +73,7 @@ class ExamplesTestCase(testlib.SDKTestCase):
     def test_apicalls(self):
         run("apicalls_binding.py")
         run("apicalls_client.py")
-        #run("apicalls_httplib.py")
+        # run("apicalls_httplib.py")
 
     def test_binding1(self):
         result = run("binding1.py")
@@ -170,7 +170,7 @@ class ExamplesTestCase(testlib.SDKTestCase):
             ["saved_search.py", "--operation", "create", "--name", temp_name, "--search", "search * | head 5"],
             ["saved_search.py", "list", "--name", temp_name],
             ["saved_search.py", "list", "--operation", "delete", "--name", temp_name],
-            ["saved_search.py", "list", "--name",  "Errors in the last 24 hours"]
+            ["saved_search.py", "list", "--name", "Errors in the last 24 hours"]
         )
 
     def test_saved_searches(self):
@@ -215,7 +215,7 @@ class ExamplesTestCase(testlib.SDKTestCase):
             "upload.py --help",
             f"upload.py --index=sdk-tests {file_to_upload}")
 
-    #The following tests are for the Analytics example
+    # The following tests are for the Analytics example
     def test_analytics(self):
         # We have to add the current path to the PYTHONPATH,
         # otherwise the import doesn't work quite right
@@ -294,4 +294,5 @@ class ExamplesTestCase(testlib.SDKTestCase):
 if __name__ == "__main__":
     os.chdir("..")
     import unittest
+
     unittest.main()

@@ -26,7 +26,6 @@ from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration,
 
 @Configuration()
 class GenerateTextCommand(GeneratingCommand):
-
     count = Option(require=True, validate=validators.Integer(0))
     text = Option(require=True)
 
@@ -35,5 +34,6 @@ class GenerateTextCommand(GeneratingCommand):
         self.logger.debug("Generating %d events with text %s" % (self.count, self.text))
         for i in range(1, self.count + 1):
             yield {'_serial': i, '_time': time.time(), '_raw': str(i) + '. ' + text}
+
 
 dispatch(GenerateTextCommand, sys.argv, sys.stdin, sys.stdout, __name__)

@@ -20,6 +20,7 @@
 import os
 import sys
 from pprint import pprint
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from splunklib import binding
 from splunklib import client

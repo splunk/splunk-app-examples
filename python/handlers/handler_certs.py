@@ -39,11 +39,11 @@ import sys
 import os
 import urllib.parse
 import http.client
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from splunklib import client
 from python import utils
-
 
 RULES = {
     "ca_file": {

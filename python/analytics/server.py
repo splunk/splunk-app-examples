@@ -17,7 +17,6 @@
 import os
 import sys
 
-
 from bottle import route, run, debug, template, static_file, request
 
 from time import strptime, mktime

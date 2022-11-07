@@ -30,7 +30,7 @@ def main():
     for group in service.fired_alerts:
         header = f"{group.name} (count: {group.count})"
         print(header)
-        print('='*len(header))
+        print('=' * len(header))
         alerts = group.alerts
         for alert in alerts.list():
             content = alert.content

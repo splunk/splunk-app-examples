@@ -22,6 +22,7 @@ import sys
 splunkhome = os.environ['SPLUNK_HOME']
 sys.path.append(os.path.join(splunkhome, 'etc', 'apps', 'customsearchcommands_app', 'lib'))
 from splunklib.searchcommands import dispatch, StreamingCommand, Configuration, Option, validators
+
 try:
     from splunklib import ensure_binary
 except ImportError:
@@ -74,5 +75,6 @@ class CountMatchesCommand(StreamingCommand):
                 count += len(matches)
             record[self.fieldname] = count
             yield record
+
 
 dispatch(CountMatchesCommand, sys.argv, sys.stdin, sys.stdout, __name__)

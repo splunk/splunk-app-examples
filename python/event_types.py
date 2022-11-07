@@ -16,7 +16,6 @@
 
 """A command line utility that lists Splunk event types."""
 
-
 import sys
 from splunklib.client import connect
 from utils import parse

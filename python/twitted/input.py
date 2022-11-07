@@ -27,7 +27,6 @@ from python.utils import error, parse
 TWITTER_STREAM_HOST = "https://api.twitter.com"
 TWITTER_STREAM_PATH = "/2/tweets/sample/stream"
 
-
 # Get 100 tweets from Twitter
 MAX_COUNT = 100
 

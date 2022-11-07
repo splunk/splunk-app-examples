@@ -20,7 +20,6 @@ from optparse import OptionParser
 from argparse import ArgumentParser
 from dotenv import dotenv_values
 
-
 __all__ = ["error", "Parser", "cmdline", "parse", "dslice", "FLAGS_SPLUNK"]
 
 

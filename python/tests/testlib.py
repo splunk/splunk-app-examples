@@ -30,7 +30,6 @@ from datetime import datetime, timedelta
 from utils import parse
 from splunklib import client
 
-
 logging.basicConfig(
     filename='test.log',
     level=logging.DEBUG,

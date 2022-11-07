@@ -176,7 +176,7 @@ def main():
 
             functions_dict[kwargs["function"]](service)
         else:
-            raise NameError("Please provide a function name from %s as an argument." % list(functions_dict.keys()) )
+            raise NameError("Please provide a function name from %s as an argument." % list(functions_dict.keys()))
     except Exception as e:
         print(str(e))
 

@@ -75,4 +75,5 @@ class SumCommand(ReportingCommand):
                 self.logger.debug('  could not convert %s value to float: %s', fieldname, repr(value))
         yield {self.total: total}
 
+
 dispatch(SumCommand, sys.argv, sys.stdin, sys.stdout, __name__)

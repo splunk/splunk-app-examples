@@ -34,7 +34,7 @@ def main():
     PASSWORD = "changed!"
 
     # Present credentials to Splunk and retrieve the session key
-    connection = http.client.HTTPSConnection(HOST, PORT, context= ssl._create_unverified_context())
+    connection = http.client.HTTPSConnection(HOST, PORT, context=ssl._create_unverified_context())
     body = urllib.parse.urlencode({'username': USERNAME, 'password': PASSWORD})
     headers = {
         'Content-Type': "application/x-www-form-urlencoded",
@@ -57,7 +57,7 @@ def main():
     sessionKey = ElementTree.XML(body).findtext("./sessionKey")
 
     # Now make the request to Splunk for list of installed apps
-    connection = http.client.HTTPSConnection(HOST, PORT, context= ssl._create_unverified_context())
+    connection = http.client.HTTPSConnection(HOST, PORT, context=ssl._create_unverified_context())
     headers = {
         'Content-Length': "0",
         'Host': HOST,

@@ -73,7 +73,8 @@ def main():
     print(f"Should return item1 and item2: {json.dumps(collection.data.query(query=query), indent=1)}")
 
     query = json.dumps({"otherkey": "bar"})
-    print(f"Should return third item with auto-generated _key: {json.dumps(collection.data.query(query=query), indent=1)}")
+    print(
+        f"Should return third item with auto-generated _key: {json.dumps(collection.data.query(query=query), indent=1)}")
 
     # passing query data as dict
     query = {"somekey": {"$gt": 1}}

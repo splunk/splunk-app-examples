@@ -72,9 +72,9 @@ class Program:
 
         # unflagged arguments are conf, stanza, key. In this order
         # however, we must have a conf and stanza.
-        cpres =count > 0
-        spres =count > 1
-        kpres =count > 2
+        cpres = count > 0
+        spres = count > 1
+        kpres = count > 2
 
         if not cpres:
             error("Conf name is required for delete", 2)

@@ -17,7 +17,6 @@
 import os
 import sys
 
-
 import splunklib.client as client
 import splunklib.results as results
 import python.utils as utils

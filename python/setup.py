@@ -18,7 +18,6 @@ import sys
 
 from setuptools import setup, Command
 
-
 FAILED = False
 
 
