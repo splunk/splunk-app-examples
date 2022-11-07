@@ -1252,9 +1252,9 @@ class _ImportRedirect:
         ''' Create a virtual package that redirects imports (see PEP 302). '''
         self.name = name
         self.impmask = impmask
-        # print(name)
+        
         self.module = sys.modules.setdefault(name, imp.new_module(name))
-        # self.module = sys.modules.setdefault(name, types.ModuleType(name))
+
         self.module.__dict__.update({'__file__': __file__, '__path__': [],
                                      '__all__': [], '__loader__': self})
         sys.meta_path.append(self)
