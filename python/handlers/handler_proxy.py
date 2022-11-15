@@ -24,18 +24,19 @@
 #
 #     > python tiny-proxy.py -p 8080
 #     > python handler_proxy.py --proxy=localhost:8080
-# 
+#
 
 import os
 import ssl
 import sys
+import urllib.request
+import urllib.error
 from io import BytesIO
 from pprint import pprint
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from splunklib.six.moves import urllib
-import splunklib.client as client
-import python.utils as utils
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from splunklib import client
+from python import utils
 
 RULES = {
     "proxy": {
@@ -50,13 +51,11 @@ def request(url, message, **kwargs):
     method = message['method'].lower()
     data = message.get('body', "") if method == 'post' else None
     headers = dict(message.get('headers', []))
+    # If running Python 2.7.9+, disable SSL certificate validation
     req = urllib.request.Request(url, data, headers)
     try:
-        response = urllib.request.urlopen(req)
-    except urllib.error.URLError:
-        # If running Python 2.7.9+, disable SSL certificate validation and try again
         response = urllib.request.urlopen(req, context=ssl._create_unverified_context())
-    except urllib.error.HTTPError:
+    except urllib.error.HTTPError as response:
         pass  # Propagate HTTP errors via the returned response message
 
     return {
@@ -87,4 +86,3 @@ except urllib.error.URLError as e:
         pass
     else:
         raise
-

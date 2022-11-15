@@ -24,7 +24,7 @@ API.
 """
 
 from xml.etree import ElementTree
-import splunklib.binding as binding
+from splunklib import binding
 
 
 def main():
@@ -41,7 +41,7 @@ def main():
 
     response = context.get('apps/local')
     if response.status != 200:
-        raise Exception("%d (%s)" % (response.status, response.reason))
+        raise Exception(f"{response.status} ({response.reason})")
 
     body = response.body.read()
     data = ElementTree.XML(body)

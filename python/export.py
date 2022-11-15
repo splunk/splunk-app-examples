@@ -77,12 +77,12 @@ CLIRULES = {
     'omode': {
         'flags': ["--omode"],
         'default': OUTPUT_MODE,
-        'help': "output format %s default is %s" % (OUTPUT_MODES, OUTPUT_MODE)
+        'help': f"output format {OUTPUT_MODES} default is {OUTPUT_MODE}"
     },
     'output': {
         'flags': ["--output"],
         'default': OUTPUT_FILE,
-        'help': "Output file name (default is %s)" % OUTPUT_FILE
+        'help': f"Output file name (default is {OUTPUT_FILE})"
     },
     'recover': {
         'flags': ["--recover"],
@@ -247,10 +247,9 @@ def get_event_start(event_buffer, event_format):
 
     if event_format == "csv":
         return get_csv_event_start(event_buffer)
-    elif event_format == "xml":
+    if event_format == "xml":
         return get_xml_event_start(event_buffer)
-    else:
-        return get_json_event_start(event_buffer)
+    return get_json_event_start(event_buffer)
 
 
 def recover(options):
@@ -261,31 +260,30 @@ def recover(options):
     event_format = options.kwargs['omode']
 
     buffer_size = 64 * 1024
-    fpd = open(options.kwargs['output'], "r+")
-    fpd.seek(0, 2)  # seek to end
-    fptr = max(fpd.tell() - buffer_size, 0)
-    fptr_eof = 0
-
-    while fptr > 0:
-        fpd.seek(fptr)
-        event_buffer = fpd.read(buffer_size)
-        (event_start, next_event_start, last_time) = \
-            get_event_start(event_buffer, event_format)
-        if event_start != -1:
-            fptr_eof = event_start + fptr
-            break
-        fptr = fptr - buffer_size
-
-    if fptr < 0:
-        # didn't find a valid event, so start over
+    with open(options.kwargs['output'], "r+") as fpd:
+        fpd.seek(0, 2)  # seek to end
+        fptr = max(fpd.tell() - buffer_size, 0)
         fptr_eof = 0
-        last_time = 0
+
+        while fptr > 0:
+            fpd.seek(fptr)
+            event_buffer = fpd.read(buffer_size)
+            (event_start, next_event_start, last_time) = \
+                get_event_start(event_buffer, event_format)
+            if event_start != -1:
+                fptr_eof = event_start + fptr
+                break
+            fptr = fptr - buffer_size
+
+        if fptr < 0:
+            # didn't find a valid event, so start over
+            fptr_eof = 0
+            last_time = 0
 
         # truncate file here
-    fpd.truncate(fptr_eof)
-    fpd.seek(fptr_eof)
-    fpd.write("\n")
-    fpd.close()
+        fpd.truncate(fptr_eof)
+        fpd.seek(fptr_eof)
+        fpd.write("\n")
 
     return last_time
 
@@ -310,11 +308,11 @@ def export(options, service):
     once = True
 
     squery = options.kwargs['search']
-    squery = squery + " index=%s" % options.kwargs['index']
+    squery = squery + f" index={options.kwargs['index']}"
     if start != "":
-        squery = squery + " earliest_time=%s" % start
+        squery = squery + f" earliest_time={start}"
     if end != "":
-        squery = squery + " latest_time=%s" % end
+        squery = squery + f" latest_time={end}"
 
     success = False
 
@@ -322,7 +320,7 @@ def export(options, service):
         # issue query to splunkd
         # count=0 overrides the maximum number of events
         # returned (normally 50K) regardless of what the .conf
-        # file for splunkd says. 
+        # file for splunkd says.
         result = service.get('search/jobs/export',
                              search=squery,
                              output_mode=options.kwargs['omode'],
@@ -332,18 +330,19 @@ def export(options, service):
                              count=0)
 
         if result.status != 200:
-            print("warning: export job failed: %d, sleep/retry" % result.status)
+            print(f"warning: export job failed: {result.status}, sleep/retry")
             time.sleep(60)
         else:
             success = True
 
-    # write export file 
+    # write export file
     while True:
         if fixtail and once:
             cleanup_tail(options)
             once = False
         content = result.body.read()
-        if len(content) == 0: break
+        if len(content) == 0:
+            break
         options.kwargs['fd'].write(content)
         options.kwargs['fd'].write("\n")
 
@@ -355,16 +354,14 @@ def main():
     options = parse(sys.argv[1:], CLIRULES, ".env")
 
     if options.kwargs['omode'] not in OUTPUT_MODES:
-        print("output mode must be one of %s, found %s" % (OUTPUT_MODES,
-                                                           options.kwargs['omode']))
+        print(f"output mode must be one of {OUTPUT_MODES}, found {options.kwargs['omode']}")
         sys.exit(1)
 
     service = connect(**options.kwargs)
 
     if path.exists(options.kwargs['output']):
         if not options.kwargs['recover']:
-            print("Export file %s exists, and recover option nor specified" % \
-                  options.kwargs['output'])
+            print(f"Export file {options.kwargs['output']} exists, and recover option nor specified")
             sys.exit(1)
         else:
             options.kwargs['end'] = recover(options)
@@ -377,8 +374,7 @@ def main():
     try:
         options.kwargs['fd'] = open(options.kwargs['output'], openmode)
     except IOError:
-        print("Failed to open output file %s w/ mode %s" % \
-              (options.kwargs['output'], openmode))
+        print(f"Failed to open output file {options.kwargs['output']} w/ mode {openmode}")
         sys.exit(1)
 
     export(options, service)

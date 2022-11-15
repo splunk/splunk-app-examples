@@ -15,8 +15,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import os
 import sys
 
@@ -76,5 +74,6 @@ class SumCommand(ReportingCommand):
             except ValueError:
                 self.logger.debug('  could not convert %s value to float: %s', fieldname, repr(value))
         yield {self.total: total}
+
 
 dispatch(SumCommand, sys.argv, sys.stdin, sys.stdout, __name__)

@@ -16,10 +16,9 @@
 
 import sys
 from os import path
-from dotenv import dotenv_values
 from optparse import OptionParser
-from splunklib import six
-
+from argparse import ArgumentParser
+from dotenv import dotenv_values
 
 __all__ = ["error", "Parser", "cmdline", "parse", "dslice", "FLAGS_SPLUNK"]
 
@@ -94,7 +93,7 @@ FLAGS_SPLUNK = list(RULES_SPLUNK.keys())
 
 # Print the given message to stderr, and optionally exit
 def error(message, exitcode=None):
-    print("Error: %s" % message, file=sys.stderr)
+    print(f"Error: {message}", file=sys.stderr)
     if exitcode is not None:
         sys.exit(exitcode)
 
@@ -147,14 +146,14 @@ class Parser(OptionParser):
         try:
             filedata = dotenv_values(filepath)
         except:
-            error("Unable to open '%s'" % filepath, 2)
+            error(f"Unable to open '{filepath}'", 2)
 
         # update result kwargs value with .env file data
         for key, value in filedata.items():
             value = value.strip()
             if len(value) == 0 or value is None:
                 continue  # Skip blank value
-            elif key in self.dests:
+            if key in self.dests:
                 self.result['kwargs'][key] = value
             else:
                 raise NameError("No such option --" + key)
@@ -192,7 +191,8 @@ def cmdline(argv, rules=None, config=None, **kwargs):
     """Simplified cmdopts interface that does not default any parsing rules
        and that does not allow compounding calls to the parser."""
     parser = Parser(rules, **kwargs)
-    if config is not None: parser.loadenv(config)
+    if config is not None:
+        parser.loadenv(config)
     return parser.parse(argv).result
 
 
@@ -206,7 +206,7 @@ def dslice(value, *args):
     result = {}
     for arg in args:
         if isinstance(arg, dict):
-            for k, v in six.iteritems(arg):
+            for k, v in list(arg.items()):
                 if k in value:
                     result[v] = value[k]
         elif isinstance(arg, list):
@@ -231,4 +231,3 @@ def parser(rules=None, **kwargs):
     """Instantiate a parser with the default Splunk command rules."""
     rules = RULES_SPLUNK if rules is None else dict(RULES_SPLUNK, **rules)
     return Parser(rules, **kwargs)
-

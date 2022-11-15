@@ -68,17 +68,17 @@ class Program:
         name = argv[0]
 
         if name in self.service.indexes:
-            print("Index '%s' already exists" % name)
+            print(f"Index '{name}' already exists")
             return
 
-        # Read index metadata and construct command line parser rules that 
+        # Read index metadata and construct command line parser rules that
         # correspond to each editable field.
 
         # Request editable fields
         fields = self.service.indexes.itemmeta().fields.optional
 
         # Build parser rules
-        rules = dict([(field, {'flags': ["--%s" % field]}) for field in fields])
+        rules = {field: {'flags': [f"--{field}"]} for field in fields}
 
         # Parse the argument vector
         opts = cmdline(argv, rules)
@@ -100,12 +100,12 @@ class Program:
             print(index.name)
             for key in sorted(index.content.keys()):
                 value = index.content[key]
-                print("    %s: %s" % (key, value))
+                print(f"    {key}: {value}")
 
         if len(argv) == 0:
             for index in self.service.indexes:
                 count = index['totalEventCount']
-                print("%s (%s)" % (index.name, count))
+                print(f"{index.name} ({count})")
         else:
             self.foreach(argv, read)
 
@@ -122,7 +122,7 @@ class Program:
         }
         handler = handlers.get(command, None)
         if handler is None:
-            error("Unrecognized command: %s" % command, 2)
+            error(f"Unrecognized command: {command}", 2)
         handler(argv[1:])
 
     def foreach(self, argv, func):
@@ -132,7 +132,7 @@ class Program:
             error("Command requires an index name", 2)
         for name in opts.args:
             if name not in self.service.indexes:
-                error("Index '%s' does not exist" % name, 2)
+                error(f"Index '{name}' does not exist", 2)
             index = self.service.indexes[name]
             func(index)
 
@@ -144,17 +144,17 @@ class Program:
         name = argv[0]
 
         if name not in self.service.indexes:
-            error("Index '%s' does not exist" % name, 2)
+            error(f"Index '{name}' does not exist", 2)
         index = self.service.indexes[name]
 
-        # Read index metadata and construct command line parser rules that 
+        # Read index metadata and construct command line parser rules that
         # correspond to each editable field.
 
         # Request editable fields
         fields = self.service.indexes.itemmeta().fields.optional
 
         # Build parser rules
-        rules = dict([(field, {'flags': ["--%s" % field]}) for field in fields])
+        rules = {field: {'flags': [f"--{field}"]} for field in fields}
 
         # Parse the argument vector
         opts = cmdline(argv, rules)

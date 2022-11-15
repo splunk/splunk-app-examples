@@ -14,14 +14,14 @@
 
 """
 This example uses Python's standard httplib module to make calls against the
-  Splunk REST API. This example does not use any SDK libraries to access
-  Splunk. (this example can used as a validation check to determine if an API call has failed due to SDK or due to Splunk platform(
+  Splunk REST API. This example does not use any SDK libraries to access Splunk. (this example can used
+  as a validation check to determine if an API call has failed due to SDK or due to Splunk platform.)
 The example happens to retrieve a list of installed apps from a given
 Splunk instance, but they could apply as easily to any other area of the REST
 API.
 """
 
-import urllib
+import urllib.parse
 import ssl
 from xml.etree import ElementTree
 import http.client
@@ -34,7 +34,7 @@ def main():
     PASSWORD = "changed!"
 
     # Present credentials to Splunk and retrieve the session key
-    connection = http.client.HTTPSConnection(HOST, PORT, context= ssl._create_unverified_context())
+    connection = http.client.HTTPSConnection(HOST, PORT, context=ssl._create_unverified_context())
     body = urllib.parse.urlencode({'username': USERNAME, 'password': PASSWORD})
     headers = {
         'Content-Type': "application/x-www-form-urlencoded",
@@ -50,20 +50,20 @@ def main():
         print('')
     if response.status != 200:
         connection.close()
-        raise Exception("%d (%s)" % (response.status, response.reason))
+        raise Exception(f"{response.status} ({response.reason})")
     body = response.read()
     connection.close()
 
     sessionKey = ElementTree.XML(body).findtext("./sessionKey")
 
     # Now make the request to Splunk for list of installed apps
-    connection = http.client.HTTPSConnection(HOST, PORT, context= ssl._create_unverified_context())
+    connection = http.client.HTTPSConnection(HOST, PORT, context=ssl._create_unverified_context())
     headers = {
         'Content-Length': "0",
         'Host': HOST,
         'User-Agent': "a.py/1.0",
         'Accept': "*/*",
-        'Authorization': "Splunk %s" % sessionKey,
+        'Authorization': f"Splunk {sessionKey}",
     }
     try:
         connection.request("GET", "/services/apps/local", "", headers)
@@ -72,7 +72,7 @@ def main():
         print('')
     if response.status != 200:
         connection.close()
-        raise Exception("%d (%s)" % (response.status, response.reason))
+        raise Exception(f"{response.status} ({response.reason})")
 
     body = response.read()
     connection.close()

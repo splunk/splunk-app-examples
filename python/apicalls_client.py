@@ -22,7 +22,7 @@ The example happens to retrieve a list of installed apps from a given
 Splunk instance, but they could apply as easily to any other area of the REST
 API."""
 
-import splunklib.client as client
+from splunklib import client
 
 
 def main():

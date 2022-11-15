@@ -28,19 +28,17 @@ def main():
     service = connect(**opts.kwargs)
 
     for group in service.fired_alerts:
-        header = "%s (count: %d)" % (group.name, group.count)
-        print("%s" % header)
-        print('='*len(header))
+        header = f"{group.name} (count: {group.count})"
+        print(header)
+        print('=' * len(header))
         alerts = group.alerts
         for alert in alerts.list():
             content = alert.content
             for key in sorted(content.keys()):
                 value = content[key]
-                print("%s: %s" % (key, value))
+                print(f"{key}: {value}")
             print()
 
 
 if __name__ == "__main__":
     main()
-
-

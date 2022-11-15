@@ -29,7 +29,7 @@
 #
 # If you run this script without providing the cert file it will simply
 # invoke Splunk without anycert validation.
-# 
+#
 
 from io import BytesIO
 from pprint import pprint
@@ -37,12 +37,13 @@ import ssl
 import socket
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from splunklib import six
-from splunklib.six.moves import urllib
-import splunklib.client as client
-import python.utils as utils
+import urllib.parse
+import http.client
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+from splunklib import client
+from python import utils
 
 RULES = {
     "ca_file": {
@@ -55,21 +56,21 @@ RULES = {
 
 # Extend httplib's implementation of HTTPSConnection with support server
 # certificate validation.
-class HTTPSConnection(six.moves.http_client.HTTPSConnection):
+class HTTPSConnection(http.client.HTTPSConnection):
     def __init__(self, host, port=None, ca_file=None):
-        six.moves.http_client.HTTPSConnection.__init__(self, host, port)
+        http.client.HTTPSConnection.__init__(self, host, port)
         self.ca_file = ca_file
 
     def connect(self):
         sock = socket.create_connection((self.host, self.port))
+        context = ssl.SSLContext()
         if self.ca_file is not None:
-            self.sock = ssl.wrap_socket(
-                sock, None, None, 
-                ca_certs=self.ca_file, 
-                cert_reqs=ssl.CERT_REQUIRED)
+            context.load_verify_locations(cafile=self.ca_file)
+            context.verify_mode = ssl.CERT_REQUIRED
+            self.sock = context.wrap_socket(sock)
         else:
-            self.sock = ssl.wrap_socket(
-                sock, None, None, cert_reqs=ssl.CERT_NONE)
+            context.verify_mode = ssl.CERT_NONE
+            self.sock = context.wrap_socket(sock)
 
 
 def spliturl(url):
@@ -78,8 +79,10 @@ def spliturl(url):
     port = parsed_url.port
     path = '?'.join((parsed_url.path, parsed_url.query)) if parsed_url.query else parsed_url.path
     # Strip brackets if its an IPv6 address
-    if host.startswith('[') and host.endswith(']'): host = host[1:-1]
-    if port is None: port = DEFAULT_PORT
+    if host.startswith('[') and host.endswith(']'):
+        host = host[1:-1]
+    if port is None:
+        port = DEFAULT_PORT
     return parsed_url.scheme, host, port, path
 
 
@@ -89,8 +92,8 @@ def handler(ca_file=None):
     def request(url, message, **kwargs):
         scheme, host, port, path = spliturl(url)
 
-        if scheme != "https": 
-            ValueError("unsupported scheme: %s" % scheme)
+        if scheme != "https":
+            ValueError(f"unsupported scheme: {scheme}")
 
         connection = HTTPSConnection(host, port, ca_file)
         try:
@@ -115,4 +118,3 @@ opts = utils.parse(sys.argv[1:], RULES, ".env")
 ca_file = opts.kwargs['ca_file']
 service = client.connect(handler=handler(ca_file), **opts.kwargs)
 pprint([app.name for app in service.apps])
-

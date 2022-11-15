@@ -18,7 +18,6 @@
 
 import sys
 
-from splunklib import six
 from splunklib.client import connect
 
 from utils import error, parse
@@ -38,9 +37,9 @@ class Program:
 
         # unflagged arguments are conf, stanza, key. In this order
         # however, we must have a conf and stanza.
-        cpres = True if count > 0 else False
-        spres = True if count > 1 else False
-        kpres = True if count > 2 else False
+        cpres = count > 0
+        spres = count > 1
+        kpres = count > 2
 
         if kpres:
             kvpair = argv[2].split("=")
@@ -73,9 +72,9 @@ class Program:
 
         # unflagged arguments are conf, stanza, key. In this order
         # however, we must have a conf and stanza.
-        cpres = True if count > 0 else False
-        spres = True if count > 1 else False
-        kpres = True if count > 2 else False
+        cpres = count > 0
+        spres = count > 1
+        kpres = count > 2
 
         if not cpres:
             error("Conf name is required for delete", 2)
@@ -99,9 +98,9 @@ class Program:
 
         # unflagged arguments are conf, stanza, key. In this order
         # but all are optional
-        cpres = True if count > 0 else False
-        spres = True if count > 1 else False
-        kpres = True if count > 2 else False
+        cpres = count > 0
+        spres = count > 1
+        kpres = count > 2
 
         if not cpres:
             # List out the available confs
@@ -115,10 +114,10 @@ class Program:
 
             for stanza in conf:
                 if (spres and argv[1] == stanza.name) or not spres:
-                    print("[%s]" % stanza.name)
-                    for key, value in six.iteritems(stanza.content):
+                    print(f"[{stanza.name}]")
+                    for key, value in list(stanza.content.items()):
                         if (kpres and argv[2] == key) or not kpres:
-                            print("%s = %s" % (key, value))
+                            print(f"{key} = {value}")
                 print()
 
     def run(self, command, opts):
@@ -130,7 +129,7 @@ class Program:
         }
         handler = handlers.get(command, None)
         if handler is None:
-            error("Unrecognized command: %s" % command, 2)
+            error(f"Unrecognized command: {command}", 2)
         handler(opts)
 
 
@@ -144,7 +143,7 @@ def main():
     command = None
     commands = ['create', 'delete', 'list']
 
-    # parse args, connect and setup 
+    # parse args, connect and setup
     opts = parse(argv, {}, ".env", usage=usage)
     service = connect(**opts.kwargs)
     program = Program(service)
@@ -153,7 +152,7 @@ def main():
         # no args means list
         command = "list"
     elif opts.args[0] in commands:
-        # args and the first in our list of commands, extract 
+        # args and the first in our list of commands, extract
         # command and remove from regular args
         command = opts.args[0]
         opts.args.remove(command)

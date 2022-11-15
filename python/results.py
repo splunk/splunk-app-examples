@@ -15,12 +15,12 @@
 # under the License.
 
 """A script that reads XML search results from stdin and pretty-prints them
-   back to stdout. The script is designed to be used with the search.py 
+   back to stdout. The script is designed to be used with the search.py
    example, eg: './search.py "search 404" | ./results.py'"""
 import sys
 from pprint import pprint
 
-import splunklib.results as results
+from splunklib import results
 
 
 def pretty():

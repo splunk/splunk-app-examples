@@ -31,4 +31,5 @@ Results:
 student having total marks greater than cutoff|
 :-----|
 3 |
+
 Note: Here total may vary per query, so we'll get result value between 0<=ans<=count.

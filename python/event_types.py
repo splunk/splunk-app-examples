@@ -16,7 +16,6 @@
 
 """A command line utility that lists Splunk event types."""
 
-
 import sys
 from splunklib.client import connect
 from utils import parse
@@ -27,12 +26,12 @@ def main():
     service = connect(**opts.kwargs)
 
     for item in service.event_types:
-        print("%s" % item.name)
+        print(item.name)
         print('=' * len(item.name))
         content = item.content
         for key in sorted(content.keys()):
             value = content[key]
-            print("%s: %s" % (key, value))
+            print(f"{key}: {value}")
         print()
 
 

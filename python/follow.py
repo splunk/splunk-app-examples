@@ -17,13 +17,12 @@
 """Follows (aka tails) a realtime search using the job endpoints and prints
    results to stdout."""
 
-
 import sys
 import time
 from pprint import pprint
 
-import splunklib.client as client
-import splunklib.results as results
+from splunklib import client
+from splunklib import results
 
 import utils
 

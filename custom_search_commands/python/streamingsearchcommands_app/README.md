@@ -33,4 +33,5 @@ celsius| fahrenheit |
 66| 150.8 |
 58| 136.4 |
 33| 91.4 |
+
 Note: Here celsius value may vary per query, so fahrenheit value will change according to celsius value.

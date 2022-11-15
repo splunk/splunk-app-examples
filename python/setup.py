@@ -13,23 +13,20 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-
-from setuptools import setup, Command
-
 import os
 import sys
 
-import splunklib
+from setuptools import setup, Command
 
-failed = False
+FAILED = False
 
 
 def run_test_suite():
     import unittest
 
     def mark_failed():
-        global failed
-        failed = True
+        global FAILED
+        FAILED = True
 
     class _TrackingTextTestResult(unittest._TextTestResult):
         def addError(self, test, err):
@@ -52,7 +49,7 @@ def run_test_suite():
     runner.run(suite)
     os.chdir(original_cwd)
 
-    return failed
+    return FAILED
 
 
 def run_test_suite_with_junit_output():
@@ -81,7 +78,7 @@ class CoverageCommand(Command):
             import coverage
         except ImportError:
             print("Could not import coverage. Please install it and try again.")
-            exit(1)
+            sys.exit(1)
         cov = coverage.coverage(source=['splunklib'])
         cov.start()
         run_test_suite()
@@ -101,8 +98,8 @@ class TestCommand(Command):
         pass
 
     def run(self):
-        failed = run_test_suite()
-        if failed:
+        FAILED = run_test_suite()
+        if FAILED:
             sys.exit(1)
 
 

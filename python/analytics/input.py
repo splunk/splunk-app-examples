@@ -17,8 +17,6 @@
 import os
 import sys
 
-from splunklib import six
-
 from datetime import datetime
 import splunklib.client as client
 
@@ -52,7 +50,7 @@ class AnalyticsTracker:
             self.splunk.confs["props"].create(ANALYTICS_SOURCETYPE)
             stanza = self.splunk.confs["props"][ANALYTICS_SOURCETYPE]
             stanza.submit({
-                "LINE_BREAKER": "(%s)" % EVENT_TERMINATOR,
+                "LINE_BREAKER": f"({EVENT_TERMINATOR})",
                 "CHARSET": "UTF-8",
                 "SHOULD_LINEMERGE": "false"
             })
@@ -61,7 +59,7 @@ class AnalyticsTracker:
     @staticmethod
     def encode(props):
         encoded = " "
-        for k, v in six.iteritems(props):
+        for k, v in list(props.items()):
             # We disallow dictionaries - it doesn't quite make sense.
             assert (not isinstance(v, dict))
 
@@ -72,7 +70,7 @@ class AnalyticsTracker:
             if isinstance(v, str):
                 v = v.replace('"', "'")
 
-            encoded += ('%s%s="%s" ' % (PROPERTY_PREFIX, k, v))
+            encoded += f'{PROPERTY_PREFIX}{k}="{v}" '
 
         return encoded
 
@@ -89,7 +87,7 @@ class AnalyticsTracker:
         assert (not EVENT_KEY in list(props.keys()))
 
         if distinct_id is not None:
-            event += ('%s="%s" ' % (DISTINCT_KEY, distinct_id))
+            event += f'{DISTINCT_KEY}="{distinct_id}" '
             assert (not DISTINCT_KEY in list(props.keys()))
 
         event += AnalyticsTracker.encode(props)

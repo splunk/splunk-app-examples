@@ -15,7 +15,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
 
 import csv
 import os
@@ -99,5 +98,6 @@ class SimulateCommand(GeneratingCommand):
             if interval < self.interval:
                 time.sleep(self.interval - interval)
             duration -= max(interval, self.interval)
+
 
 dispatch(SimulateCommand, sys.argv, sys.stdin, sys.stdout, __name__)

@@ -18,13 +18,16 @@
 
 import os
 import sys
+import ssl
+import urllib.request
+import urllib.error
 from io import BytesIO
 from pprint import pprint
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from splunklib.six.moves import urllib
-import ssl
-import splunklib.client as client
-import python.utils as utils
+
+from splunklib import client
+from python import utils
 
 
 def request(url, message, **kwargs):
@@ -34,10 +37,7 @@ def request(url, message, **kwargs):
     # If running Python 2.7.9+, disable SSL certificate validation
     req = urllib.request.Request(url, data, headers)
     try:
-        if sys.version_info >= (2, 7, 9):
-            response = urllib.request.urlopen(req, context=ssl._create_unverified_context())
-        else:
-            response = urllib.request.urlopen(req)
+        response = urllib.request.urlopen(req, context=ssl._create_unverified_context())
     except urllib.error.HTTPError as response:
         pass  # Propagate HTTP errors via the returned response message
     return {

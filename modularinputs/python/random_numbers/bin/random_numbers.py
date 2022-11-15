@@ -14,9 +14,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import
-import random, sys
+import random
+import sys
 import os
+
 # NOTE: splunklib must exist within random_numbers/lib/splunklib for this
 # example to run! To run this locally use `SPLUNK_VERSION=latest docker compose up -d`
 # from the root of this repo which mounts this example and the latest splunklib
@@ -24,7 +25,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 
 from splunklib.modularinput import *
-from splunklib import six
+
 
 class MyScript(Script):
     """All modular inputs should inherit from the abstract base class Script
@@ -33,6 +34,7 @@ class MyScript(Script):
     if the scheme returned by get_scheme has Scheme.use_external_validation
     set to True, the validate_input function.
     """
+
     def get_scheme(self):
         """When Splunk starts, it looks for all the modular inputs defined by
         its configuration, and tries to run them with the argument --scheme.
@@ -96,9 +98,9 @@ class MyScript(Script):
         maximum = float(validation_definition.parameters["max"])
 
         if minimum >= maximum:
-            raise ValueError("min must be less than max; found min=%f, max=%f" % minimum, maximum)
+            raise ValueError(f"min must be less than max; found min={minimum}, max={maximum}")
 
-    def stream_events(self, inputs, ew):
+    def stream_events(self, inputs, event_writer):
         """This function handles all the action: splunk calls this modular input
         without arguments, streams XML describing the inputs to stdin, and waits
         for XML on stdout describing events.
@@ -108,10 +110,10 @@ class MyScript(Script):
         script.
 
         :param inputs: an InputDefinition object
-        :param ew: an EventWriter object
+        :param event_writer: an EventWriter object
         """
         # Go through each input for this modular input
-        for input_name, input_item in six.iteritems(inputs.inputs):
+        for input_name, input_item in list(inputs.inputs.items()):
             # Get the values, cast them as floats
             minimum = float(input_item["min"])
             maximum = float(input_item["max"])
@@ -119,10 +121,11 @@ class MyScript(Script):
             # Create an Event object, and set its data fields
             event = Event()
             event.stanza = input_name
-            event.data = "number=\"%s\"" % str(random.uniform(minimum, maximum))
+            event.data = f"number=\"{str(random.uniform(minimum, maximum))}\""
 
             # Tell the EventWriter to write this event
-            ew.write_event(event)
+            event_writer.write_event(event)
+
 
 if __name__ == "__main__":
     sys.exit(MyScript().run(sys.argv))

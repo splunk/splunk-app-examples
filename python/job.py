@@ -102,7 +102,7 @@ FLAGS_SUMMARY = [
 def cmdline(argv, flags):
     """A cmdopts wrapper that takes a list of flags and builds the
        corresponding cmdopts rules to match those flags."""
-    rules = dict([(flag, {'flags': ["--%s" % flag]}) for flag in flags])
+    rules = {flag: {'flags': [f"--{flag}"]} for flag in flags}
     return parse(argv, rules)
 
 
@@ -110,7 +110,8 @@ def output(stream):
     """Write the contents of the given stream to stdout."""
     while True:
         content = stream.read(1024)
-        if len(content) == 0: break
+        if len(content) == 0:
+            break
         sys.stdout.write(content)
 
 
@@ -147,7 +148,7 @@ class Program:
         for item in argv:
             job = self.lookup(item)
             if job is None:
-                error("Search job '%s' does not exist" % item, 2)
+                error(f"Search job '{item}' does not exist", 2)
             func(job)
 
     def list(self, argv):
@@ -158,13 +159,14 @@ class Program:
             for key in sorted(job.content.keys()):
                 # Ignore some fields that make the output hard to read and
                 # that are available via other commands.
-                if key in ["performance"]: continue
-                print("%s: %s" % (key, job.content[key]))
+                if key in ["performance"]:
+                    continue
+                print(f"{key}: {job.content[key]}")
 
         if len(argv) == 0:
             index = 0
             for job in self.service.jobs:
-                print("@%d : %s" % (index, job.sid))
+                print(f"@{index} : {job.sid}")
                 index += 1
             return
 
@@ -223,7 +225,7 @@ class Program:
         }
         handler = handlers.get(command, None)
         if handler is None:
-            error("Unrecognized command: %s" % command, 2)
+            error(f"Unrecognized command: {command}", 2)
         handler(argv[1:])
 
     def searchlog(self, argv):

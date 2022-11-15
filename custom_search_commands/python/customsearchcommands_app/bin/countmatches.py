@@ -15,7 +15,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
 import sys
@@ -23,7 +22,11 @@ import sys
 splunkhome = os.environ['SPLUNK_HOME']
 sys.path.append(os.path.join(splunkhome, 'etc', 'apps', 'customsearchcommands_app', 'lib'))
 from splunklib.searchcommands import dispatch, StreamingCommand, Configuration, Option, validators
-from splunklib import six
+
+try:
+    from splunklib import ensure_binary
+except ImportError:
+    from splunklib.six import ensure_binary
 
 
 @Configuration()
@@ -68,9 +71,10 @@ class CountMatchesCommand(StreamingCommand):
         for record in records:
             count = 0
             for fieldname in self.fieldnames:
-                matches = pattern.findall(six.text_type(six.ensure_binary(record[fieldname]).decode("utf-8")))
+                matches = pattern.findall(str(ensure_binary(record[fieldname]).decode("utf-8")))
                 count += len(matches)
             record[self.fieldname] = count
             yield record
+
 
 dispatch(CountMatchesCommand, sys.argv, sys.stdin, sys.stdout, __name__)

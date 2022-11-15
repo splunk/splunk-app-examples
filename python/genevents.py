@@ -44,8 +44,7 @@ RULES = {
     'type': {
         'flags': ["--inputport"],
         'default': SPLUNK_PORT,
-        'help': "input host port when using tcp ingest, default is %d" %
-                SPLUNK_PORT
+        'help': f"input host port when using tcp ingest, default is {SPLUNK_PORT}"
     },
 }
 
@@ -60,7 +59,7 @@ def feed_index(service, opts):
     try:
         index = service.indexes[indexname]
     except KeyError:
-        print("Index %s not found" % indexname)
+        print(f"Index {indexname} not found")
         return
 
     if itype in ["stream", "submit"]:
@@ -69,7 +68,7 @@ def feed_index(service, opts):
         # create a tcp input if one doesn't exist
         input_host = opts.kwargs.get("inputhost", SPLUNK_HOST)
         input_port = int(opts.kwargs.get("inputport", SPLUNK_PORT))
-        input_name = "tcp:%s" % input_port
+        input_name = f"tcp:{input_port}"
         if input_name not in service.inputs.list():
             service.inputs.create("tcp", input_port, index=indexname)
         # connect to socket
@@ -82,8 +81,7 @@ def feed_index(service, opts):
     try:
         for i in range(0, 10):
             for j in range(0, 5000):
-                lastevent = "%s: event bunch %d, number %d\n" % \
-                            (datetime.datetime.now().isoformat(), i, j)
+                lastevent = f"{datetime.datetime.now().isoformat()}: event bunch {i}, number {j}\n"
 
                 lastevent = (lastevent + "\n").encode()
 
@@ -96,7 +94,7 @@ def feed_index(service, opts):
 
                 count = count + 1
 
-            print("submitted %d events, sleeping 1 second" % count)
+            print(f"submitted {count} events, sleeping 1 second")
             time.sleep(1)
 
     except KeyboardInterrupt:

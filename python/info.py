@@ -18,7 +18,7 @@
 
 import sys
 
-import splunklib.client as client
+from splunklib import client
 
 from utils import parse
 
@@ -30,13 +30,14 @@ if __name__ == "__main__":
     for key in sorted(content.keys()):
         value = content[key]
         if isinstance(value, list):
-            print("%s:" % key)
-            for item in value: print("    %s" % item)
+            print(f"{key}:")
+            for item in value:
+                print(f"    {item}")
         else:
-            print("%s: %s" % (key, value))
+            print(f"{key}: {value}")
 
     print("Settings:")
     content = service.settings.content
     for key in sorted(content.keys()):
         value = content[key]
-        print("    %s: %s" % (key, value))
+        print(f"    {key}: {value}")

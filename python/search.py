@@ -19,7 +19,7 @@ import sys
 from time import sleep
 
 from splunklib.binding import HTTPError
-import splunklib.client as client
+from splunklib import client
 
 from utils import *
 
@@ -42,7 +42,7 @@ FLAGS_RESULTS = [
 def cmdline(argv, flags, **kwargs):
     """A cmdopts wrapper that takes a list of flags and builds the
        corresponding cmdopts rules to match those flags."""
-    rules = dict([(flag, {'flags': ["--%s" % flag]}) for flag in flags])
+    rules = {flag: {'flags': [f"--{flag}"]} for flag in flags}
     return parse(argv, rules, ".env", **kwargs)
 
 
@@ -70,7 +70,7 @@ def main(argv):
     try:
         service.parse(search, parse_only=True)
     except HTTPError as e:
-        error("query '%s' is invalid:\n\t%s" % (search, str(e)), 2)
+        error(f"query '{search}' is invalid:\n\t{str(e)}", 2)
         return
 
     job = service.jobs.create(search, **kwargs_create)
@@ -87,20 +87,22 @@ def main(argv):
         matched = int(stats['eventCount'])
         results = int(stats['resultCount'])
         if verbose > 0:
-            status = ("\r%03.1f%% | %d scanned | %d matched | %d results" % (
-                progress, scanned, matched, results))
+            status = (f"\r{progress:03.1f}% | {scanned} scanned | {matched} matched | {results} results")
             sys.stdout.write(status)
             sys.stdout.flush()
         if stats['isDone'] == '1':
-            if verbose > 0: sys.stdout.write('\n')
+            if verbose > 0:
+                sys.stdout.write('\n')
             break
         sleep(2)
 
-    if 'count' not in kwargs_results: kwargs_results['count'] = 0
+    if 'count' not in kwargs_results:
+        kwargs_results['count'] = 0
     results = job.results(**kwargs_results)
     while True:
         content = results.read(1024)
-        if len(content) == 0: break
+        if len(content) == 0:
+            break
         sys.stdout.write(content.decode('utf-8'))
         sys.stdout.flush()
     sys.stdout.write('\n')
