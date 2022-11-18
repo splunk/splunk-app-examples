@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<view template="setup-component-demo-app:/templates/demo.html" type="html">
+	<label>Demo</label>
+</view>

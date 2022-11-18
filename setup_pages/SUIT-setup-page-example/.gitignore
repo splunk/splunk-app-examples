@@ -1,0 +1,11 @@
+.DS_Store
+.idea/
+lerna-debug.log
+node_modules
+npm-debug.log
+test-reports
+coverage_report
+yarn-error.log
+licenses.json
+functional-temp
+splunktional-temp

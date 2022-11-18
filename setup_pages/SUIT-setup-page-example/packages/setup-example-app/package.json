@@ -1,0 +1,51 @@
+{
+  "name": "@splunk/setup-example-app",
+  "version": "0.0.1",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "NODE_ENV=production webpack --bail",
+    "eslint": "eslint src --ext \".js,.jsx\"",
+    "eslint:ci": "yarn run eslint -f junit -o test-reports/lint-results.xml",
+    "eslint:fix": "eslint src --ext \".js, .jsx\" --fix",
+    "link:app": "ln -s $PWD/stage $SPLUNK_HOME/etc/apps/setup-example-app",
+    "lint": "yarn run eslint && yarn run stylelint",
+    "lint:ci": "yarn run eslint:ci && yarn run stylelint",
+    "start": "webpack --watch",
+    "stylelint": "stylelint \"src/**/*.{js,jsx}\" --config stylelint.config.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.2.0",
+    "@splunk/setup-component": "^0.0.1",
+    "@splunk/babel-preset": "^3.0.0",
+    "@splunk/eslint-config": "^4.0.0",
+    "@splunk/react-page": "^5.1.0",
+    "@splunk/react-ui": "^4.3.0",
+    "@splunk/splunk-utils": "^2.1.0",
+    "@splunk/stylelint-config": "^4.0.0",
+    "@splunk/themes": "^0.9.0",
+    "@splunk/webpack-configs": "^5.0.0",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.0.4",
+    "copy-webpack-plugin": "^4.5.2",
+    "eslint": "^7.14.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-import-resolver-webpack": "^0.13.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "styled-components": "^5.1.1",
+    "stylelint": "^13.0.0",
+    "webpack": "^4.16.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-merge": "^4.1.3"
+  },
+  "engines": {
+    "node": ">=6"
+  }
+}
