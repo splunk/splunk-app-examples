@@ -1,0 +1,10 @@
+{
+  "lerna": "2.0.0",
+  "commands": {
+    "publish": {
+      "ignore": ["*.md"]
+    }
+  },
+  "npmClient": "yarn",
+  "useWorkspaces": true
+}

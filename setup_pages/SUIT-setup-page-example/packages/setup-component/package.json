@@ -1,0 +1,66 @@
+{
+  "name": "@splunk/setup-component",
+  "version": "0.0.1",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "NODE_ENV=production webpack --bail",
+    "eslint": "eslint src --ext \".js,.jsx\"",
+    "eslint:ci": "yarn run eslint -f junit -o test-reports/lint-results.xml",
+    "eslint:fix": "eslint src --ext \".js, .jsx\" --fix",
+    "link:app": "ln -s $PWD/demo/splunk-app $SPLUNK_HOME/etc/apps/setup-component-demo-app",
+    "lint": "yarn run eslint && yarn run stylelint",
+    "lint:ci": "yarn run eslint:ci && yarn run stylelint",
+    "start": "webpack --watch",
+    "start:app": "webpack --watch --config demo/webpack.splunkapp.config.js",
+    "start:demo": "webpack-dev-server --config demo/webpack.standalone.config.js --port ${DEMO_PORT-8080}",
+    "stylelint": "stylelint \"src/**/*.{js,jsx}\" --config stylelint.config.js",
+    "test": "jest",
+    "test:ci": "JEST_JUNIT_OUTPUT_DIR=./test-reports JEST_JUNIT_OUTPUT_NAME=unit-results.xml JEST_JUNIT_CLASSNAME=unit yarn run test --ci --reporters=default jest-junit --coverage --coverageDirectory=coverage_report/coverage_maps_unit --coverageReporters=json",
+    "test:watch": "jest --watch"
+  },
+  "main": "SetupComponent.js",
+  "dependencies": {
+    "@splunk/react-ui": "^4.2.0",
+    "@splunk/themes": "^0.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.0",
+    "@splunk/babel-preset": "^3.0.0",
+    "@splunk/eslint-config": "^4.0.0",
+    "@splunk/splunk-utils": "^2.1.0",
+    "@splunk/stylelint-config": "^4.0.0",
+    "@splunk/webpack-configs": "^5.0.0",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.0.4",
+    "chai": "^3.5.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
+    "eslint": "^7.14.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-import-resolver-webpack": "^0.13.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "jest": "^25.1.0",
+    "jest-junit": "^10.0.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-test-renderer": "^16.12.0",
+    "styled-components": "^5.1.1",
+    "stylelint": "^13.0.0",
+    "webpack": "^4.16.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5",
+    "webpack-merge": "^4.1.3"
+  },
+  "peerDependencies": {
+    "react": "^16.8",
+    "styled-components": "^5.1"
+  },
+  "engines": {
+    "node": ">=6"
+  }
+}

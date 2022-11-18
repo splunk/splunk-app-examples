@@ -1,0 +1,37 @@
+# Source code
+/src/
+/test/
+/demo/
+
+# Tools
+/.babelrc*
+.eslintrc.*
+.eslintignore
+/stylelint.config.js
+.stylelintignore
+/webpack.config.js
+
+# Testing
+/coverage_report/
+/functional.settings.js
+/functional.*.conf.js
+/functional-temp
+/splunktional.settings.js
+/splunktional.*.conf.js
+/splunktional-temp
+/test-reports/
+/karma.conf.js
+/jest.config.js
+/webpack.test.config.js
+/*hooks.js
+/test-app
+
+# Misc
+/docs.manifest.json
+/docs
+/docs.gen*
+/.npmignore
+npm-debug.log
+yarn-error.log
+/licenses.json
+/*.tgz

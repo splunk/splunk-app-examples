@@ -26,6 +26,7 @@ This repository contains the following examples to help you get started creating
 
 | Example                         | Description                                                                                                                |
 |---------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| SUIT-setup-page-example | Demonstrates how to configure a setup page using SplunkUI
 | dependency_checking_app_example | Uses a setup page to verify the installation of app dependencies                                                           |
 | developer_guidance_setup_page   | Demonstrates how to use a setup page that adheres to Splunk Application Certification standards                            |
 | react_setup_page_example        | Demonstrates how to configure a setup page using React                                                                     |

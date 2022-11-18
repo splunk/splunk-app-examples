@@ -1,0 +1,7 @@
+demo/splunk-app/appserver/static/pages
+
+/*.js
+!/.babelrc.js
+!/.eslintrc.js
+!/jest.config.js
+!/*.config.js
