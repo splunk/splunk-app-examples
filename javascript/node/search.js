@@ -57,25 +57,28 @@
             
             try {
                 // Poll until the search is complete
-                while(!job.properties().isDone) {
-                    await job.fetch();
-                    // If the user asked for verbose output,
-                    // then write out the status of the search
-                    let properties = job.properties();
-                    if (isVerbose) {
-                        let progress = (properties.doneProgress * 100.0) + "%";
-                        let scanned = properties.scanCount;
-                        let matched = properties.eventCount;
-                        let results = properties.resultCount;
-                        let stats = "-- " +
-                            progress + " done | " +
-                            scanned + " scanned | " +
-                            matched + " matched | " +
-                            results + " results";
-                        console.log("\r" + stats + "                                          ");
+                await utils.whilst(
+                    function () { return !job.properties().isDone; },
+                    async function () {
+                        await job.fetch();
+                        // If the user asked for verbose output,
+                        // then write out the status of the search
+                        let properties = job.properties();
+                        if (isVerbose) {
+                            let progress = (properties.doneProgress * 100.0) + "%";
+                            let scanned = properties.scanCount;
+                            let matched = properties.eventCount;
+                            let results = properties.resultCount;
+                            let stats = "-- " +
+                                progress + " done | " +
+                                scanned + " scanned | " +
+                                matched + " matched | " +
+                                results + " results";
+                            console.log("\r" + stats + "                                          ");
+                        }
+                        await utils.sleep(1000);
                     }
-                    await utils.sleep(1000);
-                }
+                );
             } catch (err) {
                 if (isVerbose) {
                     console.log("\r");
@@ -183,10 +186,10 @@
             delete cmdline.version;
 
             if (cmdline.opts.exec_mode === "oneshot") {
-                oneshotSearch(service, cmdline.opts);
+                await oneshotSearch(service, cmdline.opts);
             }
             else {
-                search(service, cmdline.opts);
+                await search(service, cmdline.opts);
             }
         } catch (err) {
             console.log("Error:", err);

@@ -57,35 +57,36 @@ exports.main = async function (opts) {
             "search index=_internal | stats count by sourcetype",
             { earliest_time: "rt", latest_time: "rt" });
 
-        // The search is never going to be done, so we simply poll it every second to get
-        // more results
+
         let MAX_COUNT = 5;
         let count = 0;
-
-        // Loop for N times
-        while(MAX_COUNT > count) {
+        await utils.whilst(
+            // Loop for N times
+            function () { return MAX_COUNT > count; },
             // Every second, ask for preview results
-            await utils.sleep(1000);
-            let res = await job.preview({});
-            let results = res[0];
-            // Only do something if we have results
-            if (results && results.rows) {
-                // Up the iteration counter
-                count++;
-                console.log("========== Iteration " + count + " ==========");
-                let sourcetypeIndex = results.fields.indexOf("sourcetype");
-                let countIndex = results.fields.indexOf("count");
+            async function () {
+                await utils.sleep(1000);
+                let res = await job.preview({});
+                let results = res[0];
+                // Only do something if we have results
+                if (results && results.rows) {
+                    // Up the iteration counter
+                    count++;
+                    console.log("========== Iteration " + count + " ==========");
+                    let sourcetypeIndex = results.fields.indexOf("sourcetype");
+                    let countIndex = results.fields.indexOf("count");
 
-                for (const row of results.rows) {
-                    // This is a hacky "padding" solution
-                    let stat = ("  " + row[sourcetypeIndex] + "                         ").slice(0, 30);
+                    for (const row of results.rows) {
+                        // This is a hacky "padding" solution
+                        let stat = ("  " + row[sourcetypeIndex] + "                         ").slice(0, 30);
 
-                    // Print out the sourcetype and the count of the sourcetype so far
-                    console.log(stat + row[countIndex]);
+                        // Print out the sourcetype and the count of the sourcetype so far
+                        console.log(stat + row[countIndex]);
+                    }
+                    console.log("=================================");
                 }
-                console.log("=================================");
             }
-        }
+        );
         await job.cancel();
     } catch (err) {
         console.log("Error:", err);
