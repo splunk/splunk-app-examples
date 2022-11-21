@@ -25,7 +25,7 @@ if (!cmdline) {
 let opts = cmdline.opts;
 
 let assert = require('chai').assert;
-let Async = splunkjs.Async;
+let utils = splunkjs.Utils;
 let idCounter = 0;
 let argv = ["program", "script"];
 
@@ -42,8 +42,8 @@ describe("Hello World Tests", async function () {
         await main(opts);
     });
 
-    it("Pivot#Async", async function () {
-        let main = require("./node/helloworld/pivot_async").main;
+    it("Pivot", async function () {
+        let main = require("./node/helloworld/pivot").main;
         await main(opts);
     });
 
@@ -119,19 +119,19 @@ describe("Hello World Tests", async function () {
     });
 });
 
-describe.skip("Jobs Example Tests", function (done) {
-    beforeEach(function (done) {
+describe("Jobs Example Tests", function () {
+    beforeEach(function () {
         let context = this;
 
         this.main = require("./node/jobs").main;
-        this.run = function (command, args, options, callback) {
+        this.run = async function (command, args, options) {
             let combinedArgs = argv.slice();
             if (command) {
                 combinedArgs.push(command);
             }
 
             if (args) {
-                for (let arg of args) {
+                for (const arg of args) {
                     combinedArgs.push(arg);
                 }
             }
@@ -145,154 +145,102 @@ describe.skip("Jobs Example Tests", function (done) {
                 }
             }
 
-            return context.main(combinedArgs, callback);
+            let res = await context.main(combinedArgs);
+            return res;
         };
-
-        done();
     });
 
-    it("help", function (done) {
-        this.run(null, null, null, function (err) {
-            assert.ok(!!err);
-            done();
-        });
+    it("help", async function () {
+        await this.run(null, null, null);
     });
 
-    it("List jobs", function (done) {
-        this.run("list", null, null, function (err) {
-            assert.ok(!err);
-            done();
-        });
+    it("List jobs", async function () {
+        await this.run("list", null, null);
     });
 
-    it("Create job", function (done) {
+    it("Create job", async function () {
         let create = {
             search: "search index=_internal | head 1",
             id: getNextId()
         };
 
         let context = this;
-        context.run("create", [], create, function (err) {
-            assert.ok(!err);
-            context.run("cancel", [create.id], null, function (err) {
-                assert.ok(!err);
-                done();
-            });
-        });
+        await context.run("create", [], create);
+        await context.run("cancel", [create.id], null);
     });
 
-    it("Cancel job", function (done) {
+    it("Cancel job", async function () {
         let create = {
             search: "search index=_internal | head 1",
             id: getNextId()
         };
 
         let context = this;
-        context.run("create", [], create, function (err) {
-            assert.ok(!err);
-            context.run("cancel", [create.id], null, function (err) {
-                assert.ok(!err);
-                done();
-            });
-        });
+        let res = await context.run("create", [], create);
+        res = await context.run("cancel", [create.id], null);
     });
 
-    it("List job properties", function (done) {
+    it("List job properties", async function () {
         let create = {
             search: "search index=_internal | head 1",
             id: getNextId()
         };
 
         let context = this;
-        context.run("create", [], create, function (err) {
-            assert.ok(!err);
-            context.run("list", [create.id], null, function (err) {
-                assert.ok(!err);
-                context.run("cancel", [create.id], null, function (err) {
-                    assert.ok(!err);
-                    done();
-                });
-            });
-        });
+        await context.run("create", [], create);
+        await context.run("list", [create.id], null);
+        await context.run("cancel", [create.id], null);
     });
 
-    it("List job events", function (done) {
+    it("List job events", async function () {
         let create = {
             search: "search index=_internal | head 1",
             id: getNextId()
         };
 
         let context = this;
-        context.run("create", [], create, function (err) {
-            assert.ok(!err);
-            context.run("events", [create.id], null, function (err) {
-                assert.ok(!err);
-                context.run("cancel", [create.id], null, function (err) {
-                    assert.ok(!err);
-                    done();
-                });
-            });
-        });
+        await context.run("create", [], create,);
+        await context.run("events", [create.id], null);
+        await context.run("cancel", [create.id], null);
     });
 
-    it("List job preview", function (done) {
+    it("List job preview", async function () {
         let create = {
             search: "search index=_internal | head 1",
             id: getNextId()
         };
 
         let context = this;
-        context.run("create", [], create, function (err) {
-            assert.ok(!err);
-            context.run("preview", [create.id], null, function (err) {
-                assert.ok(!err);
-                context.run("cancel", [create.id], null, function (err) {
-                    assert.ok(!err);
-                    done();
-                });
-            });
-        });
+        await context.run("create", [], create);
+        await context.run("preview", [create.id], null);
+        await context.run("cancel", [create.id], null);
     });
 
-    it("List job results", function (done) {
+    it("List job results", async function () {
         let create = {
             search: "search index=_internal | head 1",
             id: getNextId()
         };
 
         let context = this;
-        context.run("create", [], create, function (err) {
-            assert.ok(!err);
-            context.run("results", [create.id], null, function (err) {
-                assert.ok(!err);
-                context.run("cancel", [create.id], null, function (err) {
-                    assert.ok(!err);
-                    done();
-                });
-            });
-        });
+        await context.run("create", [], create);
+        await context.run("results", [create.id], null);
+        await context.run("cancel", [create.id], null);
     });
 
-    it("List job results, by column", function (done) {
+    it("List job results, by column", async function () {
         let create = {
             search: "search index=_internal | head 1",
             id: getNextId()
         };
 
         let context = this;
-        context.run("create", [], create, function (err) {
-            assert.ok(!err);
-            context.run("results", [create.id], { output_mode: "json_cols" }, function (err) {
-                assert.ok(!err);
-                context.run("cancel", [create.id], null, function (err) {
-                    assert.ok(!err);
-                    done();
-                });
-            });
-        });
+        await context.run("create", [], create);
+        await context.run("results", [create.id], { output_mode: "json_cols" });
+        await context.run("cancel", [create.id], null);
     });
 
-    it("Create+list multiple jobs", function (done) {
+    it("Create+list multiple jobs", async function () {
         let creates = [];
         for (let i = 0; i < 3; i++) {
             creates[i] = {
@@ -303,36 +251,29 @@ describe.skip("Jobs Example Tests", function (done) {
         let sids = creates.map(function (create) { return create.id; });
 
         let context = this;
-        Async.parallelMap(
+        [err, created] = await utils.parallelMap(
             creates,
-            function (create, idx, done) {
-                context.run("create", [], create, function (err, job) {
+            async function (create, idx) {
+                await context.run("create", [], create, function (err, job) {
                     assert.ok(!err);
                     assert.ok(job);
                     assert.strictEqual(job.sid, create.id);
-                    done(null, job);
+                    return job;
                 });
-            },
-            function (err, created) {
-                for (let i = 0; i < created.length; i++) {
-                    assert.strictEqual(creates[i].id, created[i].sid);
-                }
-
-                context.run("list", sids, null, function (err) {
-                    assert.ok(!err);
-                    context.run("cancel", sids, null, function (err) {
-                        assert.ok(!err);
-                        done();
-                    });
-                });
-
             }
         );
+            
+        for (let i = 0; i < created.length; i++) {
+            assert.strictEqual(creates[i].id, created[i].sid);
+        }
+
+        await context.run("list", sids, null);
+        await context.run("cancel", sids, null);
     });
 });
 
-describe("Search Example Tests", async function () {
-    beforeEach(function () {
+describe("Search Example Tests", function () {
+    beforeEach(async function () {
         let context = this;
 
         this.main = require("./node/search").main;
