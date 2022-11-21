@@ -312,27 +312,22 @@ var drawChart = function(rows) {
   chart.draw(data, options);
 };
 
-// First, we log in
-service.login(function(err, success) {
-  // We check for both errors in the connection as well
-  // as if the login itself failed.
-  if (err || !success) {
+(async function(){
+  try{
+    // First, we log in
+    try {
+      await service.login();
+    } catch (err) {
       console.log("Error in logging in");
-      done(err || "Login failed");
-      return;
-  }
-    
-  // OK, we're logged in, let's do a oneshot search and just
-  // get the results
-  var query = "" +
-    'search index=_internal sourcetype=splunkd* | head 10000 | bucket span=10m _time | eval formatted_time=strftime(_time, "%D %H:%M") | chart count over formatted_time by status usenull=f';
-  service.oneshotSearch(query, {}, function(err, results) {
-    if (err) {
-      console.log(err);
-      alert("An error occurred with the search");
       return;
     }
-  
+
+    // OK, we're logged in, let's do a oneshot search and just
+    // get the results
+    var query = "" +
+    'search index=_internal sourcetype=splunkd* | head 10000 | bucket span=10m _time | eval formatted_time=strftime(_time, "%D %H:%M") | chart count over formatted_time by status usenull=f';
+    let results = await service.oneshotSearch(query, {});
+
     // The format Google Charts needs data in is very similar to ours - we just
     // need to put the field headers in the same array, and convert the strings
     // into numbers.
@@ -353,10 +348,14 @@ service.login(function(err, success) {
     
     // Add the headers in
     rows.unshift(results.fields);
-    
+
     drawChart(rows);
-  }); 
-});
+
+  } catch(err){
+    console.log(err);
+    alert("An error occurred with the search");
+  }
+})();
             </pre>
           </div>
         </div>
@@ -484,29 +483,23 @@ var drawChart = function(rows, fields) {
   axes.render();
 };
 
-// First, we log in
-service.login(function(err, success) {
-  // We check for both errors in the connection as well
-  // as if the login itself failed.
-  if (err || !success) {
-      console.log("Error in logging in");
-      done(err || "Login failed");
-      return;
-  }
-    
-  // OK, we're logged in, let's do a oneshot search and just
-  // get the results
-  var query = "" +
-    'search index=_internal sourcetype=splunkd* | head 10000 ' + 
-    '| timechart span=1m count by status | eval formatted_time=_time' +
-    '| fields - NULL, _*, _time';
-  service.oneshotSearch(query, {count: 0}, function(err, results) {
-    if (err) {
-      console.log(err);
-      alert("An error occurred with the search");
+(async function(){
+  try {
+    // First, we log in
+    try {
+      await service.login();
+    } catch (err) {
+      console.log("Login failure. Please check your server hostname and authentication credentials.");
       return;
     }
-  
+
+    // OK, we're logged in, let's do a oneshot search and just
+    // get the results
+    let query = "" +
+      'search index=_internal sourcetype=splunkd* | head 10000 ' + 
+      '| timechart span=1m count by status | eval formatted_time=_time' +
+      '| fields - NULL, _*, _time';
+    let results = await service.oneshotSearch(query, {count: 0});
     var rows = results.rows.slice();
     var fields = results.fields.slice();
     
@@ -521,10 +514,13 @@ service.login(function(err, success) {
         }
       }
     }
-    
     drawChart(rows, fields);
-  });
-});
+  } catch(err){
+    console.log(err);
+    alert("An error occurred with the search");
+  }
+
+})();
             </pre>
           </div>
         </div>

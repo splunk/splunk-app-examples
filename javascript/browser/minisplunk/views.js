@@ -29,38 +29,30 @@ var templates = {
   eventProperties: $("#eventPropertiesTemplate")
 };
 
-var performSearch = function(svc, query, callback) {
-  callback = callback || function() {};          
-  
+var performSearch = function(svc, query) {
   if (!splunkjs.Utils.startsWith(splunkjs.Utils.trim(query), "search")) {
     query = "search " + query;
   }
-  
-  svc.jobs().create(query, {rf: "*"}, function(err, job) {
-    if (err) {
-      var response = args[0];
-      var messages = {};
-      var message = response.data.messages[1];
-      messages[message.type.toLowerCase()] = [message.text];
-      App.events.trigger("search:failed", query, messages);
-    }
-    else {
+  return svc.jobs().create(query, {rf: "*"}).then(async (job)=>{
       App.events.trigger("search:new", job);
-      
-      job.track({}, {
+      return await job.track({}, {
         progress: function(job) {
           App.events.trigger("search:stats", job.state());
         },
         done: function(job) {
           App.events.trigger("search:done", job);
-          callback();
         },
         error: function(err) {
-          callback(err)
+          throw err;
         }
       });
-    }
-  })
+  }).catch((err)=>{
+      var response = args[0];
+      var messages = {};
+      var message = response.data.messages[1];
+      messages[message.type.toLowerCase()] = [message.text];
+      App.events.trigger("search:failed", query, messages);
+  });
 };
 
 var propertiesToActions = function(properties) {  
@@ -936,7 +928,7 @@ var SigninView = BootstrapModalView.extend({
     }
   },
     
-  login: function(e) {
+  login: async function(e) {
     e.preventDefault();    
     var that = this;
     
@@ -960,20 +952,21 @@ var SigninView = BootstrapModalView.extend({
         app: app,
         version: version
     });
-      
-    svc.login(function(err, success) {
-      if (err || !success) {
-          this.$("#login-error p").text("There was an error logging in.").parent().removeClass("hidden");
-        }
-        else {
-          that.hide(e);
-          App.events.trigger("service:login", svc);
-        }
-      });
+    try {
+      await svc.login();
+      that.hide(e);
+      App.events.trigger("service:login", svc);
+    } catch(err) {
+      this.$("#login-error p").text("There was an error logging in.").parent().removeClass("hidden");
+    }
   },
   
-  primaryClicked: function(e) {
-    this.login(e);
+  primaryClicked: async function(e) {
+    try{
+      await this.login(e);
+    } catch(err){
+      console.log(err);
+    }
   },
   
   secondaryClicked: function(e) {

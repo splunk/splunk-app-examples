@@ -49,20 +49,17 @@ let serverProxy = function (req, res) {
             };
 
             try {
-                needle.request(options.method, options.url, options.body, options, function (err, response, body) {
-                    try {
-                        let statusCode = (response ? response.statusCode : 500) || 500;
-                        let headers = (response ? response.headers : {}) || {};
-
-                        res.writeHead(statusCode, headers);
-                        res.write(body || JSON.stringify(err));
-                        res.end();
-                    }
-                    catch (ex) {
-                        writeError();
-                    }
+                needle(options.method, options.url, options.body, options)
+                .then((response) => {
+                    var statusCode = (response ? response.statusCode : 500) || 500;
+                    var headers = (response ? response.headers : {}) || {};
+                    res.writeHead(statusCode, headers);
+                    res.write(response.body);
+                    res.end();
+                }).catch((err)=>{
+                    res.write(JSON.stringify(err));
+                    res.end();
                 });
-
             }
             catch (ex) {
                 writeError();
