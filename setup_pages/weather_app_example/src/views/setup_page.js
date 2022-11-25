@@ -1,6 +1,5 @@
-import Splunk from "./splunk_helpers.js";
-import Config from "./setup_configuration.js";
-import StoragePasswords from "./storage_passwords.js";
+import Config from "./setup_configuration";
+import StoragePasswords from "./storage_passwords";
 
 const CUSTOM_CONF = "weather";
 const CUSTOM_CONF_STANZA = "api";

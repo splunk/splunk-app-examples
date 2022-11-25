@@ -4,8 +4,8 @@
     "description": "Splunk test examples",
     "main": "test_examples.js",
     "dependencies": {
-        "splunk-sdk": ">=1.4.0",
-        "needle": "3.0.0"
+        "needle": "3.0.0",
+        "splunk-sdk": "^1.12.1"
     },
     "devDependencies": {
         "browserify": "^17.0.0",

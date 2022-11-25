@@ -1,4 +1,3 @@
-import { promisify } from "./util.js";
 
 // ----------------------------------
 // Splunk JS SDK Helpers
@@ -17,9 +16,7 @@ async function update_configuration_file(
     splunk_js_sdk_service.configurations({
       // Name space information not provided
     });
-  splunk_js_sdk_service_configurations = await promisify(
-    splunk_js_sdk_service_configurations.fetch
-  )();
+  splunk_js_sdk_service_configurations = await splunk_js_sdk_service_configurations.fetch();
 
   // Check for the existence of the configuration file
   let configuration_file_exist = does_configuration_file_exist(
@@ -35,9 +32,7 @@ async function update_configuration_file(
     );
 
     // BUG WORKAROUND: re-fetch because the client doesn't do so
-    splunk_js_sdk_service_configurations = await promisify(
-      splunk_js_sdk_service_configurations.fetch
-    )();
+    splunk_js_sdk_service_configurations = await splunk_js_sdk_service_configurations.fetch();
   }
 
   // Retrieves the configuration file accessor
@@ -45,9 +40,7 @@ async function update_configuration_file(
     splunk_js_sdk_service_configurations,
     configuration_file_name
   );
-  configuration_file_accessor = await promisify(
-    configuration_file_accessor.fetch
-  )();
+  configuration_file_accessor = await configuration_file_accessor.fetch();
 
   // Checks to see if the stanza where the inputs will be
   // stored exist
@@ -61,18 +54,14 @@ async function update_configuration_file(
     await create_stanza(configuration_file_accessor, stanza_name);
   }
   // Need to update the information after the creation of the stanza
-  configuration_file_accessor = await promisify(
-    configuration_file_accessor.fetch
-  )();
+  configuration_file_accessor = await configuration_file_accessor.fetch();
 
   // Retrieves the configuration stanza accessor
   let configuration_stanza_accessor = get_configuration_file_stanza(
     configuration_file_accessor,
     stanza_name
   );
-  configuration_stanza_accessor = await promisify(
-    configuration_stanza_accessor.fetch
-  )();
+  configuration_stanza_accessor = await configuration_stanza_accessor.fetch();
 
   // We don't care if the stanza property does or doesn't exist
   // This is because we can use the
@@ -85,7 +74,7 @@ function create_configuration_file(
   configurations_accessor,
   configuration_file_name
 ) {
-  return promisify(configurations_accessor.create)(configuration_file_name);
+  return configurations_accessor.create(configuration_file_name);
 }
 
 // ---------------------
@@ -181,14 +170,14 @@ function get_configuration_file_stanza_property(
 }
 
 function create_stanza(configuration_file_accessor, new_stanza_name) {
-  return promisify(configuration_file_accessor.create)(new_stanza_name);
+  return configuration_file_accessor.create(new_stanza_name);
 }
 
 function update_stanza_properties(
   configuration_stanza_accessor,
   new_stanza_properties
 ) {
-  return promisify(configuration_stanza_accessor.update)(new_stanza_properties);
+  return configuration_stanza_accessor.update(new_stanza_properties);
 }
 
 export default {

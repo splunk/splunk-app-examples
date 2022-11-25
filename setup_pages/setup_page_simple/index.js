@@ -8,8 +8,7 @@ if (!fs.existsSync(outputDirectory)){
 browserify("./src/setup_page.js")
   .transform("babelify", {
     presets: [
-      "@babel/preset-env",
-      "@babel/preset-react"
+      "@babel/preset-env"
     ],
   })
   .bundle()

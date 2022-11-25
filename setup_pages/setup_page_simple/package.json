@@ -1,5 +1,5 @@
 {
-  "name": "weather-app-example",
+  "name": "setup-page-simple",
   "version": "0.0.1",
   "main": "index.js",
   "private":true,
@@ -8,14 +8,12 @@
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "jquery": "^3.6.1",
     "splunk-sdk": "^1.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.19.0",
     "@babel/preset-env": "^7.19.0",
-    "@babel/preset-react": "^7.18.6",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0"
   }

@@ -6,7 +6,7 @@ Documentation link:
 http://docs.splunk.com/Documentation/Splunk/latest/Viz/PanelreferenceforSimplifiedXML#dashboard_or_form
 -->
 <dashboard isDashboard="false"
-           script="javascript/setup_page.js"
+           script="javascript/app.js"
            stylesheet="styles/setup_page.css">
     <row>
         <panel>

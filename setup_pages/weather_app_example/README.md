@@ -18,17 +18,14 @@ And finally the `setup_page.js` imports a React app from `src/views/app.js`.
 
 
 # Installation
-- `setup_page.js` from `./appserver/static/javascript` creates the Main container of the React App.
+- First users have to install dependencies by running `npm install` command in the root directory of the application.
 
-- `app.js` from `./appserver/static/javascript/views` defines the elements of the main container. 
+- Then, inside `src` directory, user can write their own code.
 
-- New components to be used within the App can be created within `./appserver/static/javascript` as per the need.
+- Run `npm run build command`. It will bundle all the files in `src` directory and will save the whole bundle in `appserver/static/javascript` as `app.js`.
 
-- Install dependencies by running `npm install` command in the root directory of the application.
+- Now run the `splunk-app-examples` docker container.
 
-- Run `npm run build` command. It will bundle all the files in `./appserver/static/javascript` directory and will save the whole bundle in `appserver/static/javascript` as `app.js`.
-
-- Link the directory `weather_app_examples` as volume within the docker Splunk instance (ref docker-compose.yml).
 
 *Note:* You can also copy files using `docker cp ./setup_pages/weather_app_example CONTAINER:/opt/splunk/etc/apps/weather_app_example`
 

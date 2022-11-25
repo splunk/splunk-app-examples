@@ -1,12 +1,14 @@
 {
-  "name": "weather-app-example",
-  "version": "0.0.1",
+  "name": "dependency-checking-app",
+  "version": "1.0.0",
+  "description": "",
   "main": "index.js",
-  "private":true,
   "scripts": {
     "build": "node index.js"
   },
-  "license": "UNLICENSED",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -15,14 +15,26 @@ services:
         volumes:
             # Weather App
             - ./setup_pages/weather_app_example:/opt/splunk/etc/apps/weather_app_example
+            - /opt/splunk/etc/apps/weather_app_example/node_modules
             - ./lib:/opt/splunk/etc/apps/weather_app_example/vendor
 
             # Dependency checking app example
             - ./setup_pages/dependency_checking_app_example:/opt/splunk/etc/apps/dependency_checking_app_example
+            - /opt/splunk/etc/apps/dependency_checking_app_example/node_modules
             - ./lib:/opt/splunk/etc/apps/dependency_checking_app_example/vendor
+
+            # React Setup Page
+            - ./setup_pages/react_setup_page_example:/opt/splunk/etc/apps/react_setup_page_example
+            - /opt/splunk/etc/apps/react_setup_page_example/node_modules
+            
+            # Developer Guidance App
+            - ./setup_pages/developer_guidance_setup_page:/opt/splunk/etc/apps/developer_guidance_setup_page
+            - /opt/splunk/etc/apps/developer_guidance_setup_page/node_modules
+            - ./lib:/opt/splunk/etc/apps/developer_guidance_setup_page/vendor
 
             # Setup page simple
             - ./setup_pages/setup_page_simple:/opt/splunk/etc/apps/setup_page_simple
+            - /opt/splunk/etc/apps/setup_page_simple/node_modules
 
             # Custom search commands app
             - ./custom_search_commands/python/customsearchcommands_app/package:/opt/splunk/etc/apps/customsearchcommands_app

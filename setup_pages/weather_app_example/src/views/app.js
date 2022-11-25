@@ -1,5 +1,5 @@
 import { perform } from "./setup_page";
-import * as React from "react";
+import React from "react";
 import { Component } from "react";
 import splunkjs from "splunk-sdk";
 

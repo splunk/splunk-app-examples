@@ -1,5 +1,4 @@
-import { promisify } from "./util.js";
-import SplunkHelpers from "./splunk_helpers.js";
+import SplunkHelpers from "./splunk_helpers";
 
 async function complete_setup(splunk_js_sdk_service) {
   let configuration_file_name = "app";
@@ -18,10 +17,10 @@ async function complete_setup(splunk_js_sdk_service) {
 
 async function reload_splunk_app(splunk_js_sdk_service, app_name) {
   let splunk_js_sdk_apps = splunk_js_sdk_service.apps();
-  await promisify(splunk_js_sdk_apps.fetch)();
+  await splunk_js_sdk_apps.fetch();
 
   let current_app = splunk_js_sdk_apps.item(app_name);
-  await promisify(current_app.reload)();
+  await current_app.reload();
 }
 
 function redirect_to_splunk_app_homepage(app_name) {
