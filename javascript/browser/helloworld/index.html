@@ -84,7 +84,6 @@
       port     = "8089";
       version  = "5.0";
       
-      Async = splunkjs.Async;
       utils = splunkjs.Utils;
       
       var updateConnectionInformation = function() {
@@ -345,10 +344,7 @@
             <h2>Description</h2>
               <p>
                 This example demonstrates working with the apps collection (<code>splunkjs.Service.Applications</code>)
-                and individual apps (<code>splunkjs.Service.Application</code>). This example displays the name of each app in the collection.</p>
-
-                <p>The only difference between the two code files, Regular and splunkjs.Async, is that the latter uses the built-in
-                <code>splunkjs.Async</code> module to simplify asynchronous control flow.
+                and individual apps (<code>splunkjs.Service.Application</code>). This example displays the name of each app in the collection.
               </p>
             
           </div>
@@ -413,10 +409,7 @@ var service = new splunkjs.Service(http, {
               <p>              
                 This sample demonstrates working with the saved search collection (<code>splunkjs.Service.SavedSearches</code>)
                 and individual saved searches (<code>splunkjs.Service.SavedSearch</code>). This example displays the name and 
-                search query for each saved search in the collection.</p>
-
-                <p>The only difference between the two code files, Regular and splunkjs.Async, is that the latter uses the built-in
-                <code>splunkjs.Async</code> module to simplify asynchronous control flow.
+                search query for each saved search in the collection.
               </p>
             
           </div>

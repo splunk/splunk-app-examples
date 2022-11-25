@@ -758,81 +758,76 @@ var MapView = Backbone.View.extend({
     this.properties = properties;
   },
   
-  searchDone: function(job) {
+  searchDone: async function(job) {
     this.job = job;
     
-    this.getResults();
+    await this.getResults();
   },
   
-  getResults: function() {
+  getResults: async function() {
     this.markers = {};
     
     var that = this;
     var iterator = this.job.iterator("results");
     
     var hasMore = true;
-    splunkjs.Async.whilst(
-      function() { return hasMore; },
-      function(iterationDone) {
-        iterator.next(function(err, results, more) {
-          if (err) {
-            iterationDone(err);
-            return;
-          }
-          
-          hasMore = more;
-          
-          if (more) {
-            var fields = results.fields;
-            var lngIndex, latIndex;
-            
-            for(var i = 0; i < fields.length; i++) {
-              if (fields[i] === "lng") {
-                lngIndex = i;
-              }
-              else if (fields[i] === "lat") {
-                latIndex = i;
-              }
-            }
-            
-            var data = results.rows;
-            for(var i = 0; i < data.length; i++) {
-              var result = data[i];
-              var latVal = result[latIndex];
-              var lngVal = result[lngIndex];
+    try {
+      await splunkjs.Utils.whilst(
+        function() { return hasMore; },
+        async function() {
+          try {
+            let results;
+            [results, hasMore] = await iterator.next();
+            if (hasMore) {
+              var fields = results.fields;
+              var lngIndex, latIndex;
               
-              if (!latVal || !lngVal) {
-                continue;
-              }
-              
-              var lat = latVal;
-              var lng = lngVal;
-              
-              var properties = [];
-              for (var j = 0; j < fields.length; j++) {
-                property = fields[j];
-                if (!splunkjs.Utils.startsWith(property, "_")) {
-                  properties.push({
-                    key: property,
-                    value: result[j]
-                  });
+              for(var i = 0; i < fields.length; i++) {
+                if (fields[i] === "lng") {
+                  lngIndex = i;
+                }
+                else if (fields[i] === "lat") {
+                  latIndex = i;
                 }
               }
               
-              that.addMarker(lat, lng, properties);
+              var data = results.rows;
+              for(var i = 0; i < data.length; i++) {
+                var result = data[i];
+                var latVal = result[latIndex];
+                var lngVal = result[lngIndex];
+                
+                if (!latVal || !lngVal) {
+                  continue;
+                }
+                
+                var lat = latVal;
+                var lng = lngVal;
+                
+                var properties = [];
+                for (var j = 0; j < fields.length; j++) {
+                  property = fields[j];
+                  if (!splunkjs.Utils.startsWith(property, "_")) {
+                    properties.push({
+                      key: property,
+                      value: result[j]
+                    });
+                  }
+                }
+                
+                that.addMarker(lat, lng, properties);
+              }
             }
+          } catch (err) {
+            console.log("Error:", err);
           }
-          
-          iterationDone();
-        });
-      },
-      function(err) {
-        if (err) {
-          console.log("GEO ERR: " + err);
-          alert("GEOERR!");
         }
-        that.render();
-      });
+      );
+    } catch(err) {
+      console.log("GEO ERR: " + err);
+      alert("GEOERR!");
+      that.render();
+    }
   },
   
   addMarker: function(lat, lng, properties) {
