@@ -84,7 +84,7 @@ describe("Hello World Tests", async function () {
 
     it("Saved Searches#Create", async function () {
         let main = require("./node/helloworld/savedsearches_create").main;
-        main(opts);
+        await main(opts);
     });
 
     it("Saved Searches#Delete Again", async function () {
@@ -124,38 +124,15 @@ describe("Jobs Example Tests", function () {
         let context = this;
 
         this.main = require("./node/jobs").main;
-        this.run = async function (command, args, options) {
-            let combinedArgs = argv.slice();
-            if (command) {
-                combinedArgs.push(command);
-            }
-
-            if (args) {
-                for (const arg of args) {
-                    combinedArgs.push(arg);
-                }
-            }
-
-            if (options) {
-                for (let key in options) {
-                    if (options.hasOwnProperty(key)) {
-                        combinedArgs.push("--" + key);
-                        combinedArgs.push(options[key]);
-                    }
-                }
-            }
-
-            let res = await context.main(combinedArgs);
-            return res;
-        };
+        this.helper = require("./node/jobs").helper;
     });
 
     it("help", async function () {
-        await this.run(null, null, null);
+        await this.main(null, null, null);
     });
 
     it("List jobs", async function () {
-        await this.run("list", null, null);
+        await this.helper("list", null, null);
     });
 
     it("Create job", async function () {
@@ -165,8 +142,8 @@ describe("Jobs Example Tests", function () {
         };
 
         let context = this;
-        await context.run("create", [], create);
-        await context.run("cancel", [create.id], null);
+        await context.helper("create", [], create);
+        await context.helper("cancel", [create.id], null);
     });
 
     it("Cancel job", async function () {
@@ -176,8 +153,8 @@ describe("Jobs Example Tests", function () {
         };
 
         let context = this;
-        let res = await context.run("create", [], create);
-        res = await context.run("cancel", [create.id], null);
+        let res = await context.helper("create", [], create);
+        res = await context.helper("cancel", [create.id], null);
     });
 
     it("List job properties", async function () {
@@ -187,9 +164,9 @@ describe("Jobs Example Tests", function () {
         };
 
         let context = this;
-        await context.run("create", [], create);
-        await context.run("list", [create.id], null);
-        await context.run("cancel", [create.id], null);
+        await context.helper("create", [], create);
+        await context.helper("list", [create.id], null);
+        await context.helper("cancel", [create.id], null);
     });
 
     it("List job events", async function () {
@@ -199,9 +176,9 @@ describe("Jobs Example Tests", function () {
         };
 
         let context = this;
-        await context.run("create", [], create,);
-        await context.run("events", [create.id], null);
-        await context.run("cancel", [create.id], null);
+        await context.helper("create", [], create,);
+        await context.helper("events", [create.id], null);
+        await context.helper("cancel", [create.id], null);
     });
 
     it("List job preview", async function () {
@@ -211,9 +188,9 @@ describe("Jobs Example Tests", function () {
         };
 
         let context = this;
-        await context.run("create", [], create);
-        await context.run("preview", [create.id], null);
-        await context.run("cancel", [create.id], null);
+        await context.helper("create", [], create);
+        await context.helper("preview", [create.id], null);
+        await context.helper("cancel", [create.id], null);
     });
 
     it("List job results", async function () {
@@ -223,9 +200,9 @@ describe("Jobs Example Tests", function () {
         };
 
         let context = this;
-        await context.run("create", [], create);
-        await context.run("results", [create.id], null);
-        await context.run("cancel", [create.id], null);
+        await context.helper("create", [], create);
+        await context.helper("results", [create.id], null);
+        await context.helper("cancel", [create.id], null);
     });
 
     it("List job results, by column", async function () {
@@ -235,9 +212,9 @@ describe("Jobs Example Tests", function () {
         };
 
         let context = this;
-        await context.run("create", [], create);
-        await context.run("results", [create.id], { output_mode: "json_cols" });
-        await context.run("cancel", [create.id], null);
+        await context.helper("create", [], create);
+        await context.helper("results", [create.id], { output_mode: "json_cols" });
+        await context.helper("cancel", [create.id], null);
     });
 
     it("Create+list multiple jobs", async function () {
@@ -251,15 +228,13 @@ describe("Jobs Example Tests", function () {
         let sids = creates.map(function (create) { return create.id; });
 
         let context = this;
-        [err, created] = await utils.parallelMap(
+        let [err, created] = await utils.parallelMap(
             creates,
             async function (create, idx) {
-                await context.run("create", [], create, function (err, job) {
-                    assert.ok(!err);
-                    assert.ok(job);
-                    assert.strictEqual(job.sid, create.id);
-                    return job;
-                });
+                let job = await context.helper("create", [], create);
+                assert.ok(job);
+                assert.strictEqual(job.sid, create.id);
+                return [null, job];
             }
         );
             
@@ -267,13 +242,13 @@ describe("Jobs Example Tests", function () {
             assert.strictEqual(creates[i].id, created[i].sid);
         }
 
-        await context.run("list", sids, null);
-        await context.run("cancel", sids, null);
+        await context.helper("list", sids, null);
+        await context.helper("cancel", sids, null);
     });
 });
 
 describe("Search Example Tests", function () {
-    beforeEach(async function () {
+    beforeEach(function () {
         let context = this;
 
         this.main = require("./node/search").main;

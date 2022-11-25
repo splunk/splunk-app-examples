@@ -25,7 +25,6 @@
  */
 
 let splunkjs = require('splunk-sdk');
-let Async = splunkjs.Async;
 
 exports.main = async function (opts) {
     // This is just for testing - ignore it.

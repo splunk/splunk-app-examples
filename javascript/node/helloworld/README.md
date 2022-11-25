@@ -29,9 +29,6 @@ for each one print its name and the search query associated with it.
 These files demonstrate how to create and delete `splunkjs.Service.AlertGroup`
 entities.
 
-The only difference between the two files is that the latter uses the built-in
-`splunkjs.Async` module to make asynchronous control-flow easier.
-
 ### Files: [`savedsearches.js`]
 
 These files demonstrate working with the `splunkjs.Service.SavedSearches` collection

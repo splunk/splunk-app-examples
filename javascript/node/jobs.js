@@ -134,7 +134,7 @@
             }
 
             // Invoke the command
-            await handler(args, options);
+            return await handler(args, options);
         },
 
         // Cancel the specified search jobs
@@ -142,10 +142,11 @@
             _check_sids('cancel', sids);
 
             // For each of the supplied sids, cancel the job.
-            return await this._foreach(sids, async function (job, idx) {
+            let [err, vals] = await this._foreach(sids, async function (job, idx) {
                 try {
                     await job.cancel();
                     console.log("  Job " + job.sid + " cancelled");
+                    return [null, null];
                 } catch (err) {
                     console.log("Error:", err);
                     // For use by tests only
@@ -154,12 +155,13 @@
                     }
                 }       
             });
+            return vals;
         },
 
         // Retrieve events for the specified search jobs
         events: async function (sids, options) {
             // For each of the passed in sids, get the relevant events
-            return await this._foreach(sids, async function (job, idx) {
+            let [err, vals] = await this._foreach(sids, async function (job, idx) {
                  try {
                     let data;
                     [data, job] = await job.events(options);
@@ -176,7 +178,7 @@
                     else {
                         console.log(data);
                     }
-                    return data;
+                    return [null,data];
                 } catch (err) {
                    console.log("Error:", err);
                     // For use by tests only
@@ -185,6 +187,7 @@
                     }
                 }
             });
+            return vals;
         },
 
         // Create a search job
@@ -228,7 +231,7 @@
                 else {  
                     // If certain job SIDs are provided,
                     // then we simply read the properties of those jobs
-                    return await this._foreach(sids, async function (job, idx) {
+                    let [err, vals] = await this._foreach(sids, async function (job, idx) {
                         job = await job.fetch();
                         console.log("Job " + job.sid + ": ");
                         let properties = job.properties();
@@ -239,8 +242,9 @@
                             }
                             console.log("  " + key + ": ", properties[key]);
                         }
-                        return properties;
+                        return [null, properties];
                     });
+                    return vals;
                 }
             } catch (err) {
                 console.log("Error:", err);
@@ -255,7 +259,7 @@
         preview: async function (sids, options) {
             try {
                 // For each of the passed in sids, get the relevant results
-                return await this._foreach(sids, async function (job, idx) {
+                let [err, vals] = await this._foreach(sids, async function (job, idx) {
                     let data;
                     [data, job] = await job.preview(options);
                     console.log("===== PREVIEW @ " + job.sid + " =====");
@@ -272,8 +276,9 @@
                         console.log(data);
                     }
                     
-                    return data;
+                    return [null, data];
                 });
+                return vals;
             } catch (err) {
                 console.log("Error:", err);
                 // For use by tests only
@@ -286,8 +291,8 @@
         // Retrieve events for the specified search jobs
         results: async function (sids, options) {
             // For each of the passed in sids, get the relevant results
-            return await this._foreach(sids, async function (job, idx) {
-                await job.track({}, {
+            let [err, vals] = await this._foreach(sids, async function (job, idx) {
+                return await job.track({}, {
                     'done': async function (job) {
                         try {
                             let data;
@@ -305,7 +310,7 @@
                                 console.log(data);
                             }
     
-                            return data;
+                            return [null, data];
                         } catch (err) {
                             throw err;
                         }
@@ -318,9 +323,49 @@
                     }
                 });
             });
+            return vals;
         }
     });
 
+    // for use by test cases only
+    exports.helper = async function (name, args, opts) {
+        args = args || [];
+        opts = opts || {};
+
+        // Create our service object
+        let svc = new splunkjs.Service({
+            scheme: 'https',
+            host: 'localhost',
+            port: '8089',
+            username: 'admin',
+            password: 'changed!',
+            version: '8.2'
+        });
+
+        try {
+            try {
+                // First, we log in
+                await svc.login();
+            } catch (err) {
+                console.log("Error in logging in");
+                // For use by tests only
+                if (module != require.main) {
+                    throw new Error(err);
+                }
+                return;
+            }
+            let program = new Program(svc);
+            
+            let res = await program.run(name, args, opts);
+            return res;
+        } catch (err) {
+            console.log("Error: " + err);
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
+            }
+        }
+    };
 
     exports.main = async function (argv) {
         let cmdline = options.create();
@@ -343,7 +388,6 @@
                     // First, we log in
                     await svc.login();
                 } catch (err) {
-                    console.log("Error in logging in");
                     // For use by tests only
                     if (module != require.main) {
                         return Promise.reject(err);
@@ -351,7 +395,7 @@
                     return;
                 }
                 let program = new Program(svc);
-                
+
                 await program.run(name, cmdline.args, options.opts);
             } catch (err) {
                 console.log("Error: " + err);
@@ -372,7 +416,7 @@
         cmdline.add("cancel", "Cancel the specify search jobs", "<sids...>", [], [], run);
         cmdline.add("list", "List all search jobs or properties for those specified", "[sids...]", [], [], run);
 
-        await cmdline.parse(argv);
+        cmdline.parse(argv);
         // Try and parse the command line
         if (!cmdline.executedCommand) {
             console.log(cmdline.helpInformation());
