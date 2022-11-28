@@ -264,7 +264,7 @@ var searchTerm = 'search index=_internal | head 10000 | stats count(host), count
 // A small utility function to queue up operations on the chart
 // until it is ready.
 var updateTimeline = function(data) {
-  var setData = function() {
+  let setData = function() {
     timeline.updateWithJSON(data);
   }
   

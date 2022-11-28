@@ -767,10 +767,10 @@ var MapView = Backbone.View.extend({
   getResults: async function() {
     this.markers = {};
     
-    var that = this;
-    var iterator = this.job.iterator("results");
+    let that = this;
+    let iterator = this.job.iterator("results");
     
-    var hasMore = true;
+    let hasMore = true;
     try {
       await splunkjs.Utils.whilst(
         function() { return hasMore; },
@@ -779,10 +779,10 @@ var MapView = Backbone.View.extend({
             let results;
             [results, hasMore] = await iterator.next();
             if (hasMore) {
-              var fields = results.fields;
-              var lngIndex, latIndex;
+              let fields = results.fields;
+              let lngIndex, latIndex;
               
-              for(var i = 0; i < fields.length; i++) {
+              for(let i = 0; i < fields.length; i++) {
                 if (fields[i] === "lng") {
                   lngIndex = i;
                 }
@@ -791,21 +791,21 @@ var MapView = Backbone.View.extend({
                 }
               }
               
-              var data = results.rows;
-              for(var i = 0; i < data.length; i++) {
-                var result = data[i];
-                var latVal = result[latIndex];
-                var lngVal = result[lngIndex];
+              let data = results.rows;
+              for(let i = 0; i < data.length; i++) {
+                let result = data[i];
+                let latVal = result[latIndex];
+                let lngVal = result[lngIndex];
                 
                 if (!latVal || !lngVal) {
                   continue;
                 }
                 
-                var lat = latVal;
-                var lng = lngVal;
+                let lat = latVal;
+                let lng = lngVal;
                 
-                var properties = [];
-                for (var j = 0; j < fields.length; j++) {
+                let properties = [];
+                for (let j = 0; j < fields.length; j++) {
                   property = fields[j];
                   if (!splunkjs.Utils.startsWith(property, "_")) {
                     properties.push({

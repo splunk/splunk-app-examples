@@ -51,8 +51,8 @@ let serverProxy = function (req, res) {
             try {
                 needle(options.method, options.url, options.body, options)
                 .then((response) => {
-                    var statusCode = (response ? response.statusCode : 500) || 500;
-                    var headers = (response ? response.headers : {}) || {};
+                    let statusCode = (response ? response.statusCode : 500) || 500;
+                    let headers = (response ? response.headers : {}) || {};
                     res.writeHead(statusCode, headers);
                     res.write(response.body);
                     res.end();

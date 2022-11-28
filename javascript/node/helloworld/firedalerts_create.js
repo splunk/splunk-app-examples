@@ -36,7 +36,7 @@ exports.main = async function (opts) {
         version: version
     });
 
-    var alertOptions = {
+    let alertOptions = {
         name: "My Awesome Alert",
         search: "index=_internal error sourcetype=splunkd* | head 10",
         "alert_type": "always",

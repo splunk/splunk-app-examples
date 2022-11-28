@@ -52,8 +52,8 @@ exports.main = async function (opts) {
         }
 
         // Perform the search
-        var job =await service.search("search index=_internal | head 3", {});
-        var res;
+        let job =await service.search("search index=_internal | head 3", {});
+        let res;
 
         // Wait until the job is done
         await job.track({}, async function (job) {

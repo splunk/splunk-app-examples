@@ -297,10 +297,10 @@ service = new splunkjs.Service(http, {
 });
 
 var drawChart = function(rows) {  
-  var chart = new google.visualization.ComboChart(document.getElementById('google-container'));
-  var data = google.visualization.arrayToDataTable(rows);
+  let chart = new google.visualization.ComboChart(document.getElementById('google-container'));
+  let data = google.visualization.arrayToDataTable(rows);
   
-  var options = {
+  let options = {
     title : 'HTTP Status Codes For Every 10 Minutes on Splunkd',
     vAxis: {title: "Count", logScale: true},
     hAxis: {title: "Time"},
@@ -323,20 +323,20 @@ var drawChart = function(rows) {
 
     // OK, we're logged in, let's do a oneshot search and just
     // get the results
-    var query = "" +
+    let query = "" +
     'search index=_internal sourcetype=splunkd* | head 10000 | bucket span=10m _time | eval formatted_time=strftime(_time, "%D %H:%M") | chart count over formatted_time by status usenull=f';
     let results = await service.oneshotSearch(query, {});
 
     // The format Google Charts needs data in is very similar to ours - we just
     // need to put the field headers in the same array, and convert the strings
     // into numbers.
-    var rows = results.rows.slice();
-    var fields = results.fields.slice();
+    let rows = results.rows.slice();
+    let fields = results.fields.slice();
     
-    var timeIndex = utils.indexOf(fields, "formatted_time");
-    for(var i = 0; i < rows.length; i++) {
-      var row = rows[i];
-      for(var j = 0; j < row.length; j++) {
+    let timeIndex = utils.indexOf(fields, "formatted_time");
+    for(let i = 0; i < rows.length; i++) {
+      let row = rows[i];
+      for(let j = 0; j < row.length; j++) {
         
         // Don't change the time field
         if (j !== timeIndex) {
@@ -403,8 +403,8 @@ service = new splunkjs.Service(http, {
 var palette = new Rickshaw.Color.Palette( { scheme: 'httpStatus' } );
 
 var transformData = function(d) {
-  var data = [];
-  var statusCounts = {};
+  let data = [];
+  let statusCounts = {};
 
   Rickshaw.keys(d).sort().forEach( function(t) {
     Rickshaw.keys(d[t]).forEach( function(status) {
@@ -427,31 +427,31 @@ var transformData = function(d) {
 
 var drawChart = function(rows, fields) {  
   
-  var data = {};
+  let data = {};
   
-  var timeIndex = utils.indexOf(fields, "formatted_time");    
-  for(var i = 0; i < rows.length; i++) {
-    var row = rows[i];
-    var timeValue = parseInt(row[timeIndex]);
+  let timeIndex = utils.indexOf(fields, "formatted_time");    
+  for(let i = 0; i < rows.length; i++) {
+    let row = rows[i];
+    let timeValue = parseInt(row[timeIndex]);
     data[timeValue] = {};
-    for(var j = 0; j < row.length; j++) {
+    for(let j = 0; j < row.length; j++) {
       if (j !== timeIndex) {
         data[timeValue][fields[j]] = row[j];
       }
     }
   }
 
-  var transformed = transformData(data);
+  let transformed = transformData(data);
 
   // Setup the graph
-  var graph = new Rickshaw.Graph( {
+  let graph = new Rickshaw.Graph( {
     element: document.getElementById("rickshaw-chart"),
     series: transformed,
     renderer: 'line',
     width: 550
   });
   
-  var y_ticks = new Rickshaw.Graph.Axis.Y({
+  let y_ticks = new Rickshaw.Graph.Axis.Y({
     graph: graph,
     orientation: 'left',
     tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
@@ -461,22 +461,22 @@ var drawChart = function(rows, fields) {
   // Render the graph
   graph.render();
 
-  var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+  let hoverDetail = new Rickshaw.Graph.HoverDetail( {
     graph: graph
   });
 
-  var legend = new Rickshaw.Graph.Legend( {
+  let legend = new Rickshaw.Graph.Legend( {
     graph: graph,
     element: document.getElementById('rickshaw-legend')
 
   });
 
-  var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
+  let shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
     graph: graph,
     legend: legend
   });
   
-  var axes = new Rickshaw.Graph.Axis.Time({
+  let axes = new Rickshaw.Graph.Axis.Time({
     graph: graph
   });
   axes.render();
@@ -499,13 +499,13 @@ var drawChart = function(rows, fields) {
       '| timechart span=1m count by status | eval formatted_time=_time' +
       '| fields - NULL, _*, _time';
     let results = await service.oneshotSearch(query, {count: 0});
-    var rows = results.rows.slice();
-    var fields = results.fields.slice();
+    let rows = results.rows.slice();
+    let fields = results.fields.slice();
     
-    var timeIndex = utils.indexOf(fields, "formatted_time");
-    for(var i = 0; i < rows.length; i++) {
-      var row = rows[i];
-      for(var j = 0; j < row.length; j++) {
+    let timeIndex = utils.indexOf(fields, "formatted_time");
+    for(let i = 0; i < rows.length; i++) {
+      let row = rows[i];
+      for(let j = 0; j < row.length; j++) {
         
         // Don't change the time field
         if (j !== timeIndex && fields[j] !== "_time") {

@@ -377,8 +377,8 @@ var service = new splunkjs.Service(http, {
     let apps = await service.apps().fetch();
     let appList = apps.list();
     console.log("Applications:");
-    for(var i = 0; i < appList.length; i++){
-      var app = appList[i];
+    for(let i = 0; i < appList.length; i++){
+      let app = appList[i];
       console.log(" App " + i + ": " + app.name);
     }
   } catch(err){
@@ -445,8 +445,8 @@ var service = new splunkjs.Service(http, {
     let searches = await service.savedSearches().fetch();
     let searchList = searches.list();
     console.log("Saved searches:");
-    for(var i = 0; i < searchList.length; i++) {
-        var search = searchList[i];
+    for(let i = 0; i < searchList.length; i++) {
+        let search = searchList[i];
         console.log("  Search " + i + ": " + search.name);
         console.log("    " + search.properties().search);
     } 
@@ -477,7 +477,7 @@ var service = new splunkjs.Service(http, {
       console.log("Login failure. Please check your server hostname and authentication credentials.");
       return;
     }
-    var savedSearchOptions = {
+    let savedSearchOptions = {
       name: "My Awesome Saved Search",
       search: "index=_internal error sourcetype=splunkd* | head 10"
     };
@@ -523,7 +523,7 @@ var service = new splunkjs.Service(http, {
 
     // Now that we're logged in, Let's create a saved search
     let savedSearches = await service.savedSearches().fetch();
-    var savedSearchToDelete = savedSearches.item(name);
+    let savedSearchToDelete = savedSearches.item(name);
     if (!savedSearchToDelete) {
       console.log("Can't delete '" + name + "' because it doesn't exist!");
     }
@@ -629,7 +629,7 @@ var service = new splunkjs.Service(http, {
       
     // Print out each result and the key-value pairs we want
     console.log("Results: ");
-    for(var i = 0; i < results[0].rows.length; i++) {
+    for(let i = 0; i < results[0].rows.length; i++) {
         console.log("  Result " + i + ": ");
         console.log("    sourcetype: " + results[0].rows[i][sourcetypeIndex]);
         console.log("    user: " + results[0].rows[i][userIndex]);
@@ -683,13 +683,13 @@ var service = new splunkjs.Service(http, {
     let results = await job.results({});
 
     // Find the index of the fields we want
-    var rawIndex        = utils.indexOf(results[0].fields, "_raw");
-    var sourcetypeIndex = utils.indexOf(results[0].fields, "sourcetype");
-    var userIndex       = utils.indexOf(results[0].fields, "user");
+    let rawIndex        = utils.indexOf(results[0].fields, "_raw");
+    let sourcetypeIndex = utils.indexOf(results[0].fields, "sourcetype");
+    let userIndex       = utils.indexOf(results[0].fields, "user");
     
     // Print out each result and the key-value pairs we want
     console.log("Results: ");
-    for(var i = 0; i < results[0].rows.length; i++) {
+    for(let i = 0; i < results[0].rows.length; i++) {
         console.log("  Result " + i + ": ");
         console.log("    sourcetype: " + results[0].rows[i][sourcetypeIndex]);
         console.log("    user: " + results[0].rows[i][userIndex]);
@@ -730,13 +730,13 @@ var service = new splunkjs.Service(http, {
     let results = await service.oneshotSearch("search index=_internal | head 3", {});    
 
     // Find the index of the fields we want
-    var rawIndex        = utils.indexOf(results.fields, "_raw");
-    var sourcetypeIndex = utils.indexOf(results.fields, "sourcetype");
-    var userIndex       = utils.indexOf(results.fields, "user");
+    let rawIndex        = utils.indexOf(results.fields, "_raw");
+    let sourcetypeIndex = utils.indexOf(results.fields, "sourcetype");
+    let userIndex       = utils.indexOf(results.fields, "user");
     
     // Print out each result and the key-value pairs we want
     console.log("Results: ");
-    for(var i = 0; i < results.rows.length; i++) {
+    for(let i = 0; i < results.rows.length; i++) {
       console.log("  Result " + i + ": ");
       console.log("    sourcetype: " + results.rows[i][sourcetypeIndex]);
       console.log("    user: " + results.rows[i][userIndex]);
@@ -831,14 +831,14 @@ var service = new splunkjs.Service(http, {
           count++;
           
           console.log("========== Iteration " + count + " ==========");
-          var sourcetypeIndex = utils.indexOf(results.fields, "sourcetype");
-          var countIndex      = utils.indexOf(results.fields, "count");
+          let sourcetypeIndex = utils.indexOf(results.fields, "sourcetype");
+          let countIndex      = utils.indexOf(results.fields, "count");
             
-          for(var i = 0; i < results.rows.length; i++) {
-            var row = results.rows[i];
+          for(let i = 0; i < results.rows.length; i++) {
+            let row = results.rows[i];
             
             // This is a hacky "padding" solution
-            var stat = ("  " + row[sourcetypeIndex] + "                         ").slice(0, 30);
+            let stat = ("  " + row[sourcetypeIndex] + "                         ").slice(0, 30);
             
             // Print out the sourcetype and the count of the sourcetype so far
             console.log(stat + row[countIndex]);   
@@ -921,7 +921,7 @@ var Logger = splunkjs.Class.extend({
     },
     
     log: function(data) {
-        var message = {
+        let message = {
             __time: (new Date()).toUTCString(),
             level: "LOG",
             data: data
@@ -932,7 +932,7 @@ var Logger = splunkjs.Class.extend({
     },
     
     error: function(data) {
-        var message = {
+        let message = {
             __time: (new Date()).toUTCString(),
             level: "ERROR",
             data: data
@@ -943,7 +943,7 @@ var Logger = splunkjs.Class.extend({
     },
     
     info: function(data) {
-        var message = {
+        let message = {
             __time: (new Date()).toUTCString(),
             level: "INFO",
             data: data
@@ -954,7 +954,7 @@ var Logger = splunkjs.Class.extend({
     },
     
     warn: function(data) {
-        var message = {
+        let message = {
             __time: (new Date()).toUTCString(),
             level: "WARN",
             data: data
@@ -976,7 +976,7 @@ var Logger = splunkjs.Class.extend({
     }
     
     // Create our logger
-    var logger = new Logger(service, { sourcetype: "mylogger", source: "test" });
+    let logger = new Logger(service, { sourcetype: "mylogger", source: "test" });
     
     // Log the various types of messages. Note how we are sending
     // both strings and JSON objects, which will be auto-encoded and
