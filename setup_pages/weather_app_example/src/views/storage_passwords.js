@@ -4,7 +4,7 @@ async function write_secret(splunk_js_sdk_service, realm, name, secret) {
     // No namespace information provided
   });
   storage_passwords_accessor = await storage_passwords_accessor.fetch();
-  await storage_passwords_accessor.createV2({
+  await storage_passwords_accessor.createOrReplace({
     name: name,
     password: secret,
     realm: realm,
