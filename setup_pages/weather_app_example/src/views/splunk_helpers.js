@@ -70,11 +70,11 @@ async function update_configuration_file(
   await update_stanza_properties(configuration_stanza_accessor, properties);
 }
 
-function create_configuration_file(
+async function create_configuration_file(
   configurations_accessor,
   configuration_file_name
 ) {
-  return configurations_accessor.create(configuration_file_name);
+  return await configurations_accessor.create(configuration_file_name);
 }
 
 // ---------------------
@@ -162,22 +162,15 @@ function get_configuration_file_stanza(
   return configuration_stanza_accessor;
 }
 
-function get_configuration_file_stanza_property(
-  configuration_file_accessor,
-  configuration_file_name
-) {
-  return null;
+async function create_stanza(configuration_file_accessor, new_stanza_name) {
+  return await configuration_file_accessor.create(new_stanza_name);
 }
 
-function create_stanza(configuration_file_accessor, new_stanza_name) {
-  return configuration_file_accessor.create(new_stanza_name);
-}
-
-function update_stanza_properties(
+async function update_stanza_properties(
   configuration_stanza_accessor,
   new_stanza_properties
 ) {
-  return configuration_stanza_accessor.update(new_stanza_properties);
+  return await configuration_stanza_accessor.update(new_stanza_properties);
 }
 
 export default {
