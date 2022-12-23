@@ -23,6 +23,7 @@ import sys
 
 # Run the test suite on the SDK without installing it.
 sys.path.insert(0, '../')
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "lib"))
 
 import unittest
 from time import sleep

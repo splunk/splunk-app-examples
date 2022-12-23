@@ -34,6 +34,8 @@ invoked as a result of the event firing. Scripts are run out of
 """
 
 import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 
 from splunklib import binding
 

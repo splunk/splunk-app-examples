@@ -20,6 +20,8 @@ from subprocess import PIPE, Popen
 
 import testlib
 
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "lib"))
 from splunklib import client
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))

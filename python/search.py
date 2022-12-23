@@ -16,6 +16,9 @@
 
 """A command line utility for executing Splunk searches."""
 import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
+
 from time import sleep
 
 from splunklib.binding import HTTPError

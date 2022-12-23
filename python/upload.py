@@ -16,6 +16,9 @@
 
 """A command line utility that uploads a file to Splunk for indexing."""
 import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
+
 from os import path
 
 from splunklib import client

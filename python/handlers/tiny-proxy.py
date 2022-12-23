@@ -36,7 +36,8 @@ from types import FrameType, CodeType
 import time
 import ftplib
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "lib"))
+
 from splunklib import ensure_binary
 
 DEFAULT_LOG_FILENAME = "proxy.log"

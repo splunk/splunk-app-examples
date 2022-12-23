@@ -40,7 +40,7 @@ import os
 import urllib.parse
 import http.client
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "lib"))
 
 from splunklib import client
 from python import utils

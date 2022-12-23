@@ -15,7 +15,9 @@
 """Utility module shared by the SDK examples """
 
 import sys
-from os import path
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
+
 from optparse import OptionParser
 from argparse import ArgumentParser
 from dotenv import dotenv_values
@@ -162,13 +164,13 @@ class Parser(OptionParser):
 
     def loadif(self, filepath):
         """Load the given filepath if it exists, otherwise ignore."""
-        if path.isfile(filepath):
+        if os.path.isfile(filepath):
             self.load(filepath)
         return self
 
     def loadenv(self, filename):
-        dir_path = path.dirname(path.realpath(__file__))
-        filepath = path.join(dir_path, '.', filename)
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        filepath = os.path.join(dir_path, '.', filename)
         self.loadif(filepath)
         return self
 

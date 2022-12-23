@@ -18,6 +18,8 @@ import os
 import sys
 
 from datetime import datetime
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "lib"))
 import splunklib.client as client
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
