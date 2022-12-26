@@ -19,7 +19,6 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 
 from optparse import OptionParser
-from argparse import ArgumentParser
 from dotenv import dotenv_values
 
 __all__ = ["error", "Parser", "cmdline", "parse", "dslice", "FLAGS_SPLUNK"]
