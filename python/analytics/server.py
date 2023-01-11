@@ -24,8 +24,6 @@ from time import strptime, mktime
 from input import AnalyticsTracker
 from output import AnalyticsRetriever, TimeRange
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-
 splunk_opts = None
 retrievers = {}
 

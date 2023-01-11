@@ -49,8 +49,9 @@ the most friendly/intuitive format.
 * 	When using csv or json output formats, sideband messages are not included. If
     you wish to capture sideband messages, the xml format should be used.
 """
-
+import os
 import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 import time
 from os import path
 
@@ -359,7 +360,7 @@ def main():
 
     service = connect(**options.kwargs)
 
-    if path.exists(options.kwargs['output']):
+    if os.path.exists(options.kwargs['output']):
         if not options.kwargs['recover']:
             print(f"Export file {options.kwargs['output']} exists, and recover option nor specified")
             sys.exit(1)

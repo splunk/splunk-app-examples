@@ -16,6 +16,9 @@
 
 """A simple command line interface for the Splunk REST APIs."""
 import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
+print(sys.path)
 from xml.etree import ElementTree
 
 from splunklib import binding

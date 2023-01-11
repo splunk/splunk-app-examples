@@ -23,6 +23,9 @@ Splunk instance, but they could apply as easily to any other area of the REST
 API.
 """
 
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 from xml.etree import ElementTree
 from splunklib import binding
 

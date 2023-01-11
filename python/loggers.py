@@ -17,6 +17,8 @@
 """A command line tool lists out the Splunk logging categories and their
    current logging level."""
 import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 
 from splunklib import client
 

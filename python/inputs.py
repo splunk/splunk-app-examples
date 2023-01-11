@@ -17,6 +17,8 @@
 """A command line utility for interacting with Splunk inputs."""
 
 import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 
 from splunklib.client import connect
 

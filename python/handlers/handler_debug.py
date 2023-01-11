@@ -21,7 +21,7 @@ import os
 import sys
 from pprint import pprint
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "lib"))
 from splunklib import binding
 from splunklib import client
 from python import utils
