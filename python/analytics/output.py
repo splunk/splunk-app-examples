@@ -22,7 +22,6 @@ import splunklib.client as client
 import splunklib.results as results
 import python.utils as utils
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 __all__ = [
     "TimeRange",

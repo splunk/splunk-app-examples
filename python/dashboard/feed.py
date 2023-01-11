@@ -23,8 +23,6 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "lib"))
 from splunklib import client
 from splunklib import results
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from python.utils import parse
 
 
