@@ -64,9 +64,9 @@ here is an example of .env file:
     # Your version of Splunk Enterprise
     version=8.0
     # Bearer token for authentication
-    #bearerToken=<Bearer-token>
+    #splunkToken=<Bearer-token>
     # Session key for authentication
-    #sessionKey=<Session-Key>
+    #token=<Session-Key>
 
 #### Run the examples
 
