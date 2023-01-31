@@ -112,6 +112,12 @@ class MyScript(Script):
         :param inputs: an InputDefinition object
         :param event_writer: an EventWriter object
         """
+
+        # access service object as shown below that can be used to connect to Splunk Service
+        service = self.service
+        # for example:- to get Splunk Service Info
+        info = service.info
+
         # Go through each input for this modular input
         for input_name, input_item in list(inputs.inputs.items()):
             # Get the values, cast them as floats

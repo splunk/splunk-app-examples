@@ -34,6 +34,12 @@ class StreamingCSC(StreamingCommand):
     """
 
     def stream(self, records):
+
+        # service instance is available which is instantiated using the server-uri and other meta details to connect to Splunk Service
+        # service = self.service
+        # for example- to get Splunk Service Info
+        # info = service.info
+
         for record in records:
             record["fahrenheit"] = (float(record["celsius"]) * 1.8) + 32
             yield record

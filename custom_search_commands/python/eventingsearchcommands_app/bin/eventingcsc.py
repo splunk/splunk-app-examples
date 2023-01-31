@@ -40,6 +40,12 @@ class EventingCSC(EventingCommand):
         require=True)
 
     def transform(self, records):
+
+        # service instance is available which is instantiated using the server-uri and other meta details to connect to Splunk Service
+        # service = self.service
+        # for example- to get Splunk Service Info
+        # info = service.info
+
         for record in records:
             if str(self.status) == record["status"]:
                 yield record

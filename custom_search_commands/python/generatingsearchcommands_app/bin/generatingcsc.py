@@ -37,6 +37,12 @@ class GeneratingCSC(GeneratingCommand):
     count = Option(require=True, validate=validators.Integer(0))
 
     def generate(self):
+
+        # service instance is available which is instantiated using the server-uri and other meta details to connect to Splunk Service
+        # service = self.service
+        # for example- to get Splunk Service Info
+        # info = service.info
+
         self.logger.debug("Generating %s events" % self.count)
         for i in range(1, self.count + 1):
             text = f'Test Event {i}'

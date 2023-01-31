@@ -22,3 +22,17 @@ splunk-sdk-python custom search commands example
 + There are a handful of commands that require the entire dataset before the command can run. These commands are referred to as dataset processing commands. These commands are not transforming, not distributable, not streaming.
 + Some of these commands fit into other types in specific situations or when specific arguments are used.
 + Examples of data processing commands include: sort, eventstats, and some modes of cluster, dedup, and fillnull.
+
+### Access service object in Custom Search Command
+The service object is created from the Splunkd URI and session key passed to the command invocation the search results info file.
+* Service object can be accessed using `self.service` in `generate`/`transform`/`stream`/`reduce` methods depending on the Custom Search Command.
+* For Generating Custom Search Command
+  ```python
+    def generate(self):
+        # other code
+        
+        # access service object that can be used to connect Splunk Service
+        service = self.service
+        # to get Splunk Service Info
+        info = service.info
+  ```
