@@ -39,10 +39,11 @@ class ReportingCSC(ReportingCommand):
     @Configuration()
     def map(self, records):
 
-        # service instance is available which is instantiated using the server-uri and other meta details to connect to Splunk Service
-        # service = self.service
-        # for example- to get Splunk Service Info
-        # info = service.info
+        # To connect with Splunk, use the instantiated service object which is created using the server-uri and
+        # other meta details and can be accessed as shown below
+        # Example:-
+        #    service = self.service
+        #    info = service.info //access the Splunk Server info
 
         """returns a total marks of a students"""
         # list of subjects

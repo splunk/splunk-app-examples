@@ -38,10 +38,11 @@ class GeneratingCSC(GeneratingCommand):
 
     def generate(self):
 
-        # service instance is available which is instantiated using the server-uri and other meta details to connect to Splunk Service
-        # service = self.service
-        # for example- to get Splunk Service Info
-        # info = service.info
+        # To connect with Splunk, use the instantiated service object which is created using the server-uri and
+        # other meta details and can be accessed as shown below
+        # Example:-
+        #    service = self.service
+        #    info = service.info //access the Splunk Server info
 
         self.logger.debug("Generating %s events" % self.count)
         for i in range(1, self.count + 1):
