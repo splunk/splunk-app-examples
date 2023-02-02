@@ -2,7 +2,7 @@
 
 The Splunk App examples contains several server- and client-based examples.
 For details, see this [examples](https://dev.splunk.com/enterprise/docs/devtools/javascript/sdk-javascript/sdkjavascriptexamples) on the Splunk Developer Portal.
-
+ 
 ## Setup
 ### Create a .splunkrc convenience file
 
