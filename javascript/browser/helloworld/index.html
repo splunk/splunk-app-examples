@@ -153,7 +153,7 @@
           var output = "";
           
           // setup the global variables we need
-          done = callback = function() {
+          done = function() {
             $(tag).remove();
             console.log = log;
           };
@@ -486,14 +486,12 @@ var service = new splunkjs.Service(http, {
     let savedSearch = await service.savedSearches().create(savedSearchOptions);
     console.log("Created saved search: " + savedSearch.name);   
   } catch(err){
-    if (err && err.status === 409) {
+    if (err.status === 409) {
       console.log("ERROR: A saved search with the name '" + savedSearchOptions.name + "' already exists")
       return;
     }
-    else if (err) {
-      console.log("There was an error creating the saved search:", err);
-      return;
-    }
+    console.log("There was an error creating the saved search:", err);
+    return;
   }
 })();
                 </pre>

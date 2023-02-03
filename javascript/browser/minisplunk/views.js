@@ -47,9 +47,9 @@ var performSearch = function(svc, query) {
         }
       });
   }).catch((err)=>{
-      var response = args[0];
-      var messages = {};
-      var message = response.data.messages[1];
+      let response = args[0];
+      let messages = {};
+      let message = response.data.messages[1];
       messages[message.type.toLowerCase()] = [message.text];
       App.events.trigger("search:failed", query, messages);
   });

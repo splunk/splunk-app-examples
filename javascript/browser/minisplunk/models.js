@@ -55,21 +55,21 @@ var Events = Backbone.Collection.extend({
       offset: (page * that.resultsPerPage),
       show_empty_fields: true
     });
-    var data = results.rows || [];
-    var baseOffset = results.init_offset
-    var fields = results.fields;
-    var timestampIndex = utils.indexOf(fields, "_time");
-    var rawIndex = utils.indexOf(fields, "_raw");
-    var rows = [];
+    let data = results.rows || [];
+    let baseOffset = results.init_offset
+    let fields = results.fields;
+    let timestampIndex = utils.indexOf(fields, "_time");
+    let rawIndex = utils.indexOf(fields, "_raw");
+    let rows = [];
     
-    for(var i = 0; i < data.length; i++) {
-      var result = data[i];
+    for(let i = 0; i < data.length; i++) {
+      let result = data[i];
       
-      var properties = [];
-      var headers = {};
+      let properties = [];
+      let headers = {};
       
-      for(var j = 0; j < fields.length; j++) {
-        var property = fields[j];
+      for(let j = 0; j < fields.length; j++) {
+        let property = fields[j];
         if (!splunkjs.Utils.startsWith(property, "_")) {
           properties.push({
             key: property,
@@ -79,7 +79,7 @@ var Events = Backbone.Collection.extend({
         }
       }
       
-      var rowData = new Event({
+      let rowData = new Event({
         index: i + baseOffset + 1,
         event: result,
         properties: properties,
@@ -135,14 +135,14 @@ var Jobs = Backbone.Collection.extend({
       return;
     }
     
-    var that = this;
+    let that = this;
     let jobs = await App.service().jobs().fetch();
-    var list = jobs.list();
-    var models = [];
+    let list = jobs.list();
+    let models = [];
     for(var i = 0; i < list.length; i++) {
-      var job = list[i];
-      var properties = job.state();
-      var jobModel = new Job(properties, {job: job});
+      let job = list[i];
+      let properties = job.state();
+      let jobModel = new Job(properties, {job: job});
       models.push(jobModel);
     }
     
@@ -159,7 +159,7 @@ var Jobs = Backbone.Collection.extend({
     
     this.isFetchingStarted = true;
     
-    var jobs = this;
+    let jobs = this;
     try {
       await splunkjs.Utils.whilst(
         function() { return true; },
