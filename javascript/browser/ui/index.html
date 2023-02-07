@@ -75,7 +75,7 @@
     <script type="text/javascript" src="../resources/bootstrap.tabs.js"></script>
     <script type="text/javascript" src="../resources/bootstrap.dropdown.js"></script>
     <script type="text/javascript" src="../resources/jquery.placeholder.min.js"></script>
-    <script type="text/javascript" src="../resources/client/splunk.js"></script>
+    <script type="text/javascript" src="../../node_modules/splunk-sdk/client/splunk.js"></script>
     <script >      
       $.fn.pVal = function() {
         return this.hasClass('placeholder') ? '' : this.val();
@@ -254,7 +254,7 @@ svc = new splunkjs.Service(http, {
 });
 
 var timeline = null;
-var timelineToken = splunkjs.UI.loadTimeline("../resources/client/splunk.ui.timeline.js", function() {
+var timelineToken = splunkjs.UI.loadTimeline("../../node_modules/splunk-sdk/client/splunk.ui.timeline.js", function() {
   // Once we have the charting code, create a chart.
   timeline = new splunkjs.UI.Timeline.Timeline($("#timeline-container"));
 });
@@ -354,7 +354,7 @@ svc = new splunkjs.Service(http, {
 });
 
 var chart = null; 
-var chartToken = splunkjs.UI.loadCharting("../resources/client/splunk.ui.charting.js", function() {
+var chartToken = splunkjs.UI.loadCharting("../../node_modules/splunk-sdk/client/splunk.ui.charting.js", function() {
   // Once we have the charting code, create a chart and update it.
   chart = new splunkjs.UI.Charting.Chart($("#chart-container"), splunkjs.UI.Charting.ChartType.COLUMN, false);
 });
