@@ -75,7 +75,7 @@ splunkjs.Service.prototype.roles = function (namespace) {
     return new splunkjs.Service.Roles(this, namespace);
 };
 
-exports.main = function (opts, done) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it
     opts = opts || {};
 
@@ -95,34 +95,34 @@ exports.main = function (opts, done) {
         version: version
     });
 
-    // First, we log in
-    service.login(function (err, success) {
-        // We check for both errors in the connection as well
-        // as if the login itself failed.
-        if (err || !success) {
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
             console.log("Error in logging in");
-            done(err || "Login failed");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
+            }
             return;
         }
-
         // Now that we're logged in, we can just retrieve system roles!
-        service.roles({ user: "admin", app: "search" }).fetch(function (rolesErr, roles) {
-            if (rolesErr) {
-                console.log("There was an error retrieving the list of roles:", err);
-                done(err);
-                return;
-            }
-
-            console.log("System roles:");
-            let rolesList = roles.list();
-            for (let i = 0; i < rolesList.length; i++) {
-                console.log("  " + i + " " + rolesList[i].name);
-            }
-            done();
-        });
-    });
+        let roles = await service.roles({ user: "admin", app: "search" }).fetch();
+        console.log("System roles:");
+        let rolesList = roles.list();
+        for (let i = 0; i < rolesList.length; i++) {
+            console.log("  " + i + " " + rolesList[i].name);
+        }
+    } catch (err) {
+        console.log("There was an error retrieving the list of roles:", err);
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }

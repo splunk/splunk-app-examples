@@ -18,7 +18,7 @@
 
 let splunkjs = require('splunk-sdk');
 
-exports.main = function (opts, done) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it
     opts = opts || {};
 
@@ -38,40 +38,40 @@ exports.main = function (opts, done) {
         version: version
     });
 
-    // First, we log in
-    service.login(function (err, success) {
-        // We check for both errors in the connection as well
-        // as if the login itself failed.
-        if (err || !success) {
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
             console.log("Error in logging in");
-            done(err || "Login failed");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
+            }
             return;
         }
 
-        let name = "My Awesome Saved Search";
+        const name = "My Awesome Saved Search";
 
         // Now that we're logged in, Let's create a saved search
-        service.savedSearches().fetch(function (err, savedSearches) {
-            if (err) {
-                console.log("There was an error in fetching the saved searches");
-                done(err);
-                return;
-            }
-
-            let savedSearchToDelete = savedSearches.item(name);
-            if (!savedSearchToDelete) {
-                console.log("Can't delete '" + name + "' because it doesn't exist!");
-                done();
-            }
-            else {
-                savedSearchToDelete.remove();
-                console.log("Deleted saved search: " + name + "");
-                done();
-            }
-        });
-    });
+        const savedSearches = await service.savedSearches().fetch();
+        const savedSearchToDelete = savedSearches.item(name);
+        if (!savedSearchToDelete) {
+            console.log("Can't delete '" + name + "' because it doesn't exist!");
+        }
+        else {
+            savedSearchToDelete.remove();
+            console.log("Deleted saved search: " + name + "");
+        }
+    } catch (err) {
+        console.log("There was an error in fetching the saved searches", err);
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }

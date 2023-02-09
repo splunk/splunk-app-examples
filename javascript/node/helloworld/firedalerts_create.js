@@ -16,7 +16,7 @@
 
 let splunkjs = require('splunk-sdk');
 
-exports.main = function (opts, done) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it.
     opts = opts || {};
 
@@ -36,48 +36,49 @@ exports.main = function (opts, done) {
         version: version
     });
 
-    // First, we log in.
-    service.login(function (err, success) {
-        // We check for both errors in the connection as well
-        // as if the login itself failed.
-        if (err || !success) {
+    let alertOptions = {
+        name: "My Awesome Alert",
+        search: "index=_internal error sourcetype=splunkd* | head 10",
+        "alert_type": "always",
+        "alert.severity": "2",
+        "alert.suppress": "0",
+        "alert.track": "1",
+        "dispatch.earliest_time": "-1h",
+        "dispatch.latest_time": "now",
+        "is_scheduled": "1",
+        "cron_schedule": "* * * * *"
+    };
+
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
             console.log("Error in logging in");
-            done(err || "Login failed");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
+            }
             return;
         }
 
-        let alertOptions = {
-            name: "My Awesome Alert",
-            search: "index=_internal error sourcetype=splunkd* | head 10",
-            "alert_type": "always",
-            "alert.severity": "2",
-            "alert.suppress": "0",
-            "alert.track": "1",
-            "dispatch.earliest_time": "-1h",
-            "dispatch.latest_time": "now",
-            "is_scheduled": "1",
-            "cron_schedule": "* * * * *"
-        };
-
         // Now that we're logged in, let's create a saved search.
-        service.savedSearches().create(alertOptions, function (err, alert) {
-            if (err && err.status === 409) {
-                console.error("ERROR: A saved search with the name '" + alertOptions.name + "' already exists");
-                done();
-                return;
-            }
-            else if (err) {
-                console.error("There was an error creating the saved search:", err);
-                done(err);
-                return;
-            }
-
-            console.log("Created saved search as alert: " + alert.name);
-            done();
-        });
-    });
+        let alert = await service.savedSearches().create(alertOptions);
+        console.log("Created saved search as alert: " + alert.name);
+    } catch (err) {
+        if (err && err.status === 409) {
+            console.error("ERROR: A saved search with the name '" + alertOptions.name + "' already exists");
+        }
+        else {
+            console.error("There was an error creating the saved search:", err);
+        }
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }

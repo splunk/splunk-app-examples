@@ -80,7 +80,7 @@ let Logger = splunkjs.Class.extend({
     }
 });
 
-exports.main = function (opts, done) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it
     opts = opts || {};
 
@@ -100,13 +100,16 @@ exports.main = function (opts, done) {
         version: version
     });
 
-    // First, we log in
-    service.login(function (err, success) {
-        // We check for both errors in the connection as well
-        // as if the login itself failed.
-        if (err || !success) {
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
             console.log("Error in logging in");
-            done(err || "Login failed");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
+            }
             return;
         }
 
@@ -120,12 +123,15 @@ exports.main = function (opts, done) {
         logger.error("ERROR HAPPENED");
         logger.info(["useful", "info"]);
         logger.warn({ "this": { "is": ["a", "warning"] } });
-
-        // Say we are done with this sample.
-        done();
-    });
+    } catch (err) {
+        console.log("Error:", err);
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }

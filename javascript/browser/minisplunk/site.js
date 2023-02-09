@@ -89,8 +89,6 @@ var SearchApp = Backbone.Router.extend({
 });
 
 $(document).ready(function() {
-  process.nextTick(function() {
     var app = new SearchApp();
-    Backbone.history.start();
-  });    
+    Backbone.history.start();   
 });

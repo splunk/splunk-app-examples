@@ -17,7 +17,6 @@
     let splunkjs = require('splunk-sdk');
     let Class = splunkjs.Class;
     let utils = splunkjs.Utils;
-    let Async = splunkjs.Async;
     let options = require('./cmdline');
 
     // Print the result rows
@@ -67,7 +66,7 @@
         }
     };
 
-    exports.main = function (argv, callback) {
+    exports.main = async function (argv) {
         splunkjs.Logger.setLevel("NONE");
 
         // Read data from stdin
@@ -81,22 +80,20 @@
         let onEnd = function () {
             let results = JSON.parse(incomingResults || "{}");
             printResults(results);
-            callback();
+            cleanUp();
         };
 
         let onError = function () {
-            callback("ERROR");
+            console.log("An error occurred");
+            cleanUp();
         };
 
         // Unregister all the listeners when we're done
-        let originalCallback = callback || function () { /* Empty function */ };
-        callback = function () {
+        cleanUp = function () {
             process.stdin.removeListener("data", onData);
             process.stdin.removeListener("end", onEnd);
             process.stdin.removeListener("error", onError);
             process.stdin.pause();
-
-            originalCallback.apply(null, arguments);
         };
 
         process.stdin.on("data", onData);

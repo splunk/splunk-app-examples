@@ -29,16 +29,16 @@ var Events = Backbone.Collection.extend({
     this.pages = {};
   },
   
-  setJob: function(job) {
+  setJob: async function(job) {
     if (this.job) {
-      this.job.cancel();
+      await this.job.cancel();
     }
     
     this.pages = {};
     this.job = job;
   },
   
-  getResults: function(page, callback) {
+  getResults: async function(page, callback) {
     page = page || 0;
     
     if (this.pages[page]) {
@@ -48,58 +48,50 @@ var Events = Backbone.Collection.extend({
     
     this.headers = [];
     var that = this;
-    splunkjs.Async.chain([
-      function(done) {
-        that.job.results({
-          count: that.resultsPerPage, 
-          offset: (page * that.resultsPerPage),
-          show_empty_fields: true
-        }, done);
-      },
-      function(results, job, done) {
-        var data = results.rows || [];
-        var baseOffset = results.init_offset
-        var fields = results.fields;
-        var timestampIndex = utils.indexOf(fields, "_time");
-        var rawIndex = utils.indexOf(fields, "_raw");
-        var rows = [];
-        
-        for(var i = 0; i < data.length; i++) {
-          var result = data[i];
-          
-          var properties = [];
-          var headers = {};
-          
-          for(var j = 0; j < fields.length; j++) {
-            var property = fields[j]
-            if (!splunkjs.Utils.startsWith(property, "_")) {
-              properties.push({
-                key: property,
-                value: result[j]
-              });
-              
-              headers[property] = true;
-            }
-          }
-          
-          var rowData = new Event({
-            index: i + baseOffset + 1,
-            event: result,
-            properties: properties,
-            timestampIndex: timestampIndex,
-            rawIndex: rawIndex
+
+
+    let [results, job] = await that.job.results({
+      count: that.resultsPerPage, 
+      offset: (page * that.resultsPerPage),
+      show_empty_fields: true
+    });
+    let data = results.rows || [];
+    let baseOffset = results.init_offset
+    let fields = results.fields;
+    let timestampIndex = utils.indexOf(fields, "_time");
+    let rawIndex = utils.indexOf(fields, "_raw");
+    let rows = [];
+    
+    for(let i = 0; i < data.length; i++) {
+      let result = data[i];
+      
+      let properties = [];
+      let headers = {};
+      
+      for(let j = 0; j < fields.length; j++) {
+        let property = fields[j];
+        if (!splunkjs.Utils.startsWith(property, "_")) {
+          properties.push({
+            key: property,
+            value: result[j]
           });
-          that.headers = _.keys(headers);
-          
-          rows.push(rowData);
+          headers[property] = true;
         }
-        
-        that.pages[page] = rows;
-        that.reset(rows);
-        
-        done();
-      }],
-      callback);
+      }
+      
+      let rowData = new Event({
+        index: i + baseOffset + 1,
+        event: result,
+        properties: properties,
+        timestampIndex: timestampIndex,
+        rawIndex: rawIndex
+      });
+      that.headers = _.keys(headers);
+      
+      rows.push(rowData);
+    }
+    that.pages[page] = rows;
+    that.reset(rows);
   }
 });
 
@@ -109,29 +101,25 @@ var Job = Backbone.Model.extend({
     this.job = options.job;
   },
   
-  unpause: function(callback) {
+  unpause: async function() {
     this.set({isPaused: false});
-    this.job.unpause(callback);
+    await this.job.unpause();
   },
   
-  pause: function(callback) {
+  pause: async function() {
     this.set({isPaused: true});
-    this.job.pause(callback);
+    await this.job.pause();
   },
   
-  del: function(callback) {
-    callback = callback || function() {}
-    
+  del: async function() {
     var job = this;
-    this.job.cancel(function(err) {
-      job.collection.remove(job);
-      callback();
-    });
+    await this.job.cancel();
+    await job.collection.remove(job);
   },
   
-  finalize: function(callback) {
+  finalize: async function() {
     this.set({isFinalized: true});
-    this.job.finalize(callback);
+    await this.job.finalize();
   }
 });
 
@@ -142,30 +130,26 @@ var Jobs = Backbone.Collection.extend({
     _.bindAll(this, "fetch", "continuousFetch");
   },
   
-  fetch: function(callback) {
-    callback = callback || function() {};
-    
+  fetch: async function() {
     if (!App.service()) {
       return;
     }
     
-    var that = this;
-    App.service().jobs().fetch(function(err, jobs) {
-      var list = jobs.list();
-      var models = [];
-      for(var i = 0; i < list.length; i++) {
-        var job = list[i];
-        var properties = job.state();
-        var jobModel = new Job(properties, {job: job});
-        models.push(jobModel);
-      }
-      
-      that.reset(models);
-      callback();
-    });
+    let that = this;
+    let jobs = await App.service().jobs().fetch();
+    let list = jobs.list();
+    let models = [];
+    for(var i = 0; i < list.length; i++) {
+      let job = list[i];
+      let properties = job.state();
+      let jobModel = new Job(properties, {job: job});
+      models.push(jobModel);
+    }
+    
+    that.reset(models);
   },
   
-  continuousFetch: function() {
+  continuousFetch: async function() {
     if (!App.service()) {
       return;
     }
@@ -175,24 +159,18 @@ var Jobs = Backbone.Collection.extend({
     
     this.isFetchingStarted = true;
     
-    var jobs = this;
-    splunkjs.Async.whilst(
-      function() { return true; },
-      function(iterationDone) {
-        splunkjs.Async.chain([
-          function(done) {
-            jobs.fetch(done);
-          },
-          function(done) {
-            splunkjs.Async.sleep(10000, done);
-          }
-        ],
-        iterationDone);
-      },
-      function(err) {
-        console.log(err);
-        alert("ERR: " + err);
-      }
-    )
+    let jobs = this;
+    try {
+      await splunkjs.Utils.whilst(
+        function() { return true; },
+        async function() {
+          await jobs.fetch();
+          await splunkjs.Utils.sleep(1000);
+        }
+      );
+    } catch(err) {
+      console.log(err);
+      alert("ERR: " + err);
+    }
   }
 });

@@ -75,7 +75,7 @@
     <script type="text/javascript" src="../resources/bootstrap.tabs.js"></script>
     <script type="text/javascript" src="../resources/bootstrap.dropdown.js"></script>
     <script type="text/javascript" src="../resources/jquery.placeholder.min.js"></script>
-    <script type="text/javascript" src="../resources/client/splunk.js"></script>
+    <script type="text/javascript" src="../../node_modules/splunk-sdk/client/splunk.js"></script>
     <script >      
       $.fn.pVal = function() {
         return this.hasClass('placeholder') ? '' : this.val();
@@ -88,7 +88,6 @@
       port     = "8089";
       version  = "5.0";
       
-      Async = splunkjs.Async;
       utils = splunkjs.Utils;
       
       var updateConnectionInformation = function() {
@@ -255,7 +254,7 @@ svc = new splunkjs.Service(http, {
 });
 
 var timeline = null;
-var timelineToken = splunkjs.UI.loadTimeline("../resources/client/splunk.ui.timeline.js", function() {
+var timelineToken = splunkjs.UI.loadTimeline("../../node_modules/splunk-sdk/client/splunk.ui.timeline.js", function() {
   // Once we have the charting code, create a chart.
   timeline = new splunkjs.UI.Timeline.Timeline($("#timeline-container"));
 });
@@ -265,7 +264,7 @@ var searchTerm = 'search index=_internal | head 10000 | stats count(host), count
 // A small utility function to queue up operations on the chart
 // until it is ready.
 var updateTimeline = function(data) {
-  var setData = function() {
+  let setData = function() {
     timeline.updateWithJSON(data);
   }
   
@@ -277,55 +276,49 @@ var updateTimeline = function(data) {
   }
 };
 
-Async.chain([
-  // Login
-  function(callback) { svc.login(callback); },
-  // Create the job
-  function(success, callback) {
-    svc.jobs().create(searchTerm, {status_buckets: 300}, callback);
-  },
-  // Loop until the job is "done"
-  function(job, callback) {
-    job.track({}, {
+(async function(){
+  try{
+    // First, we log in
+    try {
+      await svc.login();
+    } catch (err) {
+      console.log("Login failure. Please check your server hostname and authentication credentials.", err);
+      return;
+    }
+
+    let job = await svc.jobs().create(searchTerm, {status_buckets: 300});
+
+    job = await job.track({}, {
       // Queue up timeline displays while we are querying the job
       progress: function(job) {
-        job.timeline({}, function(err, data) { 
-          if (!err) updateTimeline(data);
+        return job.timeline({}).then((data) => { 
+          updateTimeline(data);
         });
       },
-      
       // Move forward once the search is done
-      done: function(job) {
-        callback(null, job);
+      done: async function(job) {
+        return job;
       },
-      
       error: function(err) {
-        callback(err);
+        throw err;
       }
     });
-  },
-  // Get the final timeline data
-  function(job, callback) {
-    job.timeline({}, callback);
-  },
-  // Update the timeline control
-  function(timelineData, job, callback) {
-    updateTimeline(timelineData);
-    callback(null, job);
-  }
-],
-// And we're done, so make sure we had no error, and
-// cancel the job
-function(err, job) {
-  if (err) {
+    
+    // Get the final timeline data
+    let jobData = await job.timeline({});
+
+    // Update the timeline control
+    updateTimeline(jobData[0]);
+
+    // And we're done, so make sure we had no error, and
+    // cancel the job
+    await job.cancel();
+
+  } catch(err){
     console.log(err);
     alert("An error occurred");
   }
-  
-  if (job) {
-    job.cancel();
-  }
-});
+})();
             </pre>
           </div>
         </div>
@@ -361,66 +354,65 @@ svc = new splunkjs.Service(http, {
 });
 
 var chart = null; 
-var chartToken = splunkjs.UI.loadCharting("../resources/client/splunk.ui.charting.js", function() {
+var chartToken = splunkjs.UI.loadCharting("../../node_modules/splunk-sdk/client/splunk.ui.charting.js", function() {
   // Once we have the charting code, create a chart and update it.
   chart = new splunkjs.UI.Charting.Chart($("#chart-container"), splunkjs.UI.Charting.ChartType.COLUMN, false);
 });
 
 var searchTerm = 'search index=_internal | head 1000 | stats count(host), count(source) by sourcetype';
-Async.chain([
-  // Login
-  function(callback) { svc.login(callback); },
-  // Create the job
-  function(success, callback) {
-    svc.jobs().create(searchTerm, {status_buckets: 300}, callback);
-  },
-  // Loop until the job is "done"
-  function(job, callback) {
-    // Move forward once the search is done
-    job.track({}, {
-      done: function(job) {
-        callback(null, job);
+
+(async function(){
+  try {
+    // First, we log in
+    try {
+      await svc.login();
+    } catch (err) {
+      console.log("Login failure. Please check your server hostname and authentication credentials.");
+      return;
+    }
+
+    // Create the job
+    let job = await svc.jobs().create(searchTerm,{status_buckets: 300});
+
+    // Loop until the job is "done"
+    job = await job.track({}, {
+      done: async function(job) {
+        return job;
       },
       
       error: function(err) {
-        callback(err);
+        //alert("An error occurred");
+        throw err;
       }
     });
-  },
-  // Get the final results data
-  function(job, callback) {
-    job.results({output_mode: "json_cols"}, callback);
-  },
-  // Update the chart
-  function(results, job, callback) { 
+
+    // Get the final results data
+    let results;
+    [results, job] = await job.results({output_mode: "json_cols"});
+
+    // Update the chart
     splunkjs.UI.ready(chartToken, function() {
       chart.setData(results, {
         "chart.stackMode": "stacked"
       });
       chart.draw();
-      callback(null, job);
     });
-  }
-],
-// And we're done, so make sure we had no error, and
-// cancel the job
-function(err, job) {
-  if (err) {
+
+    // And we're done, so make sure we had no error, and
+    // cancel the job
+    await job.cancel();
+  } catch(err){
     console.log(err);
     alert("An error occurred");
   }
-  
-  if (job) {
-    job.cancel();
-  }
-});
+})();
             </pre>
           </div>
         </div>
       </section>
       
       <footer>
-        <p>&copy; Splunk 2011-2012</p>
+        <p>&copy; Splunk 2022-2023</p>
       </footer>
 
     </div> <!-- /container -->

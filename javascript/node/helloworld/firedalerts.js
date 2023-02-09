@@ -17,7 +17,7 @@
 
 let splunkjs = require('splunk-sdk');
 
-exports.main = function(opts, done) {
+exports.main = async function(opts) {
     // This is just for testing - ignore it
     opts = opts || {};
     
@@ -37,29 +37,33 @@ exports.main = function(opts, done) {
         version: version
     });
 
-    // First, we log in.
-    service.login(function(err, success) {
-        // We check for both errors in the connection as well
-        // as if the login itself failed.
-        if (err || !success) {
+    try {
+        try {
+            // First, we log in.
+            await service.login();
+        } catch (err) {
             console.log("Error in logging in");
-            done(err || "Login failed");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
+            }
             return;
-        } 
+        }
 
         // Now that we're logged in, let's get a listing of all the fired alert groups
-        service.firedAlertGroups().fetch(function(err, firedAlertGroups) {
-            if (err) {
-                console.log("ERROR", err);
-                done(err);
-                return;
-            }
+        let firedAlertGroups = await service.firedAlertGroups().fetch();
 
-            // Get the list of all fired alert groups, including the all group (represented by "-")
-            let groups = firedAlertGroups.list();
-            console.log("Fired alert groups:");
+        // Get the list of all fired alert groups, including the all group (represented by "-")
+        let groups = firedAlertGroups.list();
+        console.log("Fired alert groups:");
 
-            let listGroupCallback = function(err, firedAlerts, firedAlertGroup) {
+        for(let a in groups) {
+            if (groups.hasOwnProperty(a)) {
+                let firedAlertGroup = groups[a];
+                let res = await firedAlertGroup.list();
+                let firedAlerts = res[0];
+                firedAlertGroup = res[1];
+
                 // How many times was this alert fired?
                 console.log(firedAlertGroup.name, "(Count:", firedAlertGroup.count(), ")");
                 // Print the properties for each fired alert (default of 30 per alert group)
@@ -73,20 +77,17 @@ exports.main = function(opts, done) {
                     console.log();
                 }
                 console.log("======================================");
-            };
-
-            for(let a in groups) {
-                if (groups.hasOwnProperty(a)) {
-                    let firedAlertGroup = groups[a];
-                    firedAlertGroup.list(listGroupCallback);
-                }
             }
-
-            done();
-        });
-    });
+        }
+    } catch (err) {
+        console.log("ERROR:", err);
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function() { /* Empty function */ });
+    exports.main({});
 }

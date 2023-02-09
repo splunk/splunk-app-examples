@@ -17,7 +17,7 @@
 
 let splunkjs = require('splunk-sdk');
 
-exports.main = function (opts, done) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it.
     opts = opts || {};
 
@@ -36,41 +36,40 @@ exports.main = function (opts, done) {
         port: port,
         version: version
     });
-
-    // First, we log in.
-    service.login(function (err, success) {
-        // We check for both errors in the connection as well
-        // as whether the login itself failed.
-        if (err || !success) {
+    
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
             console.log("Error in logging in");
-            done(err || "Login failed");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
+            }
             return;
         }
-
         let name = "My Awesome Alert";
 
         // Now that we're logged in, let's delete the alert.
-        service.savedSearches().fetch(function (err, firedAlertGroups) {
-            if (err) {
-                console.log("There was an error in fetching the alerts");
-                done(err);
-                return;
-            }
-
-            let alertToDelete = firedAlertGroups.item(name);
-            if (!alertToDelete) {
-                console.log("Can't delete '" + name + "' because it doesn't exist!");
-                done();
-            }
-            else {
-                alertToDelete.remove();
-                console.log("Deleted alert: " + name + "");
-                done();
-            }
-        });
-    });
+        let firedAlertGroups = await service.savedSearches().fetch();
+        let alertToDelete = firedAlertGroups.item(name);
+        if (!alertToDelete) {
+            console.log("Can't delete '" + name + "' because it doesn't exist!");
+        }
+        else {
+            await alertToDelete.remove();
+            console.log("Deleted alert: " + name + "");
+        }
+    } catch (err) {
+        console.log("There was an error in fetching the alerts: ", err);
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }

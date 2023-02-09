@@ -18,7 +18,7 @@
 
 let splunkjs = require('splunk-sdk');
 
-exports.main = function (opts, done) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it
     opts = opts || {};
 
@@ -38,37 +38,36 @@ exports.main = function (opts, done) {
         version: version
     });
 
-    // First, we log in
-    service.login(function (err, success) {
-        // We check for both errors in the connection as well
-        // as if the login itself failed.
-        if (err || !success) {
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
             console.log("Error in logging in");
-            done(err || "Login failed");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
+            }
             return;
         }
-
         // Now that we're logged in, let's get a listing of all the saved searches.
-        service.savedSearches().fetch(function (err, searches) {
-            if (err) {
-                console.log("There was an error retrieving the list of saved searches:", err);
-                done(err);
-                return;
-            }
-
-            let searchList = searches.list();
-            console.log("Saved searches:");
-            for (let i = 0; i < searchList.length; i++) {
-                let search = searchList[i];
-                console.log("  Search " + i + ": " + search.name);
-                console.log("    " + search.properties().search);
-            }
-
-            done();
-        });
-    });
+        let searches = await service.savedSearches().fetch();
+        let searchList = searches.list();
+        console.log("Saved searches:");
+        for (let i = 0; i < searchList.length; i++) {
+            let search = searchList[i];
+            console.log("  Search " + i + ": " + search.name);
+            console.log("    " + search.properties().search);
+        }
+    } catch (err) {
+        console.log("There was an error retrieving the list of saved searches:", err);
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }

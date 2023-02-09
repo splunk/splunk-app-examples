@@ -65,7 +65,7 @@
             .option('--port <port>', "Port to use", 8089, false)
             .option('--version <version>', "Which version to use", "4", false);
 
-        parser.parse = function (argv) {
+        parser.parse = async function (argv) {
             argv = (argv || []).slice(2);
             let defaults = getDefaults();
             for (const key in defaults) {
@@ -79,10 +79,10 @@
             argv.unshift("");
             argv.unshift("");
 
-            return parse.call(parser, argv);
+            return await parse.call(parser, argv);
         };
 
-        parser.add = function (commandName, description, args, flags, required_flags, onAction) {
+        parser.add = async function (commandName, description, args, flags, required_flags, onAction) {
 
             flags = flags || [];
 
@@ -95,7 +95,7 @@
                 command.option("--" + flag + " " + option, "", undefined, required);
             }
 
-            command.action(function () {
+            return await command.action(function () {
                 let args = utils.toArray(arguments);
                 args.unshift(commandName);
                 onAction.apply(null, args);

@@ -18,9 +18,8 @@
 // won't return until the search is complete.
 
 let splunkjs = require('splunk-sdk');
-let Async = splunkjs.Async;
 
-exports.main = function (opts, callback) {
+exports.main = async function (opts) {
     // This is just for testing - ignore it
     opts = opts || {};
 
@@ -40,60 +39,58 @@ exports.main = function (opts, callback) {
         version: version
     });
 
-    Async.chain([
-        // First, we log in
-        function (done) {
-            service.login(done);
-        },
-        // Perform the search
-        function (success, done) {
-            if (!success) {
-                done("Error logging in");
+    try {
+        try {
+            // First, we log in
+            await service.login();
+        } catch (err) {
+            console.log("Error in logging in");
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
             }
-
-            service.search("search index=_internal | head 3", { exec_mode: "blocking" }, done);
-        },
-        // The job is done, but let's some statistics from the server.
-        function (job, done) {
-            job.fetch(done);
-        },
-        // Print out the statistics and get the results
-        function (job, done) {
-            // Print out the statics
-            console.log("Job Statistics: ");
-            console.log("  Event Count: " + job.properties().eventCount);
-            console.log("  Disk Usage: " + job.properties().diskUsage + " bytes");
-            console.log("  Priority: " + job.properties().priority);
-
-            // Ask the server for the results
-            job.results({}, done);
-        },
-        // Print the raw results out
-        function (results, job, done) {
-            // Find the index of the fields we want
-            let rawIndex = results.fields.indexOf("_raw");
-            let sourcetypeIndex = results.fields.indexOf("sourcetype");
-            let userIndex = results.fields.indexOf("user");
-
-            // Print out each result and the key-value pairs we want
-            console.log("Results: ");
-            for (let i = 0; i < results.rows.length; i++) {
-                console.log("  Result " + i + ": ");
-                console.log("    sourcetype: " + results.rows[i][sourcetypeIndex]);
-                console.log("    user: " + results.rows[i][userIndex]);
-                console.log("    _raw: " + results.rows[i][rawIndex]);
-            }
-
-            // Once we're done, cancel the job.
-            job.cancel(done);
+            return;
         }
-    ],
-        function (err) {
-            callback(err);
+
+        let job = await service.search("search index=_internal | head 3", { exec_mode: "blocking" });
+        await job.fetch();
+        
+        // Print out the statics
+        console.log("Job Statistics: ");
+        console.log("  Event Count: " + job.properties().eventCount);
+        console.log("  Disk Usage: " + job.properties().diskUsage + " bytes");
+        console.log("  Priority: " + job.properties().priority);
+
+        // Ask the server for the results
+        const res = await job.results({});
+        const results = res[0];
+        job = res[1];
+        
+        // Find the index of the fields we want
+        let rawIndex = results.fields.indexOf("_raw");
+        let sourcetypeIndex = results.fields.indexOf("sourcetype");
+        let userIndex = results.fields.indexOf("user");
+
+        // Print out each result and the key-value pairs we want
+        console.log("Results: ");
+        for (let i = 0; i < results.rows.length; i++) {
+            console.log("  Result " + i + ": ");
+            console.log("    sourcetype: " + results.rows[i][sourcetypeIndex]);
+            console.log("    user: " + results.rows[i][userIndex]);
+            console.log("    _raw: " + results.rows[i][rawIndex]);
         }
-    );
+
+        // Once we're done, cancel the job.
+        await job.cancel();
+    } catch (err) {
+        console.log("Error:", err);
+        // For use by tests only
+        if (module != require.main) {
+            return Promise.reject(err);
+        }
+    }
 };
 
 if (module === require.main) {
-    exports.main({}, function () { /* Empty function */ });
+    exports.main({});
 }

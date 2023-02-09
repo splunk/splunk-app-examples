@@ -17,7 +17,6 @@
     let splunkjs = require('splunk-sdk');
     let Class = splunkjs.Class;
     let utils = splunkjs.Utils;
-    let Async = splunkjs.Async;
     let options = require('./cmdline');
 
     let FLAGS_CREATE = [
@@ -40,7 +39,7 @@
         });
     };
 
-    let search = function (service, options, callback) {
+    let search = async function (service, options) {
         // Extract the options we care about and delete them
         // the object
         let query = options.search;
@@ -52,90 +51,82 @@
         delete options.count;
         delete options.mode;
 
-        Async.chain([
+        try {
             // Create a search
-            function (done) {
-                service.search(query, options, done);
-            },
-            // Poll until the search is complete
-            function (job, done) {
-                Async.whilst(
+            let job = await service.search(query, options);
+            
+            try {
+                // Poll until the search is complete
+                await utils.whilst(
                     function () { return !job.properties().isDone; },
-                    function (iterationDone) {
-                        job.fetch(function (err, job) {
-                            if (err) {
-                                callback(err);
-                            }
-                            else {
-                                // If the user asked for verbose output,
-                                // then write out the status of the search
-                                let properties = job.properties();
-                                if (isVerbose) {
-                                    let progress = (properties.doneProgress * 100.0) + "%";
-                                    let scanned = properties.scanCount;
-                                    let matched = properties.eventCount;
-                                    let results = properties.resultCount;
-                                    let stats = "-- " +
-                                        progress + " done | " +
-                                        scanned + " scanned | " +
-                                        matched + " matched | " +
-                                        results + " results";
-                                    console.log("\r" + stats + "                                          ");
-                                }
-
-                                Async.sleep(1000, iterationDone);
-                            }
-                        });
-                    },
-                    function (err) {
+                    async function () {
+                        await job.fetch();
+                        // If the user asked for verbose output,
+                        // then write out the status of the search
+                        let properties = job.properties();
                         if (isVerbose) {
-                            console.log("\r");
+                            let progress = (properties.doneProgress * 100.0) + "%";
+                            let scanned = properties.scanCount;
+                            let matched = properties.eventCount;
+                            let results = properties.resultCount;
+                            let stats = "-- " +
+                                progress + " done | " +
+                                scanned + " scanned | " +
+                                matched + " matched | " +
+                                results + " results";
+                            console.log("\r" + stats + "                                          ");
                         }
-                        done(err, job);
+                        await utils.sleep(1000);
                     }
                 );
-            },
+            } catch (err) {
+                if (isVerbose) {
+                    console.log("\r");
+                }
+                // For use by tests only
+                if (module != require.main) {
+                    return Promise.reject(err);
+                }
+            }
+
             // Once the search is done, get the results
-            function (job, done) {
-                job.results({ count: count, json_mode: mode }, done);
-            },
+            let res = await job.results({ count: count, json_mode: mode });
+            let results = res[0];
+            job = res[1];
+
             // Print them out (as JSON), and cancel the job
-            function (results, job, done) {
-                process.stdout.write(JSON.stringify(results));
-                job.cancel(done);
+            process.stdout.write(JSON.stringify(results));
+            await job.cancel();
+        } catch (err) {
+            console.log("Error: ", err);
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
             }
-        ],
-            function (err) {
-                callback(err);
-            }
-        );
+        }
     };
 
-    let oneshotSearch = function (service, options, callback) {
+    let oneshotSearch = async function (service, options) {
         let query = options.search;
         delete options.search;
-
-        // Oneshot searches don't have a job associated with them, so we
-        // simply execute it and print out the results.
-        service.oneshotSearch(query, options, function (err, results) {
-            if (err) {
-                callback(err);
+        
+        try {
+            // Oneshot searches don't have a job associated with them, so we
+            // simply execute it and print out the results.
+            let results = await service.oneshotSearch(query, options);
+            console.log(JSON.stringify(results));
+        } catch (err) {
+            console.log("Error:", err);
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
             }
-            else {
-                console.log(JSON.stringify(results));
-                callback();
-            }
-        });
+        }
     };
 
-    exports.main = function (argv, callback) {
+    exports.main = async function (argv) {
         splunkjs.Logger.setLevel("NONE");
 
-        callback = callback || function (err) {
-            if (err) {
-                console.log(err);
-            }
-        };
         let cmdline = options.create();
 
         cmdline.name = "search";
@@ -174,12 +165,18 @@
         cmdline.parse(argv);
 
         let service = createService(cmdline.opts);
-        service.login(function (err, success) {
-            if (err || !success) {
-                callback("Error logging in");
+        try {
+            try {
+                // First, we log in
+                await service.login();
+            } catch (err) {
+                console.log("Error in logging in");
+                // For use by tests only
+                if (module != require.main) {
+                    return Promise.reject(err);
+                }
                 return;
             }
-
             delete cmdline.username;
             delete cmdline.password;
             delete cmdline.scheme;
@@ -189,12 +186,18 @@
             delete cmdline.version;
 
             if (cmdline.opts.exec_mode === "oneshot") {
-                oneshotSearch(service, cmdline.opts, callback);
+                await oneshotSearch(service, cmdline.opts);
             }
             else {
-                search(service, cmdline.opts, callback);
+                await search(service, cmdline.opts);
             }
-        });
+        } catch (err) {
+            console.log("Error:", err);
+            // For use by tests only
+            if (module != require.main) {
+                return Promise.reject(err);
+            }
+        }
     };
 
     if (module === require.main) {
