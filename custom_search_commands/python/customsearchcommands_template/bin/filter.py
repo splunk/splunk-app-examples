@@ -23,6 +23,12 @@ class %(command.title())Command(EventingCommand):
     """
     def transform(self, events):
        # Put your event transformation code here
+
+       # To connect with Splunk, use the instantiated service object which is created using the server-uri and
+       # other meta details and can be accessed as shown below
+       # Example:-
+       #    service = self.service
+
        pass
 
 dispatch(%(command.title())Command, sys.argv, sys.stdin, sys.stdout, __name__)

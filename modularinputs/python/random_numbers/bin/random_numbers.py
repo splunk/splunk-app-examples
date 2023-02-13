@@ -112,6 +112,13 @@ class MyScript(Script):
         :param inputs: an InputDefinition object
         :param event_writer: an EventWriter object
         """
+
+        # To connect with Splunk, use the instantiated service object which is created using the server-uri and
+        # other meta details and can be accessed as shown below
+        # Example:-
+        #    service = self.service
+        #    info = service.info //access the Splunk Server info
+
         # Go through each input for this modular input
         for input_name, input_item in list(inputs.inputs.items()):
             # Get the values, cast them as floats

@@ -38,6 +38,13 @@ class ReportingCSC(ReportingCommand):
 
     @Configuration()
     def map(self, records):
+
+        # To connect with Splunk, use the instantiated service object which is created using the server-uri and
+        # other meta details and can be accessed as shown below
+        # Example:-
+        #    service = self.service
+        #    info = service.info //access the Splunk Server info
+
         """returns a total marks of a students"""
         # list of subjects
         fieldnames = self.fieldnames
