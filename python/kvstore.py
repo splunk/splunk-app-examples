@@ -82,6 +82,16 @@ def main():
     query = {"somekey": {"$gt": 1}}
     print(f"Should return item2 and item3: {json.dumps(collection.data.query(query=query), indent=1)}")
 
+    # update accelerated_field of the kvstore
+    collection.update_accelerated_field('ind1', {'a': -1})
+    collection = service.kvstore[collection_name]
+    print("accelerated fields.ind1 value: ", collection["accelerated_fields.ind1"])
+
+    # update acl properties of the kvstore
+    print("acl properties before update", collection.access)
+    collection.acl_update(sharing="app", owner="nobody", **{"perms.read": "admin, nobody"})
+    print("acl properties after update", collection.access)
+
     # Let's delete the collection
     collection.delete()
 
