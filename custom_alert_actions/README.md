@@ -22,7 +22,7 @@ Follow this workflow to create a custom alert action.
 
 ## Custom alert action examples
 
-This repository contains the following example to help you get started creating setup pages.
+This repository contains the following example to help you get started creating custom alert actions.
 
 | Example      | Description                                                                                             |
 |--------------|---------------------------------------------------------------------------------------------------------|
