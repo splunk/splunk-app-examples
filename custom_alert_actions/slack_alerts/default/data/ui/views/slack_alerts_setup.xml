@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<view template="slack_alerts:/templates/setup.html" type="html">
+	<label>Slack Alerts Setup</label>
+</view>

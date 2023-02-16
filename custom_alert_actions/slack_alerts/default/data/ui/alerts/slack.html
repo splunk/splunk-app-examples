@@ -1,0 +1,72 @@
+<form class="form-horizontal form-complex">
+    <div class="control-group">
+        <label class="control-label" for="slack_chanel">Channel</label>
+
+        <div class="controls">
+            <input type="text" name="action.slack.param.channel" id="slack_channel" />
+            <span class="help-block">Slack channel to send the message to (Should start with # or @)</span>
+        </div>
+    </div>
+    <br clear="both" />
+    <div class="control-group">
+        <label class="control-label" for="slack_message">Message</label>
+
+        <div class="controls">
+            <textarea name="action.slack.param.message" id="slack_message" style="height: 140px;"></textarea>
+            <span class="help-block">
+                Enter the chat message to send to the Slack channel.
+                The message can include tokens that insert text based on the results of the search.
+                <a href="{{SPLUNKWEB_URL_PREFIX}}/help?location=learnmore.alert.action.tokens" target="_blank"
+                   title="Splunk help">Learn More <i class="icon-external"></i></a>
+            </span>
+        </div>
+    </div>
+    <br clear="both" />
+    <div class="control-group">
+        <label class="control-label">Attachment</label>
+        <div class="controls">            
+            <select name="action.slack.param.attachment">
+                <option value="none">None</option>
+                <option value="alert_link">Link to alert</option>
+                <option value="message">Show message in attachment (instead of plain message)</option>
+            </select>
+            <span class="help-block">
+                Optionally include an <a href="https://api.slack.com/docs/message-attachments" target="_blank" noreferer>attachment</a>.
+            </span>
+        </div>
+    </div>
+    <div style="clear: both;" class="control-group">
+        <label class="control-label" for="slack_fields">Fields</label>
+
+        <div class="controls">
+            <input type="text" name="action.slack.param.fields" id="slack_fields" placeholder="Optional" />
+            <span class="help-block">Show one or more fields from the search results below your Slack message. Comma-separated list of field names. Allows wildcards. eg. <code>index,source*</code>.</span>            
+        </div>
+    </div>
+    <br clear="both" />
+    <div style="clear: both; color: #888; margin: 25px 0 10px 0;">Advanced settings:</div>
+    <div style="clear: both" class="control-group">
+        <label class="control-label" for="slack_app_token_override">Slack App OAuth Token</label>
+
+        <div class="controls">
+            <input type="text" name="action.slack.param.slack_app_oauth_token_override" id="slack_fields" placeholder="Optional" />
+            <span class="help-block">
+                You can override the <a href="https://api.slack.com/apps" target="_blank" noreferer>Slack App OAuth Token</a> here
+                if you need to send the alert message to a different Slack team.
+            </span>
+        </div>
+    </div>
+    <br clear="both" />
+    <div style="clear: both" class="control-group">
+        <label class="control-label" for="slack_url_override">Webhook URL</label>
+
+        <div class="controls">
+            <input type="text" name="action.slack.param.webhook_url_override" id="slack_fields" placeholder="Optional" />
+            <span class="help-block">
+                You can override the <a href="https://slack.com/apps/A0F7XDUAZ-incoming-webhooks" target="_blank" noreferer>Slack webhook URL</a> here
+                if you need to send the alert message to a different Slack team.
+            </span>
+        </div>
+    </div>
+    <br clear="both" />
+</form>
