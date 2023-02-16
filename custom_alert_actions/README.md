@@ -22,6 +22,14 @@ Follow this workflow to create a custom alert action.
 
 ## Custom alert action examples
 
+This repository contains the following example to help you get started creating setup pages.
+
+| Example      | Description                                                                                             |
+|--------------|---------------------------------------------------------------------------------------------------------|
+| slack_alerts | Sends a customized message to a Slack channel based on a triggered alert action in the Splunk platform. |
+
+
+
 ## See also
 
 - [Create custom alert actions for Splunk Cloud Platform or Splunk Enterprise](https://dev.splunk.com/enterprise/docs/devtools/customalertactions) in the Splunk *Developer Guide*
