@@ -32,13 +32,13 @@ And finally the `app.js` imports a React app inside dashboard view.
 # Configuration
 There are two apps installed out-of-the-box when you `make` examples repo. Both not configured to begin with. Follow these steps to run through the dependency_checking_setup_page_app example:
 
-- Navigate to the dependency_checking_app and attempt to configure.
+- Navigate to the "Dependency Checking App Example" and attempt to configure.
 
 - There will be an alert that the `Weather_app_example` is not configured.
 
 - Navigate to the `weather_app_example` and finish the configuration. Ensure the version installed is greater or equal to 1.0.
 
-- Navigate back to the dependency_checking_app and attempt to configure.
+- Navigate back to the "Dependency Checking App Example" and attempt to configure.
 
 - Set up configuration should complete successfully.
 

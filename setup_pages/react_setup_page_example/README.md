@@ -30,7 +30,7 @@ And finally the `app.js` imports a React app inside dashboard view.
 # Configuration
 Follow these steps to run through the react_setup_page example:
 
-- Navigate to the react_setup_page and attempt to configure.
+- Navigate to the "React Example - Setup Page" and attempt to configure.
 
 - This will show us simple form asking for multiple fields. Enter any data in all fields and click on `Submit` button.
 

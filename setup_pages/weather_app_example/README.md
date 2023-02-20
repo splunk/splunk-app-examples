@@ -30,7 +30,7 @@ And finally the `app.js` imports a React app inside dashboard view.
 # Configuration
 Follow these steps to run through the weather_app example:
 
-- Navigate to the weather_app and attempt to configure.
+- Navigate to the "Weather Example - Setup Page" and attempt to configure.
 
 - This will show us simple form asking for the token. Enter token provided by OpenWeatherMap API service and click on `Complete Setup` button.
 

@@ -28,7 +28,7 @@ The dashboard view specifies its CSS and JavaScript resources and points to the 
 # Configuration
 Follow these steps to run through the setup_page_simple example:
 
-- Navigate to the setup_page_simple and attempt to configure.
+- Navigate to the "Simple Setup Page" and attempt to configure.
 
 - This will show us simple form asking for the password. Enter any password and click on `Complete Setup` button.
 
