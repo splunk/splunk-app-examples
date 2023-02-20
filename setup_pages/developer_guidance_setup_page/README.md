@@ -12,9 +12,31 @@ This program starts in the `app.conf`, where the `[install]` stanza's `is_config
 
 In the `app.conf`'s, `[ui]` stanza there is a `setup_page` property that points to which resource should be used for the setup page. In this case it's pointing to `default/data/ui/views/setup_page_dashboard.xml`.
 
-The dashboard view specifies its CSS and JavaScript resources and points to the two file in `appserver/static/javascript/setup_page.js` and `appserver/static/styles/setup_page.css`.
+The dashboard view specifies its CSS and JavaScript resources and points to the two files in `appserver/static/javascript/app.js`(this will be generated after the build command specified in the installation steps below) and `appserver/static/styles/setup_page.css`.
 
-And finally the `setup_page.js` imports a custom Backbone view from the `appserver/static/javascript/views/setup_page_example.js`.
+And finally the `app.js` imports a React app inside dashboard view.
+
+# Installation
+- First users have to install dependencies by running `npm install` command in the root directory of the application.
+
+- Then, inside `src` directory, user can write their own code.
+
+- Run `npm run build` command. It will bundle all the files of the `src` directory and will save the whole bundle in `appserver/static/javascript` as `app.js`.
+
+- Now run the `splunk-app-examples` docker container.
+
+*Note:* You can also copy files using `docker cp ./setup_pages/developer_guidance_setup_page CONTAINER:/opt/splunk/etc/apps/developer_guidance_setup_page`
+
+# Configuration
+Follow these steps to run through the developer_guidance_setup_page example:
+
+- Navigate to the developer_guidance_setup_page and attempt to configure.
+
+- This will show us simple form asking for multiple fields. Enter any data in all fields and click on `Submit` button.
+
+- Set up configuration should complete successfully.
+
+- To confirm this, navigate to the applications' root directory. The `local` directory will contain the `app.conf` and `macros.conf` files. `macros.conf` will contain the data provided in the setup page.
 
 # Resources
 - Splunk Techniques Used
@@ -29,10 +51,9 @@ And finally the `setup_page.js` imports a custom Backbone view from the `appserv
     - CSS
     - HTML
     - JavaScript
-        - Backbone JS
-            - [Main Website](https://backbonejs.org/)
-            - [On GitHub](https://github.com/jashkenas/backbone/)
-            - [Views are the only feature used](https://backbonejs.org/#View)
+        - React
+            - [Main Website](https://reactjs.org/)
+            - [On GitHub](https://github.com/facebook/react)
         - JQuery
             - [Main Website](https://jquery.com/)
             - [On GitHub](https://github.com/jquery/jquery/)

@@ -14,17 +14,33 @@ This program starts in the `app.conf`, where the `[install]` stanza's `is_config
 
 In the `app.conf`'s, `[ui]` stanza there is a `setup_page` property that points to which resource should be used for the setup page. In this case it's pointing to `default/data/ui/views/setup_page_dashboard.xml`.
 
-The dashboard view specifies its CSS and JavaScript resources and points to `appserver/static/javascript/setup_page.js`.
+The dashboard view specifies its CSS and JavaScript resources and points to the two files in `appserver/static/javascript/app.js`(this will be generated after the build command specified in the installation steps below) and `appserver/static/styles/setup_page.css`.
 
-And finally the `setup_page.js` imports a React app from `appserver/static/javascript/views/app.js`.
+And finally the `app.js` imports a React app inside dashboard view.
 
+# Installation
+- First users have to install dependencies by running `npm install` command in the root directory of the application.
+
+- Then, inside `src` directory, user can write their own code.
+
+- Run `npm run build` command. It will bundle all the files of the `src` directory and will save the whole bundle in `appserver/static/javascript` as `app.js`.
+
+- Now run the `splunk-app-examples` docker container.
+
+*Note:* You can also copy files using `docker cp ./setup_pages/dependency_checking_app_example CONTAINER:/opt/splunk/etc/apps/dependency_checking_app_example`
+
+# Configuration
 There are two apps installed out-of-the-box when you `make` examples repo. Both not configured to begin with. Follow these steps to run through the dependency_checking_setup_page_app example:
-- First navigate to the dependency_checking_app and attempt to configure. 
-- There will be an alert that the `Weather_app_example` is not configured.
-- Navigate to the `weather_app_example` and finish set up configuration. Ensure the version installed is greater or equal to 1.0.
-- Navigate back to the dependency_checking_app and attempt to configure. 
-- Set up configuration should complete successfully.
 
+- Navigate to the dependency_checking_app and attempt to configure.
+
+- There will be an alert that the `Weather_app_example` is not configured.
+
+- Navigate to the `weather_app_example` and finish the configuration. Ensure the version installed is greater or equal to 1.0.
+
+- Navigate back to the dependency_checking_app and attempt to configure.
+
+- Set up configuration should complete successfully.
 
 # Resources
 - Splunk Techniques Used

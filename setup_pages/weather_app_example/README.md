@@ -12,22 +12,33 @@ This program starts in the `app.conf`, where the `[install]` stanza's `is_config
 
 In the `app.conf`'s, `[ui]` stanza there is a `setup_page` property that points to which resource should be used for the setup page. In this case it's pointing to `default/data/ui/views/setup_page_dashboard.xml`.
 
-The dashboard view specifies its and JavaScript source code and points to `views/setup_page.js`.
+The dashboard view specifies its CSS and JavaScript resources and points to the two files in `appserver/static/javascript/app.js`(this will be generated after the build command specified in the installation steps below) and `appserver/static/styles/setup_page.css`.
 
-And finally the `setup_page.js` imports a React app from `src/views/app.js`.
-
+And finally the `app.js` imports a React app inside dashboard view.
 
 # Installation
 - First users have to install dependencies by running `npm install` command in the root directory of the application.
 
 - Then, inside `src` directory, user can write their own code.
 
-- Run `npm run build command`. It will bundle all the files in `src` directory and will save the whole bundle in `appserver/static/javascript` as `app.js`.
+- Run `npm run build` command. It will bundle all the files of the `src` directory and will save the whole bundle in `appserver/static/javascript` as `app.js`.
 
 - Now run the `splunk-app-examples` docker container.
 
-
 *Note:* You can also copy files using `docker cp ./setup_pages/weather_app_example CONTAINER:/opt/splunk/etc/apps/weather_app_example`
+
+# Configuration
+Follow these steps to run through the weather_app example:
+
+- Navigate to the weather_app and attempt to configure.
+
+- This will show us simple form asking for the token. Enter token provided by OpenWeatherMap API service and click on `Complete Setup` button.
+
+- Set up configuration should complete successfully.
+
+- Enter the `| weather location=locationName` in the search bar of the search page and click on search button. You will be able to see the data in the search results if the setup was successful.
+
+- To confirm this, navigate to the applications' root directory. The `local` directory will contain the `app.conf` and `passwords.conf` files. `passwords.conf` file will contain the token (in encoded form) provided in the setup page.
 
 # Resources
 - Splunk Techniques Used

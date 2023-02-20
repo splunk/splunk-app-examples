@@ -9,7 +9,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "jquery": "^3.6.1",
-    "splunk-sdk": "^1.12.0"
+    "splunk-sdk": "^2.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.19.0",
