@@ -5,7 +5,7 @@ files in `$SPLUNK_HOME/etc/<SPLUNK_APP_NAME>/appserver/static/*`
 Documentation link:
 http://docs.splunk.com/Documentation/Splunk/latest/Viz/PanelreferenceforSimplifiedXML#dashboard_or_form
 -->
-<dashboard isDashboard="false"
+<dashboard isDashboard="false" version="1.1"
            script="javascript/setup_page.js"
            stylesheet="styles/setup_page.css">
       <label>Developer Tutorial Setup Page</label>
