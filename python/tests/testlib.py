@@ -94,7 +94,6 @@ class SDKTestCase(unittest.TestCase):
         assert entity is not None
         self.assertTrue(entity.name is not None)
         self.assertTrue(entity.path is not None)
-
         self.assertTrue(entity.state is not None)
         self.assertTrue(entity.content is not None)
 
