@@ -36,13 +36,13 @@ jobs:
         - 8088:8088
         - 10667:10667
         - 10668:10668/udp
-          
+
   steps:
-    - uses: actions/checkout@v2
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+
     - name: Cache local Maven repository
       working-directory: ./java
       uses: actions/cache@v2
