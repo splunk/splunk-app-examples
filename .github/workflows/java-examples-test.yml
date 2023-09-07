@@ -60,7 +60,7 @@ jobs:
           echo scheme=https >> .splunkrc
           echo version=${{ matrix.splunk }} >> .splunkrc
       - name: Test using maven
-        working-directory: ./java
+        working-directory: java
         run: make test
         env:
           SPLUNK_HOME: "/opt/splunk"
