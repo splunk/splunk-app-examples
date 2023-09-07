@@ -51,7 +51,6 @@ jobs:
           restore-keys: ${{ runner.os }}-maven-
 
       - name: Create .splunkrc file
-        working-directory: ./java
         run: |
           cd ~
           echo host=localhost >> .splunkrc
