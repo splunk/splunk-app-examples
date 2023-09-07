@@ -110,7 +110,7 @@ public class TestExamples {
 
     @Test
     public void pivotExampleTest(){
-        try {
+        try { 
             assertEquals(0,executePivotExample());
             System.out.println("Pivot example test passed !!!");
         } catch (IOException | InterruptedException e) {
