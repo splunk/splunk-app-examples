@@ -3,7 +3,7 @@ name: Java Examples CI
 on:
   push:
     paths:
-      - 'python/**'
+      - 'java/**'
 
 jobs:
   build:
