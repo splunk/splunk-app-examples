@@ -38,6 +38,7 @@ jobs:
           - 10668:10668/udp
 
     steps:
+      - uses: actions/checkout@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
