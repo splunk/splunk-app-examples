@@ -19,12 +19,14 @@ package com.splunk.examples.search_simple;
 import com.splunk.Args;
 import com.splunk.HttpException;
 import com.splunk.Service;
+import com.splunk.HttpService;
 import com.splunk.Command;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 // Note: not all search parameters are exposed to the CLI for this example.
 public class Program {
@@ -47,7 +49,7 @@ public class Program {
             Command.error("Search expression required");
         String query = command.args[0];
 
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
         Service service = Service.connect(command.opts);
 
         // Check the syntax of the query.
@@ -62,28 +64,17 @@ public class Program {
 
         // This is the simplest form of searching splunk. Note that additional
         // arguments are allowed, but they are not shown in this example.
-        InputStream stream = service.oneshotSearch(query);
-
-        InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
-        try {
-            OutputStreamWriter writer = new OutputStreamWriter(System.out);
-            try {
-                int size = 1024;
-                char[] buffer = new char[size];
-                while (true) {
-                    int count = reader.read(buffer);
-                    if (count == -1) break;
-                    writer.write(buffer, 0, count);
-                }
-        
-                writer.write("\n");
+        try (InputStream stream = service.oneshotSearch(query);
+             InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+             OutputStreamWriter writer = new OutputStreamWriter(System.out)){
+            int size = 1024;
+            char[] buffer = new char[size];
+            while (true) {
+                int count = reader.read(buffer);
+                if (count == -1) break;
+                writer.write(buffer, 0, count);
             }
-            finally {
-                writer.close();
-            }
-        }
-        finally {
-            reader.close();
+            writer.write("\n");
         }
     }
 }

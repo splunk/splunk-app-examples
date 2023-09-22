@@ -20,7 +20,7 @@ import com.splunk.*;
 public class Program {
     public static void main(String[] argv) {
         try {
-            run(argv);
+            run();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -28,10 +28,10 @@ public class Program {
         }
     }
 
-    static void run(String[] argsIn) throws Exception {
+    static void run() throws Exception {
         Command command;
         Service service;
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
 
         command = Command.splunk("input");
         service = Service.connect(command.opts);

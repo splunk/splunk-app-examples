@@ -21,6 +21,7 @@ import com.splunk.*;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Tail an index
@@ -51,7 +52,7 @@ public class Program {
             Command.error("Search expression required");
         String query = command.args[0];
 
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
         Service service = Service.connect(command.opts);
 
         String outputMode = "csv";
@@ -69,16 +70,16 @@ public class Program {
         InputStream is = service.export(query, args);
 
         // Use UTF8 sensitive reader/writers
-        InputStreamReader reader = new InputStreamReader(is, "UTF-8");
-        OutputStreamWriter writer = new OutputStreamWriter(System.out);
-
-        int size = 1024;
-        char[] buffer = new char[size];
-        while (true) {
-            int count = reader.read(buffer);
-            if (count == -1) break;
-            writer.write(buffer, 0, count);
-            writer.flush();
+        try (InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+             OutputStreamWriter writer = new OutputStreamWriter(System.out)) {
+            int size = 1024;
+            char[] buffer = new char[size];
+            while (true) {
+                int count = reader.read(buffer);
+                if (count == -1) break;
+                writer.write(buffer, 0, count);
+                writer.flush();
+            }
         }
     }
 }

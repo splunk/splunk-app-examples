@@ -24,6 +24,7 @@
 package com.splunk.examples.ssl_protocols;
 
 import com.splunk.Command;
+import com.splunk.HttpService;
 import com.splunk.SSLSecurityProtocol;
 import com.splunk.Service;
 
@@ -43,7 +44,7 @@ public class Program {
 
     public static void main(String[] args) {
         Command command = Command.splunk("info").parse(args);
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
 
         System.out.println("Your Java version is: " + getJavaVersion());
 
@@ -144,7 +145,7 @@ public class Program {
             };
             sslContext.init(null, byPassTrustManagers, new SecureRandom());
             SSLSocketFactory TLSOnlySSLFactory = sslContext.getSocketFactory();
-            Service.setSSLSocketFactory(TLSOnlySSLFactory);
+            HttpService.setSSLSocketFactory(TLSOnlySSLFactory);
 
             Service serviceCustomSSLFactory = Service.connect(command.opts);
             serviceCustomSSLFactory.login();

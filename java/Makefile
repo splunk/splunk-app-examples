@@ -1,8 +1,3 @@
-# ifeq ($(OS), Windows_NT)
-# 	SEPERATOR=;
-# else
-# 	SEPERATOR=:
-# endif
 clean:
 	mvn clean
 

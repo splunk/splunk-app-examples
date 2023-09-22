@@ -19,6 +19,7 @@ package com.splunk.examples.index;
 import com.splunk.EntityCollection;
 import com.splunk.Index;
 import com.splunk.Service;
+import com.splunk.HttpService;
 import com.splunk.Command;
 import com.splunk.SplunkException;
 
@@ -34,7 +35,7 @@ public class Program {
 
     public static void main(String[] args) {
         Command command = Command.splunk("index").parse(args);
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
         Service service = Service.connect(command.opts);
 
         // This example takes optional arguments:
@@ -72,7 +73,6 @@ public class Program {
             } catch (SplunkException e) {
                 if (e.getCode() == SplunkException.INTERRUPTED) {
                     // User pressed Ctrl-C
-                    return;
                 } else {
                     throw e;
                 }

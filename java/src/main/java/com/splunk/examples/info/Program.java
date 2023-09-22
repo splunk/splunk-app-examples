@@ -18,10 +18,12 @@ package com.splunk.examples.info;
 
 import com.splunk.*;
 
+import java.util.Map;
+
 public class Program {
     public static void main(String[] args) {
         Command command = Command.splunk("info").parse(args);
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
         Service service = Service.connect(command.opts);
 
         ServiceInfo info = service.getInfo();
@@ -31,7 +33,7 @@ public class Program {
 
         Entity settings = service.getSettings();
         System.out.println("\nSettings:");
-        for (String key : settings.keySet())
-            System.out.println("    " + key + ": " + settings.get(key));
+        for (Map.Entry<String, Object> entry : settings.entrySet())
+            System.out.println("    " + entry.getKey() + ": " + entry.getValue());
     }
 }

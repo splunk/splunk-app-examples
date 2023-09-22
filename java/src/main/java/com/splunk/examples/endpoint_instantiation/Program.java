@@ -45,17 +45,17 @@ import com.splunk.*;
 public class Program {
     public static void main(String[] args) {
         Command command = Command.splunk("info").parse(args);
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
         Service service = Service.connect(command.opts);
 
         String mySplunkRESTPath = "apps/local";
 
-        EntityCollection myCollection = new EntityCollection(service, mySplunkRESTPath, Entity.class, new Args());
+        EntityCollection<Entity> myCollection = new EntityCollection<>(service, mySplunkRESTPath, Entity.class, new Args());
 
         System.out.println("Found " + myCollection.size() + " Splunk apps:");
 
-        for (Object myEntity : myCollection.values()) {
-            Entity entity = (Entity) myEntity;
+        for (Entity myEntity : myCollection.values()) {
+            Entity entity = myEntity;
             System.out.println("\t" + entity.getName());
         }
     }

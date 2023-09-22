@@ -34,7 +34,7 @@ import com.splunk.*;
 public class Program {
     public static void main(String[] args) {
         Command command = Command.splunk("info").parse(args);
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
         Service service = Service.connect(command.opts);
 
         String sid = service.search("search index=_internal | head 5").getSid();
@@ -44,7 +44,7 @@ public class Program {
             job.refresh();
             try {
                 Thread.sleep(1000);
-            } catch (Exception e) {
+            }  catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }

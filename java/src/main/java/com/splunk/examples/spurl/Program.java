@@ -16,6 +16,7 @@
 
 package com.splunk.examples.spurl;
 
+import com.splunk.HttpService;
 import com.splunk.Service;
 import com.splunk.ResponseMessage;
 import com.splunk.Command;
@@ -23,6 +24,7 @@ import com.splunk.Command;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class Program {
     public static void main(String[] args) {
@@ -37,7 +39,7 @@ public class Program {
 
     static void run(String[] args) throws IOException {
         Command command = Command.splunk("test").parse(args);
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
         Service service = Service.connect(command.opts);
 
         String path = command.args.length > 0 ? command.args[0] : "/";
@@ -47,12 +49,13 @@ public class Program {
         System.out.println(String.format("=> %d", status));
         if (status != 200) return;
 
-        BufferedReader reader = new BufferedReader(
-            new InputStreamReader(response.getContent(), "UTF-8"));
-        while (true) {
-            String line = reader.readLine();
-            if (line == null) break;
-            System.out.println(line);
+        try (BufferedReader reader = new BufferedReader(
+            new InputStreamReader(response.getContent(), StandardCharsets.UTF_8))) {
+            while (true) {
+                String line = reader.readLine();
+                if (line == null) break;
+                System.out.println(line);
+            }
         }
     }
 }

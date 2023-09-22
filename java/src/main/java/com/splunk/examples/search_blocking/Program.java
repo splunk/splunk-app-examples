@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -111,7 +112,7 @@ public class Program {
         if (command.opts.containsKey("status_buckets"))
             statusBuckets = (Integer)command.opts.get("status_buckets");
 
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
         Service service = Service.connect(command.opts);
 
         // Check the syntax of the query.
@@ -179,20 +180,17 @@ public class Program {
             }
         }
         else {
-            InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
-            OutputStreamWriter writer = new OutputStreamWriter(System.out);
-
-            int size = 1024;
-            char[] buffer = new char[size];
-            while (true) {
-                int count = reader.read(buffer);
-                if (count == -1) break;
-                writer.write(buffer, 0, count);
+            try (InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+                 OutputStreamWriter writer = new OutputStreamWriter(System.out)){
+                int size = 1024;
+                char[] buffer = new char[size];
+                while (true) {
+                    int count = reader.read(buffer);
+                    if (count == -1) break;
+                    writer.write(buffer, 0, count);
+                }
+                writer.write("\n");
             }
-
-            writer.write("\n");
-            writer.close();
-            reader.close();
         }
         job.cancel();
     }

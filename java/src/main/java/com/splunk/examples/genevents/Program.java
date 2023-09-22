@@ -20,6 +20,7 @@ import com.splunk.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -53,7 +54,7 @@ public class Program {
     }
 
     static String makeEvent(String stamp, int i, int j) {
-        return String.format("%s: event bunch %d, number %d\n", stamp, i, j);
+        return String.format("%s: event bunch %d, number %d%n", stamp, i, j);
     }
 
     static void buildRules(Command command, String[] argsIn) {
@@ -79,7 +80,7 @@ public class Program {
 
         command = Command.splunk("genevents");
         buildRules(command, argsIn);
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
         service = Service.connect(command.opts);
 
         // Determine ingest method and other input arguments.
@@ -135,7 +136,7 @@ public class Program {
                 stream = tcpInput.attach();
             }
             ostream = stream.getOutputStream();
-            writerOut = new OutputStreamWriter(ostream, "UTF-8");
+            writerOut = new OutputStreamWriter(ostream, StandardCharsets.UTF_8);
         }
 
         // Generate 10 batches of 5000 events each.

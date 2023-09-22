@@ -29,6 +29,16 @@ public class TestExamples {
     }
 
     @Test
+    public void confExampleTest(){
+        try {
+            assertEquals(0,executeConfExample());
+            System.out.println("Conf example test passed !!!");
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
     public void endpointInstantiationExampleTest(){
         try {
             assertEquals(0,executeEndpointInstantiationExample());
@@ -39,10 +49,30 @@ public class TestExamples {
     }
 
     @Test
+    public void eventTypesExampleTest(){
+        try {
+            assertEquals(0,executeEventTypesExample());
+            System.out.println("Event Types example test passed !!!");
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
     public void exportExampleTest(){
         try {
             assertEquals(0,executeExportExample());
             System.out.println("Export example test passed !!!");
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void firedAlertsExampleTest(){
+        try {
+            assertEquals(0,executeFiredAlertsExample());
+            System.out.println("Fired Alerts example test passed !!!");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -109,10 +139,40 @@ public class TestExamples {
     }
 
     @Test
+    public void jobExampleTest(){
+        try {
+            assertEquals(0,executeJobExample());
+            System.out.println("Job example test passed !!!");
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void loggerExampleTest(){
+        try {
+            assertEquals(0,executeLoggerExample());
+            System.out.println("Logger example test passed !!!");
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
     public void pivotExampleTest(){
         try {
             assertEquals(0,executePivotExample());
             System.out.println("Pivot example test passed !!!");
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void savedSearchExampleTest(){
+        try {
+            assertEquals(0,executeSavedSearchExample());
+            System.out.println("Saved Search example test passed !!!");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -208,15 +268,33 @@ public class TestExamples {
         }
     }
 
+    public int executeConfExample() throws IOException, InterruptedException {
+        System.out.println("Running Conf Example.....");
+        String[] cmd = {"make", "run", "TARGET=conf"};
+        return executeCommand(cmd);
+    }
+
     public int executeEndpointInstantiationExample() throws IOException, InterruptedException {
         System.out.println("Running Endpoint Instantiation Example.....");
         String[] cmd = {"make", "run", "TARGET=endpoint_instantiation"};
         return executeCommand(cmd);
     }
 
+    public int executeEventTypesExample() throws IOException, InterruptedException {
+        System.out.println("Running Event Types Example.....");
+        String[] cmd = {"make", "run", "TARGET=event_types"};
+        return executeCommand(cmd);
+    }
+
     public int executeExportExample() throws IOException, InterruptedException {
         System.out.println("Running Export Example.....");
         String[] cmd = {"make", "run", "TARGET=export"};
+        return executeCommand(cmd);
+    }
+
+    public int executeFiredAlertsExample() throws IOException, InterruptedException {
+        System.out.println("Running Fired Alerts Example.....");
+        String[] cmd = {"make", "run", "TARGET=fired_alerts"};
         return executeCommand(cmd);
     }
 
@@ -256,9 +334,27 @@ public class TestExamples {
         return executeCommand(cmd);
     }
 
+    public int executeJobExample() throws IOException, InterruptedException {
+        System.out.println("Running Job Example.....");
+        String[] cmd = {"make", "run", "TARGET=job"};
+        return executeCommand(cmd);
+    }
+
+    public int executeLoggerExample() throws IOException, InterruptedException {
+        System.out.println("Running Logger Example.....");
+        String[] cmd = {"make", "run", "TARGET=logger"};
+        return executeCommand(cmd);
+    }
+
     public int executePivotExample() throws IOException, InterruptedException {
         System.out.println("Running Pivot Example.....");
         String[] cmd = {"make", "run", "TARGET=pivot"};
+        return executeCommand(cmd);
+    }
+
+    public int executeSavedSearchExample() throws IOException, InterruptedException {
+        System.out.println("Running Saved Search Example.....");
+        String[] cmd = {"make", "run", "TARGET=saved_search", "ARGUMENTS=read --name='Errors in the last 24 hours'"};
         return executeCommand(cmd);
     }
 
@@ -317,18 +413,16 @@ public class TestExamples {
     }
 
     public static void printResults(Process p) throws IOException {
-        BufferedReader is =
-                new BufferedReader(new InputStreamReader(p.getInputStream()));
+        try (BufferedReader is = new BufferedReader(new InputStreamReader(p.getInputStream()));
+             BufferedReader es = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
+            String line;
 
-        BufferedReader es =
-                new BufferedReader(new InputStreamReader(p.getErrorStream()));
-        String line;
+            while ((line = is.readLine(  )) != null)
+                System.out.println(line);
 
-        while ((line = is.readLine(  )) != null)
-            System.out.println(line);
-
-        while ((line = es.readLine(  )) != null)
-            System.out.println(line);
+            while ((line = es.readLine(  )) != null)
+                System.out.println(line);
+        }
     }
 
     public int executeCommand(String[] cmd) throws IOException, InterruptedException {

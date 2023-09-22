@@ -43,7 +43,7 @@ public class Program {
         Command command = Command.splunk("search saved").parse(args);
         command.addRule("count", String.class, countString);
         command.addRule("offset", String.class, offsetString);
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
         Service service = Service.connect(command.opts);
 
         if (command.args.length == 0) {

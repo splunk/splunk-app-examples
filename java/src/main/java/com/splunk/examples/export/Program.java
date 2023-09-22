@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class Program {
     static String lastTime;
     static int nextEventOffset;
 
-    static public void main(String[] args) {
+    public static void main(String[] args) {
         try {
             run(args);
         }
@@ -54,7 +55,7 @@ public class Program {
 
     static Map<String, Integer> getStartNextCSVEvent(int location, String str) {
 
-        Map<String, Integer> pair = new HashMap<String, Integer>();
+        Map<String, Integer> pair = new HashMap<>();
         pair.put("start", -1);
         pair.put("end", -1);
 
@@ -231,7 +232,7 @@ public class Program {
         command.addRule("search", String.class, "Search string to export");
 
         command.parse(argv);
-        Service.setValidateCertificates(false);
+        HttpService.setValidateCertificates(false);
         Service service = Service.connect(command.opts);
 
         Args args = new Args();
@@ -294,9 +295,10 @@ public class Program {
 
             if (fptr < 0)
                 fptrEof = 0; // We didn't find a valid event, so start over.
-            else
+            else {
                 args.put("latest_time", lastTime);
                 addEndOfLine = true;
+            }
 
             FileChannel fc = raf.getChannel();
             fc.truncate(fptrEof);
@@ -321,9 +323,9 @@ public class Program {
         InputStream is = service.export(search, args);
 
         // Use UTF8 sensitive reader/writers
-        InputStreamReader isr = new InputStreamReader(is, "UTF-8");
+        InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
         FileOutputStream os = new FileOutputStream(file, true);
-        Writer out = new OutputStreamWriter(os, "UTF-8");
+        Writer out = new OutputStreamWriter(os, StandardCharsets.UTF_8);
 
         // Read/write 8k at a time if possible
         char [] xferBuffer = new char[8192];
