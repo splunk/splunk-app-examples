@@ -18,6 +18,7 @@ package com.splunk.examples.search;
 
 import com.splunk.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -55,13 +56,18 @@ public class Program {
         try {
             run(args);
         }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            Thread.currentThread().interrupt();
+            System.exit(1);
+        }
         catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
 
-    static void run(String[] args) throws Exception {
+    static void run(String[] args) throws IOException, InterruptedException {
         Command command = Command.splunk("search");
         command.addRule("count", Integer.class, resultsCount);
         command.addRule("earliest_time", String.class, earliestTimeText);

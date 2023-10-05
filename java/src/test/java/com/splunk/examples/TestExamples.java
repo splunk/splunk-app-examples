@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.UUID;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -30,8 +31,15 @@ public class TestExamples {
 
     @Test
     public void confExampleTest(){
+        String randomName = "delete-me-" + UUID.randomUUID();
         try {
             assertEquals(0,executeConfExample());
+            assertEquals(0,executeConfCreateExample(randomName));
+            assertEquals(0,executeConfStanzaCreateExample(randomName));
+            assertEquals(0,executeConfReadExample(randomName));
+            assertEquals(0,executeConfStanzaUpdateExample(randomName));
+            assertEquals(0,executeConfStanzaReadExample(randomName));
+            assertEquals(0,executeConfStanzaDeleteExample(randomName));
             System.out.println("Conf example test passed !!!");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -170,8 +178,13 @@ public class TestExamples {
 
     @Test
     public void savedSearchExampleTest(){
+        String randomName = "delete-me-" + UUID.randomUUID();
         try {
             assertEquals(0,executeSavedSearchExample());
+            assertEquals(0,executeSavedSearchCreateExample(randomName));
+            assertEquals(0,executeSavedSearchReadExample(randomName));
+            assertEquals(0,executeSavedSearchUpdateExample(randomName));
+            assertEquals(0,executeSavedSearchDeleteExample(randomName));
             System.out.println("Saved Search example test passed !!!");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -274,6 +287,42 @@ public class TestExamples {
         return executeCommand(cmd);
     }
 
+    public int executeConfCreateExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running Conf Create Example.....");
+        String[] cmd = {"make", "run", "TARGET=conf", String.format("ARGUMENTS=create %s",randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeConfReadExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running Conf Read Example.....");
+        String[] cmd = {"make", "run", "TARGET=conf", String.format("ARGUMENTS=read %s",randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeConfStanzaCreateExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running Conf Stanza Create Example.....");
+        String[] cmd = {"make", "run", "TARGET=conf", String.format("ARGUMENTS=create %s %s-stanza", randomName, randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeConfStanzaReadExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running Conf Stanza Read Example.....");
+        String[] cmd = {"make", "run", "TARGET=conf", String.format("ARGUMENTS=read %s %s-stanza", randomName, randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeConfStanzaUpdateExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running Conf Stanza Update Example.....");
+        String[] cmd = {"make", "run", "TARGET=conf", String.format("ARGUMENTS=update %s %s-stanza hello=world", randomName, randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeConfStanzaDeleteExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running Conf Stanza Delete Example.....");
+        String[] cmd = {"make", "run", "TARGET=conf", String.format("ARGUMENTS=delete %s %s-stanza", randomName, randomName)};
+        return executeCommand(cmd);
+    }
+
     public int executeEndpointInstantiationExample() throws IOException, InterruptedException {
         System.out.println("Running Endpoint Instantiation Example.....");
         String[] cmd = {"make", "run", "TARGET=endpoint_instantiation"};
@@ -354,7 +403,31 @@ public class TestExamples {
 
     public int executeSavedSearchExample() throws IOException, InterruptedException {
         System.out.println("Running Saved Search Example.....");
-        String[] cmd = {"make", "run", "TARGET=saved_search", "ARGUMENTS=read --name='Errors in the last 24 hours'"};
+        String[] cmd = {"make", "run", "TARGET=saved_search"};
+        return executeCommand(cmd);
+    }
+
+    public int executeSavedSearchCreateExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running Saved Search Create Example.....");
+        String[] cmd = {"make", "run", "TARGET=saved_search", String.format("ARGUMENTS=create --name=%s --search='search index=main'", randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeSavedSearchReadExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running Saved Search Read Example.....");
+        String[] cmd = {"make", "run", "TARGET=saved_search", String.format("ARGUMENTS=read --name=%s", randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeSavedSearchUpdateExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running Saved Search Update Example.....");
+        String[] cmd = {"make", "run", "TARGET=saved_search", String.format("ARGUMENTS=update --name=%s --dispatch.buckets=5 --dispatch.max_count=10", randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeSavedSearchDeleteExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running Saved Search Delete Example.....");
+        String[] cmd = {"make", "run", "TARGET=saved_search", String.format("ARGUMENTS=delete --name=%s", randomName)};
         return executeCommand(cmd);
     }
 

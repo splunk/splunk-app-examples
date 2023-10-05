@@ -12,9 +12,7 @@ public class Program {
 
         FiredAlertGroupCollection firedAlertGroups = service.getFiredAlertGroups();
         for(FiredAlertGroup firedAlertGroup : firedAlertGroups.values()){
-            System.out.println(firedAlertGroup.getPath());
-            for (int i = 0; i < firedAlertGroup.getPath().length(); i++) System.out.print("=");
-            System.out.println();
+            System.out.println("\n" + firedAlertGroup.getPath());
             for(FiredAlert firedAlert : firedAlertGroup.getAlerts().values()){
                 System.out.println("FiredAlert Name : " + firedAlert.getName());
                 System.out.println("FiredAlert Action : " + Arrays.toString(firedAlert.getAction()));

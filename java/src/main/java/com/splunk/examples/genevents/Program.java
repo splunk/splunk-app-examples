@@ -64,14 +64,14 @@ public class Program {
         command.parse(argsIn);
     }
 
-    static void run(String[] argsIn) throws Exception {
+    static void run(String[] argsIn) throws IOException {
 
         Command command;
         int count;
         Index index = null;
         String ingest;
         String iname;
-        List ingestTypes = Arrays.asList("submit", "stream", "tcp");
+        List<String> ingestTypes = Arrays.asList("submit", "stream", "tcp");
         OutputStream ostream;
         Receiver receiver = null;
         Service service;

@@ -44,6 +44,9 @@ public class Program {
             job.refresh();
             try {
                 Thread.sleep(1000);
+            }  catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+                Thread.currentThread().interrupt();
             }  catch (Exception e) {
                 System.out.println(e.getMessage());
             }

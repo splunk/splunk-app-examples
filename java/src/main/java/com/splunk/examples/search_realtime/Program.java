@@ -145,6 +145,7 @@ public class Program {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 // You shouldn't ever get here.
             }
         }

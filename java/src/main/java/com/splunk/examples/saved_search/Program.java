@@ -39,7 +39,7 @@ public class Program {
             Command.error("Saved search '" + savedSearchName + "' does not exists");
             return;
         }
-        System.out.println(savedSearch.getName() + "\n===========================================================");
+        System.out.println(savedSearch.getName() + "\n");
         for(Map.Entry<String,Object> entry : savedSearch.entrySet()){
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }

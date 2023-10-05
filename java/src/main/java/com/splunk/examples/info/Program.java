@@ -28,8 +28,8 @@ public class Program {
 
         ServiceInfo info = service.getInfo();
         System.out.println("Info:");
-        for (String key : info.keySet())
-            System.out.println("    " + key + ": " + info.get(key));
+        for (Map.Entry<String, Object> entry : info.entrySet())
+            System.out.println("    " + entry.getKey() + ": " + entry.getValue());
 
         Entity settings = service.getSettings();
         System.out.println("\nSettings:");

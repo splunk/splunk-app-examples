@@ -17,18 +17,22 @@ package com.splunk.examples.fluent_pivot;
 
 import com.splunk.*;
 
+import java.io.IOException;
+
 public class Program {
     public static void main(String[] argv) {
         try {
             run();
-        }
-        catch (Exception e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.exit(1);
+        } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
 
-    static void run() throws Exception {
+    static void run() throws IOException, InterruptedException {
         Command command;
         Service service;
         HttpService.setValidateCertificates(false);

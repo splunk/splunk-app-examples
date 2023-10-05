@@ -17,10 +17,17 @@ package com.splunk.examples.pivot;
 
 import com.splunk.*;
 
+import java.io.IOException;
+
 public class Program {
     public static void main(String[] argv) {
         try {
             run();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            Thread.currentThread().interrupt();
+            System.exit(1);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -28,7 +35,7 @@ public class Program {
         }
     }
 
-    static void run() throws Exception {
+    static void run() throws InterruptedException, IOException {
         Command command;
         Service service;
         HttpService.setValidateCertificates(false);

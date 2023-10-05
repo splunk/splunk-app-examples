@@ -18,14 +18,8 @@ package com.splunk.examples.export;
 
 import com.splunk.*;
 
+import java.io.*;
 import java.nio.channels.FileChannel;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.RandomAccessFile;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -206,8 +200,7 @@ public class Program {
         return -1;
     }
 
-    static int getEventStart(byte[] buffer, String format)
-            throws Exception {
+    static int getEventStart(byte[] buffer, String format) {
 
         String str = new String(buffer);
         if (format.equals("csv"))
@@ -218,7 +211,7 @@ public class Program {
             return getJsonEventStart(str);
     }
 
-    static void cleanupTail(Writer out, String format) throws Exception {
+    static void cleanupTail(Writer out, String format) throws IOException {
         if (format.equals("csv"))
             out.write("\n");
         else if (format.equals("xml"))
@@ -227,7 +220,7 @@ public class Program {
             out.write("\n]\n");
     }
 
-    static void run(String[] argv) throws Exception {
+    static void run(String[] argv) throws IOException {
         Command command = Command.splunk("export");
         command.addRule("search", String.class, "Search string to export");
 
@@ -277,31 +270,32 @@ public class Program {
             // Chunk backwards through the file until we find valid
             // start time. If we can't find one just start over.
             final int bufferSize = (64*1024);
-            RandomAccessFile raf = new RandomAccessFile(file, "rw");
-            long fptr = Math.max(file.length() - bufferSize, 0);
-            long fptrEof = 0;
+            try (RandomAccessFile raf = new RandomAccessFile(file, "rw")){
+                long fptr = Math.max(file.length() - bufferSize, 0);
+                long fptrEof = 0;
 
-            while (fptr > 0) {
-                byte [] buffer = new byte[bufferSize];
-                raf.seek(fptr);
-                raf.read(buffer, 0, bufferSize);
-                int eventStart = getEventStart(buffer, format);
-                if (eventStart != -1) {
-                    fptrEof = nextEventOffset + fptr;
-                    break;
+                while (fptr > 0) {
+                    byte [] buffer = new byte[bufferSize];
+                    raf.seek(fptr);
+                    raf.read(buffer, 0, bufferSize);
+                    int eventStart = getEventStart(buffer, format);
+                    if (eventStart != -1) {
+                        fptrEof = nextEventOffset + fptr;
+                        break;
+                    }
+                    fptr = fptr - bufferSize;
                 }
-                fptr = fptr - bufferSize;
-            }
 
-            if (fptr < 0)
-                fptrEof = 0; // We didn't find a valid event, so start over.
-            else {
-                args.put("latest_time", lastTime);
-                addEndOfLine = true;
-            }
+                if (fptr < 0)
+                    fptrEof = 0; // We didn't find a valid event, so start over.
+                else {
+                    args.put("latest_time", lastTime);
+                    addEndOfLine = true;
+                }
 
-            FileChannel fc = raf.getChannel();
-            fc.truncate(fptrEof);
+                FileChannel fc = raf.getChannel();
+                fc.truncate(fptrEof);
+            }
         } else
         if (!file.createNewFile())
             throw new Error("Failed to create output file");
@@ -323,28 +317,25 @@ public class Program {
         InputStream is = service.export(search, args);
 
         // Use UTF8 sensitive reader/writers
-        InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-        FileOutputStream os = new FileOutputStream(file, true);
-        Writer out = new OutputStreamWriter(os, StandardCharsets.UTF_8);
+        try(InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+            FileOutputStream os = new FileOutputStream(file, true);
+            Writer out = new OutputStreamWriter(os, StandardCharsets.UTF_8)){
+            // Read/write 8k at a time if possible
+            char [] xferBuffer = new char[8192];
+            boolean once = true;
 
-        // Read/write 8k at a time if possible
-        char [] xferBuffer = new char[8192];
-        boolean once = true;
-
-        // If superfluous meta-data is not needed, or specifically
-        // wants to be removed, one would clean up the first read
-        // buffer on a format by format basis,
-        while (true) {
-            if (addEndOfLine && once) {
-                cleanupTail(out, format);
-                once = false;
+            // If superfluous meta-data is not needed, or specifically
+            // wants to be removed, one would clean up the first read
+            // buffer on a format by format basis,
+            while (true) {
+                if (addEndOfLine && once) {
+                    cleanupTail(out, format);
+                    once = false;
+                }
+                int bytesRead = isr.read(xferBuffer);
+                if (bytesRead == -1) break;
+                out.write(xferBuffer, 0, bytesRead);
             }
-            int bytesRead = isr.read(xferBuffer);
-            if (bytesRead == -1) break;
-            out.write(xferBuffer, 0, bytesRead);
         }
-
-        isr.close();
-        out.close();
     }
 }

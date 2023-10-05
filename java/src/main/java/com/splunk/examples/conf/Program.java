@@ -39,7 +39,7 @@ public class Program {
             Command.error("Stanza " + stanzaName + " does not exists in the Conf " + confName);
             return;
         }
-        for (Map.Entry entry: stanza.entrySet()) {
+        for (Map.Entry<String, Object> entry: stanza.entrySet()) {
             System.out.println(entry.getKey() + " := " + entry.getValue());
         }
     }
@@ -89,7 +89,7 @@ public class Program {
             Command.error("Conf " + confName + " does not exists");
             return;
         }
-        System.out.println("Conf " + conf.getName());
+        System.out.println("\n" + conf.getName());
         for(Entity stanza : conf.values()){
             System.out.println("[" + stanza.getName() + "]");
         }

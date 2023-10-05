@@ -13,9 +13,7 @@ public class Program {
 
         EventTypeCollection eventTypes = service.getEventTypes();
         for(EventType eventType : eventTypes.values()){
-            System.out.println(eventType.getName());
-            for (int i = 0; i < eventType.getName().length(); i++) System.out.print("=");
-            System.out.println();
+            System.out.println("\n" + eventType.getName());
             for(Map.Entry<String, Object> entry : eventType.entrySet()){
                 System.out.println(entry.getKey() + " : " + entry.getValue());
             }

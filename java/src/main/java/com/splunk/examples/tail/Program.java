@@ -18,6 +18,7 @@ package com.splunk.examples.tail;
 
 import com.splunk.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -42,7 +43,7 @@ public class Program {
         }
     }
 
-    static void run(String[] argsIn) throws Exception {
+    static void run(String[] argsIn) throws IOException {
 
         Command command = Command.splunk("tail");
         command.addRule("format", String.class, outputModeText);
