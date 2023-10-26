@@ -156,6 +156,28 @@ public class TestExamples {
         }
     }
 
+    @Ignore
+    @Test
+    public void kvStoreExampleTest(){
+        String randomName = "delete-me-" + UUID.randomUUID();
+        try {
+            assertEquals(0,executeKVStoreExample());
+            assertEquals(0,executeKVStoreCreateExample(randomName));
+            assertEquals(0,executeKVStoreUpdateExample(randomName));
+            assertEquals(0,executeKVStoreReadExample(randomName));
+            assertEquals(0,executeKVStoreAddDataExample(randomName));
+            assertEquals(0,executeKVStoreUpdateDataExample(randomName));
+            assertEquals(0,executeKVStoreBatchSaveDataExample(randomName));
+            assertEquals(0,executeKVStoreReadDataExample(randomName));
+            assertEquals(0,executeKVStoreBatchFindDataExample(randomName));
+            assertEquals(0,executeKVStoreDeleteDataExample(randomName));
+            assertEquals(0,executeKVStoreDeleteExample(randomName));
+            System.out.println("KV Store example test passed !!!");
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
     public void loggerExampleTest(){
         try {
@@ -386,6 +408,72 @@ public class TestExamples {
     public int executeJobExample() throws IOException, InterruptedException {
         System.out.println("Running Job Example.....");
         String[] cmd = {"make", "run", "TARGET=job"};
+        return executeCommand(cmd);
+    }
+
+    public int executeKVStoreExample() throws IOException, InterruptedException {
+        System.out.println("Running KV Store Example.....");
+        String[] cmd = {"make", "run", "TARGET=kvstore"};
+        return executeCommand(cmd);
+    }
+
+    public int executeKVStoreCreateExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running KV Store Create Example.....");
+        String[] cmd = {"make", "run", "TARGET=kvstore", String.format("ARGUMENTS=create --name=%s --profiling_enabled=true --profiling_threshold_ms=1200",randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeKVStoreReadExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running KV Store Read Example.....");
+        String[] cmd = {"make", "run", "TARGET=kvstore", String.format("ARGUMENTS=read --name=%s",randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeKVStoreUpdateExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running KV Store Update Example.....");
+        String[] cmd = {"make", "run", "TARGET=kvstore", String.format("ARGUMENTS=update --name=%s --field=\"field.a=number\" --accelerated_fields=\"accelerated_fields.a={key:1}\"",randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeKVStoreDeleteExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running KV Store Delete Example.....");
+        String[] cmd = {"make", "run", "TARGET=kvstore", String.format("ARGUMENTS=delete --name=%s",randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeKVStoreAddDataExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running KV Store Add Data Example.....");
+        String[] cmd = {"make", "run", "TARGET=kvstore", String.format("ARGUMENTS=addData --name=%s --json_data=\\\"{key1:val1,_key:randomData}\\\"",randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeKVStoreReadDataExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running KV Store Read Data Example.....");
+        String[] cmd = {"make", "run", "TARGET=kvstore", String.format("ARGUMENTS=readData --name=%s",randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeKVStoreUpdateDataExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running KV Store Update Data Example.....");
+        String[] cmd = {"make", "run", "TARGET=kvstore", String.format("ARGUMENTS=updateData --name=%s --json_data=\\\"{key2:val2,_key:randomData}\\\" --key=randomData",randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeKVStoreDeleteDataExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running KV Store Delete Data Example.....");
+        String[] cmd = {"make", "run", "TARGET=kvstore", String.format("ARGUMENTS=deleteData --name=%s",randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeKVStoreBatchSaveDataExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running KV Store Batch Save Data Example.....");
+        String[] cmd = {"make", "run", "TARGET=kvstore", String.format("ARGUMENTS=batchSave --name=%s --json_data=\\\"[{keyx:valx,keyy:valy,keyz:valz},{key1:val1,keya:vala},{keya:vala,keyx:valx},{key2:val2, key1:val1}]\\\"",randomName)};
+        return executeCommand(cmd);
+    }
+
+    public int executeKVStoreBatchFindDataExample(String randomName) throws IOException, InterruptedException {
+        System.out.println("Running KV Store Batch Find Data Example.....");
+        String[] cmd = {"make", "run", "TARGET=kvstore", String.format("ARGUMENTS=batchFind --name=%s --json_data=\\\"[{query:{key1:val1}},{query:{keyx:def}},{query:{keyx: valx}}]\\\"",randomName)};
         return executeCommand(cmd);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Splunk, Inc.
+ * Copyright 2023 Splunk, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"): you may
  * not use this file except in compliance with the License. You may obtain
@@ -14,16 +14,12 @@
  * under the License.
  */
 
-package com.splunk.examples.info;
-
-import com.splunk.*;
-
-import java.util.Map;
 
 public class Program {
     public static void main(String[] args) {
         Command command = Command.splunk("info").parse(args);
-        HttpService.setValidateCertificates(false);
+        String filePath = "<Path to SSL Certificate.pem fiel>";
+        byte[] bytes = Files.readAllBytes(Paths.get(filePath));
         Service service = Service.connect(command.opts);
 
         ServiceInfo info = service.getInfo();
