@@ -13,5 +13,5 @@
 make up
 ```
 
-### Run app examples on Splunk cloud
-The Splunk App Example repo contains several app examples of Custom Search Commands apps and Modular Inputs apps. To run this app examples on Splunk cloud environment, Please refer [Deploy and manage private apps in Splunk Cloud Platform](https://dev.splunk.com/enterprise/docs/releaseapps/manageprivatecloud/) document.
+### Run app examples on Splunk Cloud Platform
+The Splunk App Example repository contains several app examples of Custom Search Commands apps and Modular Inputs apps. For information about running these examples in a Splunk Cloud Platform environment, see [Deploy and manage private apps in Splunk Cloud Platform](https://dev.splunk.com/enterprise/docs/releaseapps/manageprivatecloud/).
