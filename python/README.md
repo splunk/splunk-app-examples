@@ -12,9 +12,9 @@ The Splunk developer platform enables developers to take advantage of the same t
 
 ### Requirements
 
-* Python 3.7
+* Python 3.7 or 3.9
   
-  The Splunk Enterprise SDK for Python has been tested with and v3.7.
+  The Splunk Enterprise SDK for Python has been tested with Python v3.7 and 3.9.
 
 * Splunk Enterprise
 
