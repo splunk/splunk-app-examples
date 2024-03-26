@@ -13,7 +13,7 @@
 // under the License.
 
 (function () {
-    let path = require('path');
+    let path = require('pah');
     let fs = require('fs');
     let commander = require('splunk-sdk/contrib/commander');
     let utils = require('splunk-sdk/lib/utils');
