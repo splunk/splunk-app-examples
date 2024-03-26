@@ -48,7 +48,7 @@ def main():
 
     body = response.body.read()
     data = ElementTree.XML(body)
-    apps = data.findall("{http://www.w3.org/2005/Atom}entry/{http://www.w3.org/2005/Atom}title")
+    apps = data.findall("{http://www.w.org/2005/Atom}entry/{http://www.w3.org/2005/Atom}title")
     for app in apps:
         print(app.text)
 
