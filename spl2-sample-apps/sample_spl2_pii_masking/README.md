@@ -1,6 +1,5 @@
----
-title: "README - sample SPL2 pii masking"
----
+
+# README - sample SPL2 pii masking
 
 ## Overview
 
@@ -52,8 +51,7 @@ This app was developed by Splunk.
 | Module    | functions | This module contains the custom command function `pii_mask`, which masks sensitive employee ID data in a dataset.
 | Module    | masking | This module takes a dataset and generates a masked version of that dataset, called `$masked_view |
 | Module    | sample_data | This module contains a dataset literal of a sample set of events. |
-| View  | $masked_view | This view returns all of the events with masked email addresses. 
-This view is used to create the 'Failed logins (masked)' report. This view is in the `masking` module. |
+| View  | $masked_view | This view returns all of the events with masked email addresses. This view is used to create the 'Failed logins (masked)' report. This view is in the `masking` module. |
 | View  | $hash_view | This view returns all of the events with the email addresses masked by using a hash function. This view is used to create the 'Failed logins (hash)' report. This view is in the `masking` module. |
 | View  | $failed_logins_unmasked | This view returns the failed login events from a dataset literal. No data is masked. This view is in the `_default` module. |
 | View  | $failed_logins_masked | This view returns the failed login events from a dataset literal. Email addresses are masked. This view is in the `_default` module. |
@@ -105,12 +103,6 @@ For example, this search runs the exported view `failed_logins_hash`:
 You can use the `#spl2` slack channel in the [splunk-usergroups Slack workspace](https://app.slack.com/client/T047WPASC/C06NKCFGP5J) to post any questions or comments about this app.
 
 Alternatively, you can email us at `spl2@splunk.com`.
-
-## Documentation
-
-Splunk Developer Guide - [Create SPL2-based apps](https://dev.splunk.com/enterprise/docs/developapps/createspl2apps)
-
-Happy Splunking!
 
 ## Documentation
 
