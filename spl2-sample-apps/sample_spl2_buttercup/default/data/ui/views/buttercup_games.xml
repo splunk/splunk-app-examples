@@ -1,0 +1,291 @@
+
+<dashboard version="2" theme="dark">
+    <label>Buttercup Games</label>
+    <description>A dashboard for the SPL2-based buttercupgames sample app</description>
+    <definition><![CDATA[
+{
+	"dataSources": {
+		"ds_jqkIlNC2": {
+			"type": "ds.search",
+			"options": {
+				"query": "| @spl2 from metrics",
+				"queryParameters": {
+					"earliest": "-24h@h",
+					"latest": "now"
+				}
+			},
+			"name": "Events 1 search"
+		},
+		"ds_OWihUoTC": {
+			"type": "ds.chain",
+			"options": {
+				"query": "| fieldsummary maxvals=10",
+				"extend": "ds_jqkIlNC2"
+			},
+			"name": "Events 2 search"
+		},
+		"ds_S4Oq1rT3": {
+			"type": "ds.search",
+			"options": {
+				"query": "| @spl2 from error_count",
+				"queryParameters": {
+					"earliest": "-24h@h",
+					"latest": "now"
+				}
+			},
+			"name": "Single value search"
+		},
+		"ds_vwyx97HI": {
+			"type": "ds.search",
+			"options": {
+				"query": "| @spl2 from error_count",
+				"queryParameters": {
+					"earliest": "-24h@h",
+					"latest": "now"
+				}
+			},
+			"name": "Single value search"
+		},
+		"ds_dMq9B3w6": {
+			"type": "ds.search",
+			"options": {
+				"query": "| @spl2 from products | fields product_name, quantity",
+				"queryParameters": {
+					"earliest": "-24h@h",
+					"latest": "now"
+				}
+			},
+			"name": "Pie chart search"
+		},
+		"ds_MjLVeA9N": {
+			"type": "ds.search",
+			"options": {
+				"query": "| @spl2 from products",
+				"queryParameters": {
+					"earliest": "-24h@h",
+					"latest": "now"
+				}
+			},
+			"name": "Products sold search"
+		},
+		"ds_MFCoBPpk": {
+			"type": "ds.search",
+			"options": {
+				"query": "| @spl2 from successful_purchases",
+				"queryParameters": {
+					"earliest": "-24h@h",
+					"latest": "now"
+				}
+			},
+			"name": "Table search"
+		},
+		"ds_FFioZGoj_ds_MFCoBPpk": {
+			"type": "ds.search",
+			"options": {
+				"query": "| @spl2 from successful_purchases",
+				"queryParameters": {
+					"earliest": "-24h@h",
+					"latest": "now"
+				}
+			},
+			"name": "Table search copy 1"
+		},
+		"ds_iYgZvQTw_ds_S4Oq1rT3": {
+			"type": "ds.search",
+			"options": {
+				"query": "| @spl2 from error_count",
+				"queryParameters": {
+					"earliest": "-24h@h",
+					"latest": "now"
+				}
+			},
+			"name": "Single value search copy 1"
+		}
+	},
+	"visualizations": {
+		"viz_ZedUgtjp": {
+			"type": "splunk.events",
+			"options": {
+				"list.drilldown": "none"
+			},
+			"dataSources": {
+				"primary": "ds_jqkIlNC2",
+				"fieldsummary": "ds_OWihUoTC"
+			},
+			"description": "Expand a metric to see the fields",
+			"title": "From the metrics.log file"
+		},
+		"viz_iB77zEua": {
+			"type": "splunk.singlevalue",
+			"options": {
+				"numberPrecision": 0,
+				"sparklineDisplay": "below",
+				"trendDisplay": "absolute",
+				"unitPosition": "after",
+				"shouldUseThousandSeparators": true,
+				"majorColor": "#f1813f",
+				"majorFontSize": 60
+			},
+			"context": {
+				"convertedColorRange": [
+					{
+						"from": 100,
+						"value": "#dc4e41"
+					},
+					{
+						"from": 70,
+						"to": 100,
+						"value": "#f1813f"
+					},
+					{
+						"from": 30,
+						"to": 70,
+						"value": "#f8be34"
+					},
+					{
+						"from": 0,
+						"to": 30,
+						"value": "#0877a6"
+					},
+					{
+						"to": 0,
+						"value": "#53a051"
+					}
+				]
+			},
+			"dataSources": {
+				"primary": "ds_S4Oq1rT3"
+			},
+			"title": "Number of Errors",
+			"description": "Errors from  the _internal index"
+		},
+		"viz_UxGZz4fq": {
+			"type": "splunk.pie",
+			"options": {
+				"collapseThreshold": 0.1,
+				"labelDisplay": "valuesAndPercentage"
+			},
+			"dataSources": {
+				"primary": "ds_dMq9B3w6"
+			},
+			"title": "Products sold"
+		},
+		"viz_ggYjYrfK": {
+			"type": "splunk.table",
+			"options": {
+				"count": 100,
+				"dataOverlayMode": "none",
+				"drilldown": "none",
+				"showRowNumbers": false,
+				"showInternalFields": false
+			},
+			"dataSources": {
+				"primary": "ds_MFCoBPpk"
+			},
+			"title": "Successful purchases"
+		},
+		"viz_8lKv38OB": {
+			"type": "splunk.image",
+			"options": {
+				"preserveAspectRatio": true,
+				"src": "splunk-enterprise-kvstore://663b239b7d6be4b096018100"
+			}
+		}
+	},
+	"inputs": {
+		"input_global_trp": {
+			"type": "input.timerange",
+			"options": {
+				"token": "global_time",
+				"defaultValue": "-24h@h,now"
+			},
+			"title": "Global Time Range"
+		}
+	},
+	"layout": {
+		"type": "absolute",
+		"options": {
+			"width": 1440,
+			"height": 960,
+			"backgroundColor": "#f0d75d"
+		},
+		"structure": [
+			{
+				"item": "viz_iB77zEua",
+				"type": "block",
+				"position": {
+					"x": 810,
+					"y": 20,
+					"w": 610,
+					"h": 270
+				}
+			},
+			{
+				"item": "viz_UxGZz4fq",
+				"type": "block",
+				"position": {
+					"x": 20,
+					"y": 20,
+					"w": 610,
+					"h": 380
+				}
+			},
+			{
+				"item": "viz_ggYjYrfK",
+				"type": "block",
+				"position": {
+					"x": 20,
+					"y": 420,
+					"w": 610,
+					"h": 410
+				}
+			},
+			{
+				"item": "viz_ZedUgtjp",
+				"type": "block",
+				"position": {
+					"x": 640,
+					"y": 320,
+					"w": 770,
+					"h": 510
+				}
+			},
+			{
+				"item": "viz_8lKv38OB",
+				"type": "block",
+				"position": {
+					"x": 660,
+					"y": 30,
+					"w": 130,
+					"h": 130
+				}
+			}
+		],
+		"globalInputs": [
+			"input_global_trp"
+		]
+	},
+	"title": "Buttercup Games",
+	"description": "A dashboard for the SPL2-based buttercupgames sample app",
+	"defaults": {
+		"dataSources": {
+			"ds.search": {
+				"options": {
+					"queryParameters": {
+						"latest": "$global_time.latest$",
+						"earliest": "$global_time.earliest$"
+					}
+				}
+			}
+		}
+	}
+}
+    ]]></definition>
+    <meta type="hiddenElements"><![CDATA[
+{
+	"hideEdit": false,
+	"hideOpenInSearch": false,
+	"hideExport": false
+}
+    ]]></meta>
+</dashboard>

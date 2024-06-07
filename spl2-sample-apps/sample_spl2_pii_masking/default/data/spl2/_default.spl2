@@ -1,0 +1,22 @@
+// DEFAULT MODULE FOR THE APP "sample_spl2_pii_masking"
+ 
+// IMPORTS
+import data from sample_data // A DATASET LITERAL, WITH DATAA FROM Azure Active Directory. 
+import masked_view from masking // A VIEW THAT CONTAINS THE MASKED DATA
+
+// SEARCHES
+// This search returns specific fields from a dataset literal
+// The results are shown in a table in the dashboard.
+$failed_logins_unmasked = from data where ResultStatus="failed"
+
+// This search returns specific fields from a dataset literal
+// The results are shown in a table in the dashboard.
+$failed_logins_masked = from masked_view where ResultStatus="failed"
+
+// EXPORTS
+// This line exports the searches as views
+export {$failed_logins_unmasked, $failed_logins_masked}
+// This line exports the masked_view
+export masked_view
+// This line exports the dataset used in this app
+export data

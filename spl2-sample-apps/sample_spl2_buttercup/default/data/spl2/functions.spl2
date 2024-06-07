@@ -1,0 +1,10 @@
+// FUNCTION MODULE FOR THE APP "sample_spl2_buttercup"
+
+// This function generates a string that identifies the ID and name for each product.
+// In SPL2, the concatenation operator is the plus ( + ) symbol.
+function prodnames ($pid: string, $product_name: string): string {
+return "The product ID "+$pid+" "+"corresponds to the "+$product_name+" "+"product."
+}
+
+// EXPORTS
+export prodnames

@@ -1,0 +1,18 @@
+// SAMPLE DATA FOR THE APP "sample_spl2_buttercup"
+
+// DATASET LITERAL
+// This sample uses a dataset literal as the dataset for some of the searches.
+$data = from
+[{_time: "2024/04/19 12:00", host: "www1", clientip: "192.0.2.0", method: "POST", action: "purchase", pid: "DC-SG-G02", status: "200", quantity: 1, price: 39.99},
+{_time: "2024/04/19 11:58", host: "www4", clientip:"198.51.100.0", method: "GET", action: "addtochart", pid: "MB-AG-G07", status: "200", quantity: 3, price: 27.99},
+{_time: "2024/04/19 11:58", host: "www3", clientip:"203.0.113.0", method: "POST", action: "purchase", pid: "WC-SH-A01", status: "200", quantity: 1, price: 25.99},
+{_time: "2024/04/19 11:56", host: "www2", clientip:"198.51.100.255", method: "POST", action: "changequantity", pid: "PZ-SG-G05", status: "200", quantity: 2, price: 4.99},
+{_time: "2024/04/19 11:51", host: "www1", clientip:"192.0.2.0", method: "POST", action: "purchase", pid: "SF-BVS-01", status: "404", quantity: 1, price: 49.99},
+{_time: "2024/04/19 11:47", host: "www3", clientip:"198.51.100.0", method: "POST", action: "purchase", pid: "SF-BVS-G01", status: "200", quantity: 1, price: 26.99},
+{_time: "2024/04/19 11:42", host: "www1", clientip:"192.0.2.0", method: "POST", action: "purchase", pid: "WC-SH-T02", status: "200", quantity: 2, price: 19.99},
+{_time: "2024/04/19 11:39", host: "www1", clientip:"198.51.100.0", method: "POST", action: "purchase", pid: "PZ-SG-G05", status: "200", quantity: 1, price: 4.99},
+{_time: "2024/04/19 11:31", host: "www2", clientip:"198.51.100.255", method: "GET", action: "view", pid: "MB-AG-G07", status: "200", quantity: 1, price: 27.99},
+{_time: "2024/04/19 11:27", host: "www3", clientip:"203.0.113.0", method: "POST", action: "purchase", pid: "WC-SH-A01", status: "404", quantity: 1, price: 25.99}]
+
+// EXPORTS
+export $data

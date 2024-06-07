@@ -1,5 +1,6 @@
-
-# README - sample SPL2 buttercup games
+---
+title: "README - sample SPL2 buttercup games"
+---
 
 ## Overview
 

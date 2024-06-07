@@ -1,5 +1,6 @@
-
-# README - sample SPL2 pii masking
+---
+title: "README - sample SPL2 pii masking"
+---
 
 ## Overview
 
@@ -49,22 +50,20 @@ This app was developed by Splunk.
 | Namespace  | apps.sample_spl2_pii_masking |  |
 | Module    | _default | This module contains all of the searches for this app. |
 | Module    | functions | This module contains the custom command function `pii_mask`, which masks sensitive employee ID data in a dataset.
-| Module    | masking | This module takes a dataset and generates a masked version of that dataset, called `$masked_view |
 | Module    | sample_data | This module contains a dataset literal of a sample set of events. |
-| View  | $masked_view | This view returns all of the events with masked email addresses. This view is used to create the 'Failed logins (masked)' report. This view is in the `masking` module. |
-| View  | $hash_view | This view returns all of the events with the email addresses masked by using a hash function. This view is used to create the 'Failed logins (hash)' report. This view is in the `masking` module. |
-| View  | $failed_logins_unmasked | This view returns the failed login events from a dataset literal. No data is masked. This view is in the `_default` module. |
-| View  | $failed_logins_masked | This view returns the failed login events from a dataset literal. Email addresses are masked. This view is in the `_default` module. |
-| Function | pii_mask | This command function masks the values in the `UserKey` field. This function is in the `functions` module. |
+| View  | $masked_view | This view returns all of the events with masked email addresses. 
+This view is used to create the 'Failed logins (masked)' report. |
+| View  | $failed_logins_unmasked | This view returns the failed login events from a dataset literal. No data is masked. |
+| View  | $failed_logins_masked | This view returns the failed login events from a dataset literal. Email addresses are masked. |
+| Function | pii_mask | This command function masks the values in the `UserKey` field. |
 | Report    | Failed logins | This report shows the failed login events from a dataset literal. No data is masked. |
 | Report    | Failed logins (masked) | This report shows the failed login events from a dataset literal. Email addresses are masked. |
-| Report    | Failed logins (hash) | This report shows the failed login events from a dataset literal. Email addresses are masked by using a hash function. |
 
 ## App customizations
 
 In this Beta, people with the `user` role do not have permission to run SPL2 searches using the views in an app. However, the Splunk administrator can set role-based permissions after the app is installed.
 
-For example, a Splunk administrator can use the REST API endpoints to set 'execute' permissions on the `masking` module for the `user` role. This enables people with that role to perform searches using the `masked_view` or `hash_view` views that are in the `masking` module.
+For example, a Splunk administrator can use the REST API endpoints to set 'execute' permissions on the `masking` module for the `user` role. This enables people with that role to perform searches using the `masked_view` that is in the `masking` module.
 
 ## How to use the views in Splunk Web
 
@@ -79,12 +78,7 @@ For example:
 
 This view masks the email addresses in the UserKey field.
 
-There are 3 views in this app that show the failed logins:
-* One view shows the unmasked values.
-* Another view shows the masked values.
-* A third views shows the values masked using a hash function.
-
-You can compare the differences between the masked and unmasked results by either running the views or opening the Reports.
+There are 2 views in this app that show the failed logins, one view shows the unmasked values and the other shows the masked values. You can compare the differences between the masked and unmasked results by either running the views or opening the Reports.
 
 For example, this search runs the exported view `failed_logins_unmasked`:
 
@@ -93,10 +87,6 @@ For example, this search runs the exported view `failed_logins_unmasked`:
 For example, this search runs the exported view `failed_logins_masked`:
 
 ```| @spl2 from failed_logins_masked```
-
-For example, this search runs the exported view `failed_logins_hash`:
-
-```| @spl2 from failed_logins_hash```
 
 ## Support
 

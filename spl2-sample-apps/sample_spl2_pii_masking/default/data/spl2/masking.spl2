@@ -1,0 +1,13 @@
+//@run_as_owner
+
+// MASKING MODULE FOR THE APP sample_spl2_pii_masking
+
+// IMPORTS
+import data from sample_pii_data // A DATASET LITERAL
+import pii_mask from functions // A COMMAND FUNCTION THAT MASKS EMAIL ADDRESSES
+
+$masked_view = from data | pii_mask
+
+// EXPORTS
+export $masked_view 
+export pii_mask

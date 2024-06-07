@@ -1,0 +1,49 @@
+[default]
+[]
+access = read : [ * ], write : [ admin, power ]
+
+[app/launcher]
+version = 9.2.02.20240415
+modtime = 1713851385.498681000
+
+[app/ui]
+version = 9.2.02.20240415
+modtime = 1713851385.497017000
+
+[eventtypes]
+export = system
+
+[lookups]
+export = system
+
+[props]
+export = system
+
+[transforms]
+export = system
+
+[transforms/buttercup_products_lookup]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 9.2.02.20240415
+modtime = 1713906119.283339000
+
+[transforms/buttercup_suppliers_lookup]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 9.2.02.20240415
+modtime = 1713906195.562876000
+
+[views/buttercup_games]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 9.2.2.20240415
+modtime = 1715189435.671056000
+
+[viewstates]
+access = read : [ * ], write : [ * ]
+export = system
+
