@@ -1,0 +1,19 @@
+// SAMPLE DATA FOR THE APP sample_spl2_pii_masking
+
+// DATASET LITERAL
+
+$data = from
+[{_time: "2024-02-28T20:03:19", Id: "80c76bd2-9d81-4c57-a97a-accfc3443dca", Operation: "PasswordLogonInitialAuthUsingPassword", ResultStatus: "failed", Workload: "AzureActiveDirectory", UserKey: "1153977025279851687@alex.example.com", ClientIP: "192.0.2.255"},
+{_time: "2024-02-28T20:03:34", Id: "4e655d3f-35fa-42e0-b050-264b2d255c7a", Operation: "PasswordLogonInitialAuthUsingPassword", ResultStatus: "success", Workload: "AzureActiveDirectory", UserKey: "1153977025279851688@kai.example.com", ClientIP: "203.0.113.0", LoginStatus: 0},
+{_time: "2024-02-28T20:04:55", Id: "b567caf0-088e-4c1c-a4ea-633a1e3d66c8", Operation: "Add User.", ResultStatus: "success", Workload: "AzureActiveDirectory", UserKey: "1003BFFD8EC47CA9@skyler.example.com"},
+{_time: "2024-02-28T21:09:17", Id: "90c76bd2-8d81-4c57-a97a-accfc3453dcp", Operation: "PasswordLogonInitialAuthUsingPassword", ResultStatus: "success", Workload: "AzureActiveDirectory", UserKey: "1153977025279851685@wei.example.com", ClientIP: "192.0.2.255", LoginStatus: 0},
+{_time: "2024-02-28T23:17:31", Id: "6e455d3f-35fa-42e0-b050-864b2d255c8w", Operation: "PasswordLogonInitialAuthUsingPassword", ResultStatus: "failed", Workload: "AzureActiveDirectory", UserKey: "1153977025279851684@nyah.example.com", ClientIP: "192.0.2.0"},
+{_time: "2024-03-01T00:44:52", Id: "a567cah0-088e-4c1c-a4ea-633a1e3d96n1", Operation: "Add User.", ResultStatus: "success", Workload: "AzureActiveDirectory", UserKey: "1003BFFD8EC47CA6@deepu.example.com"},
+{_time: "2024-03-01T01:03:10", Id: "30c76bd2-9d81-4c57-a97a-accfc1233dcs", Operation: "PasswordLogonInitialAuthUsingPassword", ResultStatus: "failed", Workload: "AzureActiveDirectory", UserKey: "1153977025279851683@taylor.example.com", ClientIP: "203.0.113.255"},
+{_time: "2024-03-01T01:03:11", Id: "80c76bd2-9d81-4c57-a97a-accfc3443dca", Operation: "PasswordLogonInitialAuthUsingPassword", ResultStatus: "failed", Workload: "AzureActiveDirectory", UserKey: "1153977025279851682@sasha.example.com", ClientIP: "203.0.113.255"},
+{_time: "2024-03-01T01:12:54", Id: "3e755d3f-35fa-42e0-b050-264b2d255cde", Operation: "PasswordLogonInitialAuthUsingPassword", ResultStatus: "success", Workload: "AzureActiveDirectory", UserKey: "1153977025279851681@morgan.example.com", ClientIP: "203.0.113.0", LoginStatus: 0},
+{_time: "2024-03-01T01:24:15", Id: "2p655d3f-35fa-42e0-b050-264b2d255fgh", Operation: "PasswordLogonInitialAuthUsingPassword", ResultStatus: "success", Workload: "AzureActiveDirectory", UserKey: "1153977025279851680@charlie.example.com", ClientIP: "192.0.2.255", LoginStatus: 0}]
+
+// EXPORTS
+
+export $data

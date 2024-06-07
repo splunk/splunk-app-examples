@@ -1,0 +1,28 @@
+[default]
+[]
+access = read : [ * ], write : [ admin, power ]
+
+[app/launcher]
+version = 9.2.02.20240415
+modtime = 1713937802.229783000
+
+[app/ui]
+version = 9.2.02.20240415
+modtime = 1713937802.227981000
+
+[eventtypes]
+export = system
+
+[lookups]
+export = system
+
+[props]
+export = system
+
+[transforms]
+export = system
+
+[viewstates]
+access = read : [ * ], write : [ * ]
+export = system
+

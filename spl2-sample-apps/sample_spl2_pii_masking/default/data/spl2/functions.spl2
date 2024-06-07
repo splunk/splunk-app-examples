@@ -1,0 +1,16 @@
+// FUNCTION MODULE FOR THE APP sample_spl2_pii_masking
+
+// This command function masks the values in the UserKey field
+function pii_mask($source: dataset, $start_delimiter: string="", $end_delimiter: string="", $field: any=UserKey): dataset {
+return
+| from $source
+| eval userkey_regex="(?P<number>[[:alnum:]]+)@(?P<name>\\w+)\\.(?P<domain>\\w+).com"
+| eval userkey_regex=$start_delimiter + userkey_regex + $end_delimiter
+| eval masked_userkey_str = "xxxx@xxxx.example.com"
+| eval masked_userkey_str=$start_delimiter + masked_userkey_str + $end_delimiter
+| eval $field=replace($field, userkey_regex, masked_userkey_str)
+| fields -userkey_regex,masked_userkey_str
+}
+
+// EXPORTS
+export pii_mask

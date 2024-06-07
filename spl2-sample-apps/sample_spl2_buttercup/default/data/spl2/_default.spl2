@@ -1,0 +1,47 @@
+// DEFAULT MODULE FOR THE APP "sample_spl2_buttercup"
+ 
+// IMPORTS
+import _internal from ../../../../indexes  // AN INDEX
+import buttercup_products_lookup from /apps.sample_spl2_buttercup.lookups  // A LOOKUP
+import data from sample_data  // A DATASET LITERAL
+import prodnames as prodnames_func from functions // A FUNCTION
+import get_metrics as get_metrics_func from setup // A FUNCTION for ""$splunk_home""
+
+// SEARCHES
+// This search returns specific fields from a dataset literal, with data from the Buttercup Games Store. 
+// The results are shown in a table in the dashboard.
+$successful_purchases = from data where action="purchase" AND status=200 
+| fields _time, clientip, host, pid, quantity
+
+// This search uses a lookup and returns the product names that correspond to the product IDs.
+// For the dataset, this search uses ""successful purchases"" as a base search.
+// The ""products"" view was extended in the Search Bar in Splunk Web to create the pie chart in the dashboard. 
+$products = from $successful_purchases 
+| lookup buttercup_products_lookup productID AS pid OUTPUTNEW product_name
+
+// This search generates a single value count of the errors in an index and with a specific sourcetype. 
+// You can use either the search command or the from command to search an index.
+// The results of this search are shown in the single value visualization in the dashboard.
+$error_count = search index=_internal sourcetype="splunkd_access" status="4*"
+| stats count(status)
+
+// This search shows how to use a custom eval function called ""prodnames"".
+// The results of this search are show in the ""Products Sold"" report.
+$names = from $products | eval strings=prodnames_func(pid, product_name)
+
+// This search uses a command function to specify $SPLUNK_HOME variable and search an internal index.
+// The search return specific fields from the _internal index.
+// The results are shown in a table in the dashboard.
+$metrics = | get_metrics_func
+| eval time=strftime(_time,"%Y-%m-%d %H:%M:%S.%Q") // Converts _time from an internal field to a regular field 
+| fields time, component, event_message, instantaneous_kbps
+
+// EXPORTS
+// This line exports the functions used in this app
+export {get_metrics_func, prodnames_func}
+// This line exports the datasets used in this app
+export {data, _internal}
+// This line exports the searches as views
+export {$successful_purchases, $products, $error_count, $names, $metrics}
+// This line exports the lookups used in this app
+export buttercup_products_lookup
