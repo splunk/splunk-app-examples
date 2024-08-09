@@ -123,7 +123,7 @@ word_counts |
 4497.0 |
 
 ## Optional:Set up logging using logging.conf file
-+ Inside the **default** directory of our app, we have a [logging.conf](https://github.com/splunk/splunk-app-examples/blob/master/custom_search_commands/python/customsearchcommands_app/package/default/logging.conf) file.
++ Inside the **default** directory of our app, we have a [logging.conf](default/logging.conf) file.
 + In logging.conf file we can define loggers, handlers and formatters for our app. refer [this doc](https://docs.python.org/2/library/logging.config.html#configuration-file-format) for more details
 + Logs will be written in the files specified in the handlers defined for the respective loggers
   + For **'customsearchcommands_app'** app logs will be written in **searchcommands_app.log** and **splunklib.log** files defined in respective handlers, and are present at $SPLUNK_HOME/etc/apps/customsearchcommands_app/ dir
