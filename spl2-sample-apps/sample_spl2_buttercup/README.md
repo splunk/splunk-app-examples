@@ -7,7 +7,7 @@ title: "README - sample SPL2 buttercup games"
 The `sample SPL2 buttercup games` app is a basic SPL2-based app that shows how to:
 
 * Organize your app modules for customization and reuse.
-* How to specify a custom eval function.
+* Specify a custom eval function.
 * Specify the $SPLUNK_HOME path as a variable.
 * Use a dataset literal to provide sample data for the app.
 * Import an index, a lookup, and a function into the _default module.
@@ -20,7 +20,13 @@ This app is compatible with Splunk Enterprise.
 
 You need a pre-release version of Splunk Enterprise that supports SPL2-based applications. See [SPL2 Public Beta overview](https://dev.splunk.com/enterprise/docs/developapps/createspl2apps/spl2previewoverview) for information about the Beta.
 
-## Installation
+## Accessing the sample app
+
+The app is available in the [spl2-sample-apps](https://github.com/splunk/splunk-app-examples/tree/master/spl2-sample-apps/sample_spl2_buttercup) folder on the Splunk GitHub Examples repository.
+
+The app is uncompressed so that you can view the app folder structure, the modules, and other resources that are included with the app.
+
+<!--## Installation
 
 Complete the following steps to install a SPL2-based application:
 
@@ -31,6 +37,7 @@ Complete the following steps to install a SPL2-based application:
     4. Locate the app file and select **Upload**. You might be prompted to restart the Splunk Enterprise instance.
 
 2. Verify that the app appears in the **Apps** drop-down. You can also find the app on your pre-release instance in the `$SPLUNK_HOME/etc/apps/<app_name>`folder.
+-->
 
 ## App information
 
@@ -43,8 +50,8 @@ This app was developed by Splunk.
 | App file name   | sample_spl2_buttercup_games.spl | |
 | Namespace  | apps.sample_spl2_buttercup |  |
 | Module    | _default | This module contains all of the searches for this app. |
-| Module    | setup | This module contains the `get_metrics` function which includes a variable to specify the $SPLUNK_HOME path.
-| Module    | functions | This module contains the custom eval function `prodnames`, which generates a string with the product ID and product name.
+| Module    | setup | This module contains the `get_metrics` function which includes a variable to specify the $SPLUNK_HOME path. | 
+| Module    | functions | This module contains the custom eval function `prodnames`, which generates a string with the product ID and product name. |
 | Module    | sample_data | This module contains a dataset literal of a sample set of events. |
 | View  | $successful_purchases | This view returns specific fields from the dataset literal `$data`.  The results are shown in a table in the "Buttercup Games" dashboard.  |
 | View  | $products  | This view uses a lookup and returns the product names that correspond to the product IDs. For the dataset, this view uses the `successful purchases` view as a base search The `$products` view was extended in the Search Bar in Splunk Web to create the pie chart in the "Buttercup Games" dashboard.  |
