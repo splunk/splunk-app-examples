@@ -28,7 +28,7 @@ You need a pre-release version of Splunk Enterprise that supports SPL2-based app
 
 ## Accessing the sample app
 
-The app is available in the [spl2-sample-apps](https://github.com/splunk/splunk-app-examples/tree/master/spl2-sample-apps/sample_spl2_ppi_masking) folder on the Splunk GitHub Examples repository.
+The app is available in the [spl2-sample-apps](https://github.com/splunk/splunk-app-examples/tree/master/spl2-sample-apps/sample_spl2_pii_masking) folder on the Splunk GitHub Examples repository.
 
 The app is uncompressed so that you can view the app folder structure, the modules, and other resources that are included with the app.
 
