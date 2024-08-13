@@ -15,7 +15,7 @@ In addition, this app shows how to:
 
 * Organize your app modules for customization and reuse.
 * Use a separate module that contains views for specific user roles and capabilities. You can mask sensitive employee ID data in an index for most users, while keeping that data unmasked for privileged roles.
-* How to specify a custom command function to masking out sensitive data.
+* Specify a custom command function to masking out sensitive data.
 * Use a dataset literal to provide sample data for the app.
 * Import a view into your _default module.
 * Export views.
@@ -26,7 +26,13 @@ This app is compatible with Splunk Enterprise.
 
 You need a pre-release version of Splunk Enterprise that supports SPL2-based applications. See [SPL2 Public Beta overview](https://dev.splunk.com/enterprise/docs/developapps/createspl2apps/spl2previewoverview) for information about the Beta.
 
-## Installation
+## Accessing the sample app
+
+The app is available in the [spl2-sample-apps](https://github.com/splunk/splunk-app-examples/tree/master/spl2-sample-apps/sample_spl2_pii_masking) folder on the Splunk GitHub Examples repository.
+
+The app is uncompressed so that you can view the app folder structure, the modules, and other resources that are included with the app.
+
+<!--## Installation
 
 Complete the following steps to install a SPL2-based application:
 
@@ -37,7 +43,7 @@ Complete the following steps to install a SPL2-based application:
     4. Locate the app file and select **Upload**. You might be prompted to restart the Splunk Enterprise instance.
 
 2. Verify that the app appears in the **Apps** drop-down. You can also find the app on your pre-release instance in the `$SPLUNK_HOME/etc/apps/<app_name>`folder.
-
+-->
 ## App information
 
 This app was developed by Splunk.
@@ -49,7 +55,7 @@ This app was developed by Splunk.
 | App file name   | sample_spl2_pii_masking.spl | |
 | Namespace  | apps.sample_spl2_pii_masking |  |
 | Module    | _default | This module contains all of the searches for this app. |
-| Module    | functions | This module contains the custom command function `pii_mask`, which masks sensitive employee ID data in a dataset.
+| Module    | functions | This module contains the custom command function `pii_mask`, which masks sensitive employee ID data in a dataset. |
 | Module    | sample_data | This module contains a dataset literal of a sample set of events. |
 | View  | $masked_view | This view returns all of the events with masked email addresses. 
 This view is used to create the 'Failed logins (masked)' report. |
