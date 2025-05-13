@@ -16,6 +16,7 @@ jobs:
         node:
           - 14
           - 8.17.0
+          - 22
         splunk-version:
           - "8.0"
           - "latest"
