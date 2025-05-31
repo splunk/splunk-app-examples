@@ -7,7 +7,7 @@
 - Python
 - Docker
 
-### Starting up
+### Start up
 
 ```
 make up

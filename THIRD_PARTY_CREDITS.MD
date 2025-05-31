@@ -1,6 +1,6 @@
 # Third-Party Software Credits
 
-The Splunk App Examples repository contains some libraries that were written by others, and are being redistributed under their respective open source licenses. We want to thank the contributors to these projects:
+The Splunk App examples repository contains some libraries that were written by others, and are being redistributed under their respective open source licenses. We want to thank the contributors to these projects:
 
 ## react_setup_page_example
 
