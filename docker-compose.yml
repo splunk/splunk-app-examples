@@ -1,11 +1,10 @@
-version: '3.6'
-
 services:
     splunk:
         image: "splunk/splunk:latest"
         container_name: splunk-app-examples
         environment:
             - SPLUNK_START_ARGS=--accept-license
+            - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
             - SPLUNK_HEC_TOKEN=11111111-1111-1111-1111-1111111111113
             - SPLUNK_PASSWORD=changed!
         ports:
