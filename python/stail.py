@@ -15,10 +15,11 @@
 # under the License.
 
 """Tails a realtime search using the export endpoint and prints results to
-   stdout."""
+stdout."""
 
 import sys
 import os
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 
 from pprint import pprint
@@ -40,13 +41,14 @@ def main():
     service = connect(**opts.kwargs)
 
     try:
-        result = service.get(
+        result = service.post(
             "search/jobs/export",
             search=search,
             earliest_time="rt",
             latest_time="rt",
             search_mode="realtime",
-            output_mode="json")
+            output_mode="json",
+        )
         print(result.body)
 
         for result in JSONResultsReader(result.body):
