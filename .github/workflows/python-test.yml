@@ -10,14 +10,21 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-        python: [3.9, 3.13]
-        splunk-version:
-          - "8.0"
-          - "latest"
       fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.9]
+        splunk-version: [9.4, latest]
+        include:
+          # Oldest possible configuration
+          # Last Ubuntu version with Python 3.7 binaries available
+          - os: ubuntu-22.04
+            python-version: 3.7
+            splunk-version: 9.1
+          # Latest possible configuration
+          - os: ubuntu-latest
+            python-version: 3.13
+            splunk-version: latest
 
     services:
       splunk:
