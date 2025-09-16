@@ -15,12 +15,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
 import sys
 import time
 
-splunkhome = os.environ['SPLUNK_HOME']
-sys.path.append(os.path.join(splunkhome, 'etc', 'apps', 'customsearchcommands_app', 'lib'))
 from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration, Option, validators
 
 

@@ -14,16 +14,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
 import sys
 import json
 from http import client
 
-# NOTE: splunklib must exist within github_forks/lib/splunklib for this
-# example to run! To run this locally use `SPLUNK_VERSION=latest docker compose up -d`
-# from the root of this repo which mounts this example and the latest splunklib
-# code together at /opt/splunk/etc/apps/github_forks
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
+# NOTE: splunklib must exist within github_forks/bin for this example to run!
+# To run this locally run `make up` from the root of this repo which mounts
+# this example and the latest splunklib code together at /opt/splunk/etc/apps/github_forks
 
 from splunklib.modularinput import *
 

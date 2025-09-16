@@ -16,14 +16,10 @@
 # under the License.
 
 
-import os
 import sys
 import json
-from collections import Counter
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
-from splunklib.searchcommands import dispatch, ReportingCommand, Configuration, Option, validators
-from splunklib.searchcommands import splunklib_logger
+from splunklib.searchcommands import dispatch, ReportingCommand, Configuration
 
 
 @Configuration(requires_preop=True)

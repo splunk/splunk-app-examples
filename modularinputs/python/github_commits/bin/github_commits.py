@@ -21,12 +21,11 @@ import json
 from http import client
 from datetime import datetime
 
-# NOTE: splunklib must exist within github_commits/lib/splunklib for this
-# example to run! To run this locally use `SPLUNK_VERSION=latest docker compose up -d`
-# from the root of this repo which mounts this example and the latest splunklib
-# code together at /opt/splunk/etc/apps/github_commits
+# NOTE: splunklib must exist within github_commits/bin for this example to run!
+# To run this locally run `make up` from the root of this repo which mounts
+# this example and the latest splunklib code together at /opt/splunk/etc/apps/github_commits
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
+
 from splunklib.modularinput import *
 
 
