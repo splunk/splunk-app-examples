@@ -15,9 +15,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os, sys
+import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 from splunklib.searchcommands import dispatch, ReportingCommand, Configuration, Option, validators
 
 

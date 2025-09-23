@@ -1,12 +1,7 @@
-import os, sys
+import sys
 import requests
 from urllib.parse import urljoin, urlencode
 
-# Library-loading boilerplate
-APP_NAME = 'weather_app_example'
-splunkhome = os.environ['SPLUNK_HOME']
-apphome = os.path.join(splunkhome, 'etc', 'apps', APP_NAME)
-sys.path.append(os.path.join(apphome, 'vendor'))
 
 # Enterprise SDK imports
 import splunklib.client as client

@@ -30,15 +30,7 @@ def initialize():
     from os import path
     from sys import modules, path as python_path
 
-    import platform
-
     module_dir = path.dirname(path.realpath(__file__))
-    system = platform.system()
-
-    for packages in path.join(module_dir, 'packages'), path.join(path.join(module_dir, 'packages', system)):
-        if not path.isdir(packages):
-            break
-        python_path.insert(0, path.join(packages))
 
     configuration_file = path.join(module_dir, '_pydebug_conf.py')
 
