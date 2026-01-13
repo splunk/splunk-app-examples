@@ -1,7 +1,7 @@
 // SETUP MODULE FOR THE APP "sample_spl2_buttercup"
 
 // IMPORTS
-import _internal from ../../../../indexes // AN INDEX
+import _internal from ~indexes // AN INDEX
 
 // FUNCTION - ADMIN - Change the "$splunk_home" value to match your system
 // For the Beta, this value includes "SplunkNeta" to match the pre-reslease version

@@ -1,8 +1,8 @@
 // DEFAULT MODULE FOR THE APP "sample_spl2_buttercup"
  
 // IMPORTS
-import _internal from ../../../../indexes  // AN INDEX
-import buttercup_products_lookup from /apps.sample_spl2_buttercup.lookups  // A LOOKUP
+import _internal from !indexes  // AN INDEX
+import buttercup_products_lookup from !/apps.sample_spl2_buttercup.lookups  // A LOOKUP
 import data from sample_data  // A DATASET LITERAL
 import prodnames as prodnames_func from functions // A FUNCTION
 import get_metrics as get_metrics_func from setup // A FUNCTION for ""$splunk_home""
