@@ -16,9 +16,7 @@ The `sample SPL2 buttercup games` app is a basic SPL2-based app that shows how t
 
 ## Compatibility, prerequisites, and requirements
 
-This app is compatible with Splunk Enterprise.
-
-You need a pre-release version of Splunk Enterprise that supports SPL2-based applications. See [SPL2 Public Beta overview](https://dev.splunk.com/enterprise/docs/developapps/createspl2apps/spl2previewoverview) for information about the Beta.
+This app is compatible with Splunk Enterprise versions 10.2 or higher on the Linux operating system or with the Splunk Cloud Platform for versions 10.2.2510 or higher.
 
 ## Accessing the sample app
 
@@ -74,7 +72,7 @@ This app was developed by Splunk.
 
 The `get_metrics` function in the `setup` module specifies a variable for $SPLUNK_HOME and returns events from the internal "metric.log" file. This function is used in the `$metrics` view.
 
-This function defines $SPLUNK_HOME as `$splunk_home="/Applications/SplunkBeta"`.
+This function defines $SPLUNK_HOME as `$splunk_home="/opt/splunk"`.
 
 If necessary, change the "$splunk_home" value in the `setup` module to match your operating system. See [Manage SPL2-based apps](https://docs.splunk.com/Documentation/Splunk/Admin/ManageSPL2apps#Manage_SPL2-based_apps) in the Splunk Enterprise *Admin Manual*.
 

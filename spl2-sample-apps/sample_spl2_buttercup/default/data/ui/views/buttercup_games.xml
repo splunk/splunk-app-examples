@@ -45,7 +45,9 @@
             "type": "splunk.image"
         },
         "viz_UxGZz4fq": {
-            "dataSources": {},
+            "dataSources": {
+                "primary": "ds_LXiydlhH"
+            },
             "options": {
                 "collapseThreshold": 0.1,
                 "labelDisplay": "valuesAndPercentage"
@@ -55,7 +57,8 @@
         },
         "viz_ZedUgtjp": {
             "dataSources": {
-                "fieldsummary": "ds_OWihUoTC"
+                "fieldsummary": "ds_NSFJ4c4f",
+                "primary": "ds_d7YzF3J2"
             },
             "description": "Expand a metric to see the fields",
             "options": {
@@ -65,7 +68,9 @@
             "type": "splunk.events"
         },
         "viz_ggYjYrfK": {
-            "dataSources": {},
+            "dataSources": {
+                "primary": "ds_MFCoBPpk"
+            },
             "options": {
                 "count": 100,
                 "dataOverlayMode": "none",
@@ -104,7 +109,9 @@
                     }
                 ]
             },
-            "dataSources": {},
+            "dataSources": {
+                "primary": "ds_S4Oq1rT3"
+            },
             "description": "Errors from  the _internal index",
             "options": {
                 "majorColor": "#f1813f",
@@ -120,6 +127,13 @@
         }
     },
     "dataSources": {
+        "ds_LXiydlhH": {
+            "name": "Pie chart search",
+            "options": {
+                "query": "from products | fields product_name, quantity"
+            },
+            "type": "ds.spl2"
+        },
         "ds_MFCoBPpk": {
             "name": "Table search",
             "options": {
@@ -127,13 +141,12 @@
             },
             "type": "ds.spl2"
         },
-        "ds_OWihUoTC": {
-            "name": "Events 2 search",
+        "ds_NSFJ4c4f": {
+            "name": "Events 2 Search",
             "options": {
-                "extend": "ds_jqkIlNC2",
-                "query": "| fieldsummary maxvals=10"
+                "query": "from metrics | fieldsummary maxvals=10"
             },
-            "type": "ds.chain"
+            "type": "ds.spl2"
         },
         "ds_S4Oq1rT3": {
             "name": "Single value search",
