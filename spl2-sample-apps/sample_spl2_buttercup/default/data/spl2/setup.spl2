@@ -1,13 +1,13 @@
 // SETUP MODULE FOR THE APP "sample_spl2_buttercup"
 
 // IMPORTS
-import _internal from ../../../../indexes // AN INDEX
+import _internal from ~indexes // AN INDEX
 
 // FUNCTION - ADMIN - Change the "$splunk_home" value to match your system
-// For the Beta, this value includes "SplunkNeta" to match the pre-reslease version
+// The default value "/opt/splunk" matches the default Linux install location
 // This function specifies a variable for $SPLUNK_HOME and returns events from the 
 // internal "metric.log" file
-function get_metrics($splunk_home="/Applications/SplunkBeta"):dataset{
+function get_metrics($splunk_home="/opt/splunk"):dataset{
 return | from _internal where source="${$splunk_home}/var/log/splunk/metrics.log"
 }
 // This search tests the "get_metrics" function, converts the "_time" field, 

@@ -17,14 +17,12 @@ In addition, this app shows how to:
 * Use a separate module that contains views for specific user roles and capabilities. You can mask sensitive employee ID data in an index for most users, while keeping that data unmasked for privileged roles.
 * Specify a custom command function to masking out sensitive data.
 * Use a dataset literal to provide sample data for the app.
-* Import a view into your _default module.
+* Import a view into your _resources module.
 * Export views.
 
 ## Compatibility, prerequisites, and requirements
 
-This app is compatible with Splunk Enterprise.
-
-You need a pre-release version of Splunk Enterprise that supports SPL2-based applications. See [SPL2 Public Beta overview](https://dev.splunk.com/enterprise/docs/developapps/createspl2apps/spl2previewoverview) for information about the Beta.
+This app is compatible with Splunk Enterprise versions 10.2 or higher on the Linux operating system or with the Splunk Cloud Platform for versions 10.2.2510 or higher.
 
 ## Accessing the sample app
 
@@ -54,7 +52,7 @@ This app was developed by Splunk.
 | :------------- | :------------------------ | :--------------------------------- |
 | App file name   | sample_spl2_pii_masking.spl | |
 | Namespace  | apps.sample_spl2_pii_masking |  |
-| Module    | _default | This module contains all of the searches for this app. |
+| Module    | _resources | This module contains all of the searches for this app. |
 | Module    | functions | This module contains the custom command function `pii_mask`, which masks sensitive employee ID data in a dataset. |
 | Module    | sample_data | This module contains a dataset literal of a sample set of events. |
 | View  | $masked_view | This view returns all of the events with masked email addresses. 
@@ -67,7 +65,7 @@ This view is used to create the 'Failed logins (masked)' report. |
 
 ## App customizations
 
-In this Beta, people with the `user` role do not have permission to run SPL2 searches using the views in an app. However, the Splunk administrator can set role-based permissions after the app is installed.
+Users may not have permission to run SPL2 searches using the views in an app depending on their role. However, the Splunk administrator can set role-based permissions after the app is installed.
 
 For example, a Splunk administrator can use the REST API endpoints to set 'execute' permissions on the `masking` module for the `user` role. This enables people with that role to perform searches using the `masked_view` that is in the `masking` module.
 

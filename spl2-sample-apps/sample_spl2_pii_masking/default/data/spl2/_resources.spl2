@@ -1,8 +1,8 @@
 // DEFAULT MODULE FOR THE APP "sample_spl2_pii_masking"
  
 // IMPORTS
-import data from sample_data // A DATASET LITERAL, WITH DATAA FROM Azure Active Directory. 
-import masked_view from masking // A VIEW THAT CONTAINS THE MASKED DATA
+import data from ~/apps.sample_spl2_pii_masking.sample_data // A DATASET LITERAL, WITH DATA FROM Azure Active Directory. 
+import masked_view from ~/apps.sample_spl2_pii_masking.masking // A VIEW THAT CONTAINS THE MASKED DATA
 
 // SEARCHES
 // This search returns specific fields from a dataset literal

@@ -10,15 +10,13 @@ The `sample SPL2 buttercup games` app is a basic SPL2-based app that shows how t
 * Specify a custom eval function.
 * Specify the $SPLUNK_HOME path as a variable.
 * Use a dataset literal to provide sample data for the app.
-* Import an index, a lookup, and a function into the _default module.
+* Import an index, a lookup, and a function into the _resources module.
 * Use a base search to branch child searches.
 * Export views.
 
 ## Compatibility, prerequisites, and requirements
 
-This app is compatible with Splunk Enterprise.
-
-You need a pre-release version of Splunk Enterprise that supports SPL2-based applications. See [SPL2 Public Beta overview](https://dev.splunk.com/enterprise/docs/developapps/createspl2apps/spl2previewoverview) for information about the Beta.
+This app is compatible with Splunk Enterprise versions 10.2 or higher on the Linux operating system or with the Splunk Cloud Platform for versions 10.2.2510 or higher.
 
 ## Accessing the sample app
 
@@ -49,7 +47,7 @@ This app was developed by Splunk.
 | :------------- | :------------------------ | :--------------------------------- |
 | App file name   | sample_spl2_buttercup_games.spl | |
 | Namespace  | apps.sample_spl2_buttercup |  |
-| Module    | _default | This module contains all of the searches for this app. |
+| Module    | _resources | This module contains all of the searches for this app. |
 | Module    | setup | This module contains the `get_metrics` function which includes a variable to specify the $SPLUNK_HOME path. | 
 | Module    | functions | This module contains the custom eval function `prodnames`, which generates a string with the product ID and product name. |
 | Module    | sample_data | This module contains a dataset literal of a sample set of events. |
@@ -58,9 +56,9 @@ This app was developed by Splunk.
 | View  | $error_count | This view generates a single value count of the errors in an index and with a specific sourcetype. The results of this view are shown in the single value visualization in the "Buttercup Games" dashboard. |
 | View  | $names | This view uses a custom eval function called `prodnames`. The results of this view are show in the "Products Sold" report. |
 | View  | $metrics | This view uses a command function to specify $SPLUNK_HOME variable and search an internal index. The view returns specific fields from the `_internal` index. The results are shown in a table in the "Buttercup Games" dashboard.|
-| Function | prodnames | This function generates a string that identifies the ID and name for each product. The function is given an alias name, prodnames_func, in the _default module. This function is in the `functions` module.|
-| Function | get_metrics | This function specifies a variable for $SPLUNK_HOME and returns events from the internal `metric.log` file. The function is given an alias name, get_metrics_func, in the _default module. This function is in the `setup` module.|
-| Lookup    | sample_products.csv | This lookup is used in the _default module in a view called `$products`. |
+| Function | prodnames | This function generates a string that identifies the ID and name for each product. The function is given an alias name, prodnames_func, in the _resources module. This function is in the `functions` module.|
+| Function | get_metrics | This function specifies a variable for $SPLUNK_HOME and returns events from the internal `metric.log` file. The function is given an alias name, get_metrics_func, in the _resources  module. This function is in the `setup` module.|
+| Lookup    | sample_products.csv | This lookup is used in the _resources module in a view called `$products`. |
 | Lookup    | sample_suppliers.csv | You can use the `sample_suppliers.csv` lookup to extend the $products view. |
 | Dashboard | Buttercup Games | This dashboard contains 4 visualizations:
 
@@ -74,7 +72,7 @@ This app was developed by Splunk.
 
 The `get_metrics` function in the `setup` module specifies a variable for $SPLUNK_HOME and returns events from the internal "metric.log" file. This function is used in the `$metrics` view.
 
-This function defines $SPLUNK_HOME as `$splunk_home="/Applications/SplunkBeta"`.
+This function defines $SPLUNK_HOME as `$splunk_home="/opt/splunk"`.
 
 If necessary, change the "$splunk_home" value in the `setup` module to match your operating system. See [Manage SPL2-based apps](https://docs.splunk.com/Documentation/Splunk/Admin/ManageSPL2apps#Manage_SPL2-based_apps) in the Splunk Enterprise *Admin Manual*.
 
