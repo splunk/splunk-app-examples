@@ -3,7 +3,7 @@
 // MASKING MODULE FOR THE APP sample_spl2_pii_masking
 
 // IMPORTS
-import data from ~/apps.sample_spl2_pii_masking.sample_pii_data // A DATASET LITERAL
+import data from ~/apps.sample_spl2_pii_masking.sample_data // A DATASET LITERAL
 import pii_mask from ~/apps.sample_spl2_pii_masking.functions // A COMMAND FUNCTION THAT MASKS EMAIL ADDRESSES
 
 $masked_view = from data | pii_mask
