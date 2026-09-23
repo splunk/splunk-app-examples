@@ -37,7 +37,7 @@ def request(url, message, **kwargs):
     # If running Python 2.7.9+, disable SSL certificate validation
     req = urllib.request.Request(url, data, headers)
     try:
-        response = urllib.request.urlopen(req, context=ssl._create_unverified_context())
+        response = urllib.request.urlopen(req, context=ssl.create_default_context())
     except urllib.error.HTTPError as response:
         pass  # Propagate HTTP errors via the returned response message
     return {
