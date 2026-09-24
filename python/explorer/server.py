@@ -86,7 +86,7 @@ class RedirectHandler(http.server.SimpleHTTPRequestHandler):
             # Make the request
             request = urllib.request.Request(url, data, headers)
             request.get_method = lambda: method
-            response = urllib.request.urlopen(request, context=ssl._create_unverified_context())
+            response = urllib.request.urlopen(request, context=ssl.create_default_context())
 
             # We were successful, so send the response code
             self.send_response(response.code, message=response.msg)
